@@ -1,7 +1,8 @@
 CREATE TABLE Admins(
-  id int AUTO_INCREMENT,
-  acc_uuid varchar(36),
-  role varchar(30),
+  id int NOT NULL AUTO_INCREMENT,
+  acc_uuid varchar(36) NOT NULL UNIQUE,
+  role varchar(30) NOT NULL,
   PRIMARY KEY(id),
-  FOREIGN KEY(acc_uuid) REFERENCES Users
+  FOREIGN KEY(acc_uuid) REFERENCES Users(acc_uuid),
+  FOREIGN KEY(role) REFERENCES Roles(role)
 );

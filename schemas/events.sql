@@ -1,8 +1,8 @@
 CREATE TABLE Events(
-  id int AUTO_INCREMENT,
-  acc_uuid varchar(36),
-  modified datetime,
-  msg varchar(75),
+  id int NOT NULL AUTO_INCREMENT,
+  acc_uuid varchar(36) NOT NULL UNIQUE,
+  modified datetime DEFAULT NOW() NOT NULL,
+  msg varchar(75) NOT NULL,
   PRIMARY KEY(id),
-  FOREIGN KEY(acc_uuid) REFERENCES Users
+  FOREIGN KEY(acc_uuid) REFERENCES Users(acc_uuid)
 );
