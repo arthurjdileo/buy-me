@@ -1,0 +1,21 @@
+CREATE TABLE Listing(
+	id int AUTO_INCREMENT,
+	listing_uuid varchar(36),
+	bidder_uuid varchar(36),
+	seller_uuid varchar(36),
+	description varchar(350),
+	image varchar(250),
+	created datetime,
+	updated datetime,
+	listing_days int,
+	currency varchar(10),
+	start_price float,
+	reserve_price float,
+	num_bids int,
+	end_time datetime,
+	bid_increment: float,
+	PRIMARY KEY (id),
+	FOREIGN KEY (bidder_uuid) REFERENCES Users(acc_uuid),
+	FOREIGN KEY (seller_uuid) REFERENCES Users(acc_uuid),
+	FOREIGN KEY (listing_uuid) REFERENCES Listing(listing_uuid)
+);
