@@ -14,6 +14,7 @@ CREATE TABLE Listing(
 	num_bids int DEFAULT 0 NOT NULL,
 	end_time datetime NOT NULL,
 	bid_increment decimal NOT NULL,
+	is_active int DEFAULT 1 NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (bidder_uuid) REFERENCES Users(acc_uuid),
 	FOREIGN KEY (seller_uuid) REFERENCES Users(acc_uuid)
