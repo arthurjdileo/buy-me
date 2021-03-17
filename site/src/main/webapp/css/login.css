@@ -1,0 +1,71 @@
+/*
+login
+contains style for both login and register, because they are almost the same
+*/
+
+.main-content {
+  flex-direction: row;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 1rem;
+  background: var(--blue-grey);
+  background-image: url('/img/dot-grid.png');
+  background-blend-mode: multiply;
+}
+.login-container {
+  border: 1px solid var(--light-grey);
+  display: flex;
+  flex-direction: column;
+  border-radius: 6px;
+  padding: 1rem;
+  background: #fafafa;
+  box-shadow: 1px 1px 20px rgba(0, 0, 0, 0.2);
+
+}
+
+.login-form {
+  /* min-width: 30vw; */
+  margin: 3rem 1rem 1rem 1rem;
+  padding-bottom: 4rem;
+  border-bottom: 1px solid var(--light-grey);
+}
+.input-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.8rem;
+}
+
+#btn-login {
+  display: block;
+  width: 100%;
+  /* margin: 0 auto; */
+}
+
+.register-account-text {
+  align-self: flex-end;
+  margin: 0 1rem;
+}
+#btn-register {
+  display: inline-block;
+  margin-left: 1rem;
+}
+
+.disclaimer {
+  text-transform: capitalize;
+  font-size: 0.6rem;
+  margin: 4rem 1rem 0 1rem;
+}
+
+.register-title {
+  font-weight: 500;
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.input-label {
+  text-transform: capitalize;
+  margin-right: 1em;
+}
