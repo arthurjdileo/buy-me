@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import java.sql.*;
+
 public class ApplicationDB {
 	
 	public ApplicationDB(){
@@ -20,20 +22,16 @@ public class ApplicationDB {
 			//Load JDBC driver - the interface standardizing the connection procedure. Look at WEB-INF\lib for a mysql connector jar file, otherwise it fails.
 			Class.forName("com.mysql.jdbc.Driver").newInstance();
 		} catch (InstantiationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
 			//Create a connection to your DB
 			connection = DriverManager.getConnection(connectionUrl,"webapp", "webapp");
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -45,20 +43,32 @@ public class ApplicationDB {
 		try {
 			connection.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
-	
-	
-	
 	
 	
 	public static void main(String[] args) {
 		ApplicationDB dao = new ApplicationDB();
 		Connection connection = dao.getConnection();
 		System.out.println("----CONNECTION STARTED----");
-		System.out.println(connection);		
+		if (connection == null) {
+			System.out.println("Connection is Null!");
+		} else {
+			System.out.println("NOT NULL");
+			System.out.println(connection);
+		}
+		Statement st;
+		try {
+			st = connection.createStatement();
+			ResultSet rs = st.executeQuery("select * from Users");
+	        while(rs.next()){
+	            System.out.println("UUID "+rs.getString(2));
+	        }
+		} catch (SQLException e) {
+			System.out.println("Failed");
+			e.printStackTrace();
+		}
 		dao.closeConnection(connection);
 	}
 	
