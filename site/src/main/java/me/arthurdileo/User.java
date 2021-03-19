@@ -1,8 +1,6 @@
 package me.arthurdileo;
 
 import java.sql.*;
-import java.time.*;
-import java.util.UUID;
 
 /*
  * id

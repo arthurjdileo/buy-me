@@ -3,6 +3,7 @@ CREATE TABLE Listing(
 	listing_uuid varchar(36) NOT NULL UNIQUE,
 	bidder_uuid varchar(36) NOT NULL UNIQUE,
 	seller_uuid varchar(36) NOT NULL UNIQUE,
+	item_name varchar(250) NOT NULL,
 	description varchar(350) NOT NULL,
 	image varchar(250) NOT NULL,
 	created datetime DEFAULT NOW() NOT NULL,
