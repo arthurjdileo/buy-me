@@ -69,7 +69,7 @@
 
       </form>
 
-      <p class="register-account-text">Don't have an account? <a href="register.html" id="btn-register" class="btn btn-sm green">register</a></p>
+      <p class="register-account-text">Don't have an account? <a href="register.jsp" id="btn-register" class="btn btn-sm green">register</a></p>
 
     </div>
   </main>

@@ -2,6 +2,10 @@ package me.arthurdileo;
 
 import java.util.*;
 import java.sql.*;
+import java.math.BigInteger;  
+import java.nio.charset.StandardCharsets; 
+import java.security.MessageDigest;  
+import java.security.NoSuchAlgorithmException;  
 
 public class BuyMe {
 	
@@ -20,8 +24,8 @@ public class BuyMe {
 		static HashMap<String, User> UserTable;
 		
 		// get a specific user
-		public static User get(String email) throws SQLException {
-			return getAll().get(email);
+		public static User get(String acc_uuid) throws SQLException {
+			return getAll().get(acc_uuid);
 		}
 		
 		// get list of users
@@ -50,12 +54,12 @@ public class BuyMe {
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setObject(1, u.account_uuid);
 			ps.setString(2, u.email);
-			ps.setString(3, u.firstName);
-			ps.setString(4, u.lastName);
-			ps.setString(5, u.lastIP);
+			ps.setString(3, u.password);
+			ps.setString(4, u.firstName);
+			ps.setString(5, u.lastName);
+			ps.setString(6, u.lastIP);
 			ps.executeUpdate();
 			UserTable = null;
-			
 		}
 	}
 	
@@ -64,6 +68,16 @@ public class BuyMe {
 		
 		public static Session get(String acc_uuid) throws SQLException {
 			return getAll().get(acc_uuid);
+		}
+		
+		public static User getBySession(String session_uuid) throws SQLException {
+			ArrayList<Session> sessions = getAsList();
+			for (Session s : sessions) {
+				if (s.session_uuid.equals(session_uuid)) {
+					return Users.get(s.acc_uuid);
+				}
+			}
+			return null;
 		}
 		
 		public static ArrayList<Session> getAsList() throws SQLException {
@@ -94,6 +108,14 @@ public class BuyMe {
 			SessionTable = null;
 		}
 		
+		public static void remove(String session_uuid) throws SQLException {
+			String query = "DELETE FROM Sessions WHERE session_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, session_uuid);
+			ps.executeUpdate();
+			SessionTable = null;
+		}
+		
 		public static boolean validateSession(String session_uuid) throws SQLException {
 			for (Session s : getAsList()) {
 				if (s.session_uuid.equals(session_uuid)) {
@@ -101,6 +123,20 @@ public class BuyMe {
 				}
 			}
 			return false;
+		}
+		
+		public static String hashPassword(String password) throws NoSuchAlgorithmException{
+			MessageDigest md = MessageDigest.getInstance("SHA-256");
+			
+			byte[] bytes = md.digest(password.getBytes(StandardCharsets.UTF_8));
+			
+			BigInteger n = new BigInteger(1, bytes);
+			StringBuilder hexString = new StringBuilder(n.toString(16));
+			
+			while (hexString.length() < 32) {
+				hexString.insert(0, '0');
+			}
+			return hexString.toString();
 		}
 	}
 }

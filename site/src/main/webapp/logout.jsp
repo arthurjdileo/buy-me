@@ -17,6 +17,7 @@ if (cookies != null) {
 if (loginCookie != null) {
 	loginCookie.setMaxAge(0);
 	response.addCookie(loginCookie);
+	BuyMe.Sessions.remove(loginCookie.getValue());
 }
 response.sendRedirect("login.jsp");
 return;
