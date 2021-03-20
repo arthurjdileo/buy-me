@@ -210,6 +210,34 @@ public class BuyMe {
 			ps.executeUpdate();
 			ListingsTable = null;
 		}
+		
+		public static ArrayList<Listing> searchByName(String query) throws SQLException {
+			ArrayList<Listing> listings = getAsList();
+			ArrayList<Listing> searchResults = new ArrayList<Listing>();
+			String[] split = query.split(" ");
+			
+			for (Listing l : listings) {
+				for (String s : split) {
+					if (l.item_name.contains(s)) {
+						searchResults.add(l);
+					}
+				}
+			}
+			return searchResults;
+		}
+		
+//		public static User getWinner()
+		
+		// determine winner by reserve
+		public static User getWinnerReserve(Listing l) throws SQLException {
+			ArrayList<Bid> bids = Bids.getBidsByListing(l.listing_uuid);
+			for (Bid b : bids) {
+				if (b.amount >= l.reserve_price) {
+					return Users.get(b.buyer_uuid);
+				}
+			}
+			return null;
+		}
 	}
 	
 	public static class Bids {
@@ -243,6 +271,7 @@ public class BuyMe {
 		// create a new bid
 		public static void insert(Bid b) throws SQLException {
 			loadDatabase();
+//			check for errors
 			String query = "INSERT INTO Bids(buyer_uuid, seller_uuid, listing_uuid, amount) VALUES (?, ?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, b.buyer_uuid);
@@ -253,17 +282,17 @@ public class BuyMe {
 			BidsTable = null;
 			
 			// winner checks
-			if (isWinner(b) != null) {
-				Listings.remove(b.listing_uuid);
-				Transaction t = new Transaction(b.buyer_uuid, b.seller_uuid, b.listing_uuid, b.amount);
-				TransactionHistory.insert(t);
-			}
+//			if (isWinner(b) != null) {
+//				Listings.remove(b.listing_uuid);
+//				Transaction t = new Transaction(b.buyer_uuid, b.seller_uuid, b.listing_uuid, b.amount);
+//				TransactionHistory.insert(t);
+//			}
 		}
 		
 		// get all bids for listing
 		public static ArrayList<Bid> getBidsByListing(String listing_uuid) throws SQLException {
 			ArrayList<Bid> bids = getAsList();
-			ArrayList<Bid> listingBids = null;
+			ArrayList<Bid> listingBids = new ArrayList<Bid>();
 			
 			for (Bid b : bids) {
 				if (b.listing_uuid.equals(listing_uuid)) {
@@ -273,13 +302,19 @@ public class BuyMe {
 			return listingBids;
 		}
 		
-		// determine winner
-		public static User isWinner(Bid b) throws SQLException {
-			Listing l = Listings.get(b.listing_uuid);
-			if (b.amount >= l.reserve_price) {
-				return Users.get(b.buyer_uuid);
+		// get top bid by listing
+		public static Bid topBid(Listing l) throws SQLException {
+			ArrayList<Bid> bids = Bids.getBidsByListing(l.listing_uuid);
+			
+			float maxBid = 0;
+			Bid topBid = null;
+			for (Bid b : bids) {
+				if (b.amount > maxBid) {
+					maxBid = b.amount;
+					topBid = b;
+				}
 			}
-			return null;
+			return topBid;
 		}
 	}
 	
@@ -345,6 +380,116 @@ public class BuyMe {
 				}
 			}
 			return sellerTrans;
+		}
+	}
+	
+	public static class Questions {
+		static HashMap<String, Question> QuestionsTable;
+		
+		// get question by user
+		public static Question get(String account_uuid) throws SQLException {
+			return getAll().get(account_uuid);
+		}
+		
+		// transactions as list
+		public static ArrayList<Question> getAsList() throws SQLException {
+			return new ArrayList<Question>(getAll().values());
+		}
+				
+		// updates table from db
+		static HashMap<String, Question> getAll() throws SQLException {
+			loadDatabase();
+			if (QuestionsTable == null) {
+				QuestionsTable = new HashMap<String, Question>();
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery("select * from Questions;");
+				while (rs.next()) {
+					Question q = new Question(rs);
+					QuestionsTable.put(q.client_uuid, q);
+				}
+			}
+			return QuestionsTable;
+		}
+		
+		// create question
+		public static void insert(Question q) throws SQLException {
+			loadDatabase();
+			String query = "INSERT INTO Questions(question_uuid, client_uuid, admin_uuid, question, answer) VALUES (?, ?, ?, ?, ?);";
+			String questionUUID = UUID.randomUUID().toString();
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, questionUUID);
+			ps.setString(2, q.client_uuid);
+			ps.setString(3, q.admin_uuid);
+			ps.setString(4, q.question);
+			ps.setString(5, q.answer);
+			ps.executeUpdate();
+			QuestionsTable = null;
+		}
+		
+		// answer question
+		public static void answer(Question q, String answer) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE Questions SET answer = ? WHERE question_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, answer);
+			ps.setString(2, q.question_uuid);
+			ps.executeUpdate();
+			QuestionsTable = null;
+		}
+	}
+	
+	public static class FAQ {
+		static HashMap<String, FAQ> FAQTable;
+		
+		// get question by user
+		public static FAQ get(String question_uuid) throws SQLException {
+			return getAll().get(question_uuid);
+		}
+		
+		// transactions as list
+		public static ArrayList<FAQ> getAsList() throws SQLException {
+			return new ArrayList<FAQ>(getAll().values());
+		}
+				
+		// updates table from db
+		static HashMap<String, FAQ> getAll() throws SQLException {
+			loadDatabase();
+			if (FAQTable == null) {
+				FAQTable = new HashMap<String, FAQ>();
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery("select * from FAQ;");
+				while (rs.next()) {
+					FAQ f = new FAQ(rs);
+					FAQTable.put(f.question_uuid, f);
+				}
+			}
+			return QuestionsTable;
+		}
+		
+		// create question
+		public static void insert(Question q) throws SQLException {
+			loadDatabase();
+			String query = "INSERT INTO Questions(question_uuid, client_uuid, admin_uuid, question, answer) VALUES (?, ?, ?, ?, ?);";
+			String questionUUID = UUID.randomUUID().toString();
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, questionUUID);
+			ps.setString(2, q.client_uuid);
+			ps.setString(3, q.admin_uuid);
+			ps.setString(4, q.question);
+			ps.setString(5, q.answer);
+			ps.executeUpdate();
+			QuestionsTable = null;
+		}
+		
+		// answer question
+		public static void answer(Question q, String answer) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE Questions SET answer = ? WHERE question_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, answer);
+			ps.setString(2, q.question_uuid);
+			ps.executeUpdate();
+			QuestionsTable = null;
 		}
 	}
 }

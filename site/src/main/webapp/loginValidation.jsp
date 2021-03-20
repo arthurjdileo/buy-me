@@ -10,8 +10,6 @@
 	ArrayList<String> errors = new ArrayList<String>();
 	session.setAttribute("errors", errors);
 	
-	
-	
 	for (User u : BuyMe.Users.getAsList()) {
 		if (u.email.equalsIgnoreCase(email)) {
 			if (u.password.equals(hashedPw)) {

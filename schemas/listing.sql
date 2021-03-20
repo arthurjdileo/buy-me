@@ -11,7 +11,7 @@ CREATE TABLE Listing(
 	listing_days int NOT NULL,
 	currency varchar(10) DEFAULT 'USD' NOT NULL,
 	start_price decimal NOT NULL,
-	reserve_price decimal NOT NULL,
+	reserve_price decimal,
 	num_bids int DEFAULT 0 NOT NULL,
 	end_time datetime NOT NULL,
 	bid_increment decimal NOT NULL,

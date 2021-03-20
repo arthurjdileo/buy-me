@@ -1,9 +1,10 @@
-CREATE TABLE FAQ(
+CREATE TABLE Questions(
 	id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
 	question_uuid varchar(36) NOT NULL UNIQUE,
+	client_uuid varchar(36) NOT NULL UNIQUE,
 	admin_uuid varchar(36) NOT NULL UNIQUE,
 	created datetime DEFAULT NOW() NOT NULL,
 	updated datetime DEFAULT NOW() NOT NULL,
 	question varchar(350) NOT NULL,
-	answer varchar(350) NOT NULL
+	answer varchar(350) DEFAULT NULL
 )
