@@ -14,7 +14,7 @@ public class BuyMe {
 	
 	// loads database
 	public static void loadDatabase() {
-		if (db == null) {
+		if (db == null || conn == null) {
 			db = new ApplicationDB();
 			conn = db.getConnection();
 		}
@@ -52,6 +52,7 @@ public class BuyMe {
 		
 		// insert a user object into db
 		public static void insert(User u) throws SQLException {
+			loadDatabase();
 			String query = "INSERT INTO Users(acc_uuid, email, pw, f_name, l_name, lastIP) VALUES (?, ?, ?, ?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setObject(1, u.account_uuid);
@@ -106,6 +107,7 @@ public class BuyMe {
 		
 		// insert session into db
 		public static void insert(Session s) throws SQLException {
+			loadDatabase();
 			String query = "INSERT INTO Sessions(session_uuid, acc_uuid) VALUES (?,?) ON DUPLICATE KEY UPDATE session_uuid = ?;";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, s.session_uuid);
@@ -153,12 +155,12 @@ public class BuyMe {
 	public static class Listings {
 		static HashMap<String, Listing> ListingsTable;
 		
-		// get session by acc uuid
+		// get listing by listing uuid
 		public static Listing get(String listing_uuid) throws SQLException {
 			return getAll().get(listing_uuid);
 		}
 		
-		// sessions as list
+		// listings as list
 		public static ArrayList<Listing> getAsList() throws SQLException {
 			return new ArrayList<Listing>(getAll().values());
 		}
@@ -180,6 +182,7 @@ public class BuyMe {
 		
 		// insert listing into db
 		public static void insert(Listing l) throws SQLException {
+			loadDatabase();
 			String query = "INSERT INTO Listing(listing_uuid, bidder_uuid, seller_uuid, item_name, description, image, listing_days, currency, start_price, reserve_price, num_bids, bid_increment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, l.listing_uuid);
@@ -200,11 +203,148 @@ public class BuyMe {
 		
 		// remove listing from db
 		public static void remove(String listing_uuid) throws SQLException {
+			loadDatabase();
 			String query = "UPDATE Listings SET is_active = 0 WHERE listing_uuid = ?;";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, listing_uuid);
 			ps.executeUpdate();
 			ListingsTable = null;
+		}
+	}
+	
+	public static class Bids {
+		static HashMap<String, Bid> BidsTable;
+		
+		// get bids by listing
+		public static Bid get(String listing_uuid) throws SQLException {
+			return getAll().get(listing_uuid);
+		}
+		
+		// bids as list
+		public static ArrayList<Bid> getAsList() throws SQLException {
+			return new ArrayList<Bid>(getAll().values());
+		}
+				
+		// updates table from db
+		static HashMap<String, Bid> getAll() throws SQLException {
+			loadDatabase();
+			if (BidsTable == null) {
+				BidsTable = new HashMap<String, Bid>();
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery("select * from Bids;");
+				while (rs.next()) {
+					Bid b = new Bid(rs);
+					BidsTable.put(b.listing_uuid, b);
+				}
+			}
+			return BidsTable;
+		}
+		
+		// create a new bid
+		public static void insert(Bid b) throws SQLException {
+			loadDatabase();
+			String query = "INSERT INTO Bids(buyer_uuid, seller_uuid, listing_uuid, amount) VALUES (?, ?, ?, ?);";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, b.buyer_uuid);
+			ps.setString(2, b.seller_uuid);
+			ps.setString(3, b.listing_uuid);
+			ps.setFloat(4, b.amount);
+			ps.executeUpdate();
+			BidsTable = null;
+			
+			// winner checks
+			if (isWinner(b) != null) {
+				Listings.remove(b.listing_uuid);
+				Transaction t = new Transaction(b.buyer_uuid, b.seller_uuid, b.listing_uuid, b.amount);
+				TransactionHistory.insert(t);
+			}
+		}
+		
+		// get all bids for listing
+		public static ArrayList<Bid> getBidsByListing(String listing_uuid) throws SQLException {
+			ArrayList<Bid> bids = getAsList();
+			ArrayList<Bid> listingBids = null;
+			
+			for (Bid b : bids) {
+				if (b.listing_uuid.equals(listing_uuid)) {
+					listingBids.add(b);
+				}
+			}
+			return listingBids;
+		}
+		
+		// determine winner
+		public static User isWinner(Bid b) throws SQLException {
+			Listing l = Listings.get(b.listing_uuid);
+			if (b.amount >= l.reserve_price) {
+				return Users.get(b.buyer_uuid);
+			}
+			return null;
+		}
+	}
+	
+	public static class TransactionHistory {
+		static HashMap<String, Transaction> TransactionsTable;
+		
+		// get transaction by listing
+		public static Transaction get(String listing_uuid) throws SQLException {
+			return getAll().get(listing_uuid);
+		}
+		
+		// transactions as list
+		public static ArrayList<Transaction> getAsList() throws SQLException {
+			return new ArrayList<Transaction>(getAll().values());
+		}
+				
+		// updates table from db
+		static HashMap<String, Transaction> getAll() throws SQLException {
+			loadDatabase();
+			if (TransactionsTable == null) {
+				TransactionsTable = new HashMap<String, Transaction>();
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery("select * from TransactionHistory;");
+				while (rs.next()) {
+					Transaction t = new Transaction(rs);
+					TransactionsTable.put(t.listing_uuid, t);
+				}
+			}
+			return TransactionsTable;
+		}
+		
+		public static void insert(Transaction t) throws SQLException {
+			loadDatabase();
+			String query = "INSERT INTO TransactionHistory(buyer_uuid, seller_uuid, listing_uuid, amount) VALUES (?, ?, ?, ?);";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, t.buyer_uuid);
+			ps.setString(2, t.seller_uuid);
+			ps.setString(3, t.listing_uuid);
+			ps.setFloat(4, t.amount);
+			ps.executeUpdate();
+			TransactionsTable = null;
+		}
+		
+		public static ArrayList<Transaction> getByBuyer(String buyer_uuid) throws SQLException {
+			ArrayList<Transaction> transactions = getAsList();
+			ArrayList<Transaction> buyerTrans = new ArrayList<Transaction>();
+			
+			for (Transaction t : transactions) {
+				if (t.buyer_uuid.equals(buyer_uuid)) {
+					buyerTrans.add(t);
+				}
+			}
+			return buyerTrans;
+		}
+		
+		public static ArrayList<Transaction> getBySeller(String seller_uuid) throws SQLException {
+			ArrayList<Transaction> transactions = getAsList();
+			ArrayList<Transaction> sellerTrans = new ArrayList<Transaction>();
+			
+			for (Transaction t : transactions) {
+				if (t.buyer_uuid.equals(seller_uuid)) {
+					sellerTrans.add(t);
+				}
+			}
+			return sellerTrans;
 		}
 	}
 }

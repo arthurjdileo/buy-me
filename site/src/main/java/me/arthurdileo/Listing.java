@@ -30,6 +30,8 @@ public class Listing {
 	public String item_name;
 	public String description;
 	public String image;
+	public Time created;
+	public Time updated;
 	public int listing_days;
 	public String currency;
 	public float start_price;
@@ -64,6 +66,8 @@ public class Listing {
 				rs.getString("description"), rs.getString("item_name"), rs.getString("image"), rs.getInt("listing_days"), 
 				rs.getString("currency"), rs.getFloat("start_price"), rs.getFloat("reserve_price"),
 				rs.getInt("num_bids"), rs.getTime("end_time"), rs.getFloat("bid_increment"), rs.getInt("is_active"));
+		this.created = rs.getTime("created");
+		this.updated = rs.getTime("updated");
 	}
 	
 	public String toString(Listing l) {

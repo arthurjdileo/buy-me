@@ -45,6 +45,8 @@ public class User {
 		this(rs.getString("email"), rs.getString("pw"),rs.getString("acc_uuid"), rs.getString("f_name"),
 				rs.getString("l_name"), rs.getString("lastIP"), rs.getInt("pw_reset"),
 				rs.getInt("is_active"));
+		this.created = rs.getTime("created");
+		this.updated = rs.getTime("updated");
 	}
 	
 	public String toString() {

@@ -12,6 +12,7 @@ import java.sql.*;
 public class Session {
 	public String session_uuid;
 	public String acc_uuid;
+	public Time created;
 	
 	public Session(String session_uuid, String acc_uuid) {
 		this.session_uuid = session_uuid;
@@ -20,5 +21,6 @@ public class Session {
 	
 	public Session(ResultSet rs) throws SQLException {
 		this(rs.getString("session_uuid"), rs.getString("acc_uuid"));
+		this.created = rs.getTime("created");
 	}
 }

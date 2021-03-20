@@ -9,20 +9,18 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/login.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet"> 
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/login.css">
   <title>login</title>
 </head>
 
 <body>
   <header class="main-header">
-    <figure>
-      <a href="/">
-        <div class="logo">
-          <img src="" alt=" ">
-        </div>
-      </a>
-    </figure>
+    <div class="logo-container">
+      <a href="./index.html"><img src="./img/logo.png" alt=" "></a>
+    </div>
     <h1 class="title-center register-title">Register </h1>
   </header>
   <main class="main-content">
@@ -31,22 +29,17 @@
       <form action="registerValidation.jsp" class="login-form">
 
         <div class="input-group">
-          <label for="fname" class="input-label">First Name </label>
-          <input type="text" class="input-field" name="fname" placeholder="Your First Name" id="fname" required>
-        </div>
-        
-        <div class="input-group">
-          <label for="lname" class="input-label">Last Name </label>
-          <input type="text" class="input-field" name="lname" placeholder="Your Last Name" id="lname" required>
+          <label for="name" class="input-label">full name </label>
+          <input type="text" class="input-field" name="name" placeholder="Your name" id="name" required>
         </div>
 
         <div class="input-group">
-          <label for="email" class="input-label">Email </label>
+          <label for="email" class="input-label">email </label>
           <input type="email" class="input-field" name="email" placeholder="e.g. john@mail.com" id="email" required>
         </div>
 
         <div class="input-group">
-          <label for="password" class="input-label">Password </label>
+          <label for="password" class="input-label">password </label>
           <input type="password" class="input-field" name="password" placeholder="Your secret password" id="password" required>
         </div>
         

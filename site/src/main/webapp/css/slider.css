@@ -1,0 +1,87 @@
+/* multislider */
+#exampleSlider {
+  position: relative;
+  /* recommended */
+}
+
+#exampleSlider .MS-content {
+  white-space: nowrap;
+  /* required */
+  overflow: hidden;
+  /* required */
+  margin: 0 5%;
+  /* makes room for L/R arrows */
+}
+
+#exampleSlider .MS-content .item {
+  display: inline-block;
+  /* required */
+  width: 20%;
+  /* required * Determines number of visible slides */
+  position: relative;
+  /* required */
+  vertical-align: top;
+  /* required */
+  overflow: hidden;
+  /* required */
+  height: 100%;
+  /* recommended */
+  white-space: normal;
+  /* recommended */
+}
+
+#exampleSlider .MS-controls button {
+  position: absolute;
+  /* recommended */
+  top: 35px;
+}
+
+#exampleSlider .MS-controls .MS-left {
+  top: 50%;
+  left: 10px;
+}
+
+#exampleSlider .MS-controls .MS-right {
+  right: 10px;
+  top: 50%;
+}
+
+
+.category-title {
+  font-size: 2rem;
+  text-align: center;
+  text-transform: capitalize;
+}
+.category-img {
+  /* height: 100px; */
+  width: 80%;
+  /* background: red; */
+  display: block;
+  margin: 0 auto;
+  padding: 2rem;
+}
+.item {
+  transition: background 0.4s;
+}
+.item:hover {
+  box-shadow: 1px 1px 5px  rgba(255,160,100, 0.4);
+  background: rgba(255,160,100, 0.4);
+}
+.slider-arrow-img {
+  width: 20px;
+}
+.slider {
+  position: relative;
+}
+.MS-controls button {
+  position: relative;
+  background: var(--light-grey);
+  padding: 4px 16px;
+  border-radius: 16px;
+  border: 1px solid transparent;
+  /* z-index: 10; */
+}
+
+.MS-controls button:hover {
+  cursor: pointer;
+}

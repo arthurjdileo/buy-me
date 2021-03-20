@@ -1,0 +1,78 @@
+
+/* ******************* home general style ***************************/
+
+/* greet user */
+
+.user-name {
+  font-weight: 400;
+}
+
+/* sell your item */
+#sell-your-item {
+  min-height: 120px;
+  background: var(--primary);
+  background-image: url('/img/dot-grid.png');
+  background-blend-mode: multiply;
+  display: flex;
+  margin-bottom: 1rem;
+
+}
+
+#sell-your-item-btn {
+  border: 1px solid var(--grey-1);
+  padding: 1rem 2rem;
+  border-radius:4px;
+  background: var(--bright-blue-1);
+  display: inline-block;
+  margin: auto;
+  color: var(--white);
+  font-size: 1.7rem;
+  transition: transform background 0.1s;
+}
+
+#sell-your-item-btn:hover {
+  transform: scale(1.01);
+  background: var(--functional-blue);
+}
+/* listing */
+.listing-section {
+  display: flex;
+  flex-direction: column;
+  padding:  1rem;
+}
+
+.listing-title {
+  margin-left:  1rem;
+  font-weight: 500;
+  font-size: 1.8rem;
+}
+.row-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.product-container {
+  flex: 1 1 auto;
+  border: 1px solid var(--grey-1);
+  border-radius: 6px;
+  margin: 1rem;
+  padding: 1rem;
+  background: var(--white);
+  box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.product-title {
+  text-align: center;
+  text-transform: capitalize;
+  border-bottom: 1px solid var(--grey-1);
+  line-height: 1.5;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+}
+.product-img {
+  object-fit: contain;
+}

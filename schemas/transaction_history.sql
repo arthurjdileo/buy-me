@@ -3,6 +3,7 @@ CREATE TABLE TransactionHistory(
 	buyer_uuid varchar(36) NOT NULL UNIQUE,
 	seller_uuid varchar(36) NOT NULL UNIQUE,
 	listing_uuid varchar(36) NOT NULL UNIQUE,
+	amount decimal(10, 0) NOT NULL,
 	created datetime DEFAULT NOW() NOT NULL,
 	PRIMARY KEY (id),
 	FOREIGN KEY (buyer_uuid) REFERENCES Users(acc_uuid),

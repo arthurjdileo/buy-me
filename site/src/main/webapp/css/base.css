@@ -1,8 +1,11 @@
 :root {
+  --primary: #FF9A17;
+
   --light-green: #c8fcc2;
   --accent-green: #8ce38a;
   --light-grey: lightgray;
   --blue-grey: #91a6d9;
+  --orange: #ff9999;
   --white: #fff;
   --black: #333;
   --bright-blue-1: dodgerblue;
@@ -27,7 +30,7 @@
 
 /* general style, colours and  helper classes */
 html {
-  font-family: sans-serif;
+  font-family: apple-system,BlinkMacSystemFont,"Segoe UI","Roboto","Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
 }
 
 body {
@@ -36,6 +39,11 @@ body {
 
 a {
   text-decoration: none;
+}
+a,
+a:hover,
+a:active {
+  color: inherit;
 }
 
 ul {
@@ -76,6 +84,10 @@ ul {
   text-align: center;
 }
 
+.mb-medium {
+  margin-bottom: 2rem;
+}
+
 .in-block {
   display: inline-block;
 }
@@ -84,13 +96,41 @@ ul {
   justify-content: flex-end !important;
 }
 
+.user-greeting {
+  font-weight: 400;
+  font-size: 2rem;
+  text-transform: capitalize;
+}
+
 /* header */
-.logo {
-  /* logo is just a placeholder circle, should be replaced with an image */
-  height: 30px;
-  width: 30px;
-  border-radius: 100px;
-  background: var(--light-green);
+
+.logo-container  {
+  width: 100px ;
+  display: flex;
+}
+/* .logo-container:hover {
+} */
+.logo-container img {
+  width: 100%;
+  transition: all 0.3s ease-in-out;
+  align-self: center;
+}
+
+.logo-container img:hover {
+  animation-name: shake;
+  animation-duration: 0.4s;
+  animation-fill-mode: forwards;
+}
+@keyframes shake {
+  0% {
+    transform: scale(0.9) translateX(3px);
+  }
+  50% {
+    transform: scale(1.05) translateX(-3px);
+  }
+  100% {
+    transform: scale(1.01) translateX(0px);
+  }
 }
 
 .main-header {
@@ -102,12 +142,12 @@ ul {
   padding: 1rem 4rem;
   border-bottom: 1px solid lightgray;
   background: var(--white);
+  /* overflow: hidden; */
 }
 
 .search-form {
   width: 50vw;
   margin: 0 1rem;
-  ;
 }
 
 .input-container {
@@ -117,19 +157,40 @@ ul {
 }
 
 .search-input {
-  width: 100%;
-  border: 1px solid rgba(0, 0, 0, 0.5);
+  /* width: 100%; */
+  /* border: 1px solid rgba(0, 0, 0, 0.5); */
+  /* border: 1px solid red; */
+  /* border-right: 1px solid grey; */
+  border: 0px solid transparent;
   height: 2.5rem;
   padding: 0 0.5rem;
-  border-top-left-radius: 6px;
-  border-bottom-left-radius: 6px;
+  flex: 1 1 60%;
 }
 
 .search-input:focus {
   /* border: 4px solid dodgerblue; */
 }
 
+/* navbar search */
+.search-input-container {
+  display: flex;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-right: 1px solid transparent;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 6px;
+}
+
+
+.select-label {
+  background: blue;
+  display: block;
+  flex: 1 1 auto;
+  align-self: center;
+  display: block;
+
+}
 .search-btn {
+  box-sizing: content-box;
   background: var(--bright-blue-2);
   min-width: 10%;
   border: 1px solid transparent;
@@ -187,6 +248,55 @@ ul {
   flex-direction: column;
   min-height: 80vh;
 }
+
+/* multislider */
+.slider {
+  position: relative;
+  /* recommended */
+}
+
+.slider .MS-content {
+  white-space: nowrap;
+  /* required */
+  overflow: hidden;
+  /* required */
+  margin: 0 5%;
+  /* makes room for L/R arrows */
+}
+
+.slider .MS-content .item {
+  display: inline-block;
+  /* required */
+  width: 20%;
+  /* required * Determines number of visible slides */
+  position: relative;
+  /* required */
+  vertical-align: top;
+  /* required */
+  overflow: hidden;
+  /* required */
+  height: 100%;
+  /* recommended */
+  white-space: normal;
+  /* recommended */
+}
+
+.slider .MS-controls button {
+  position: absolute;
+  /* recommended */
+  top: 35px;
+}
+
+.slider .MS-controls .MS-left {
+  left: 10px;
+  top: 50%;
+}
+
+.slider .MS-controls .MS-right {
+  right: 10px;
+  top: 50%;
+}
+
 
 /* footer */
 footer {

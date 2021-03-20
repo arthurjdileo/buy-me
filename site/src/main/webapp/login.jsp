@@ -10,21 +10,19 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="css/base.css">
-  <link rel="stylesheet" href="css/login.css">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet"> 
+  <link rel="stylesheet" href="./css/base.css">
+  <link rel="stylesheet" href="./css/login.css">
   <title>login</title>
 </head>
 
 <body>
 
   <header class="main-header">
-    <figure>
-      <a href="/">
-        <div class="logo">
-          <img src="" alt=" ">
-        </div>
-      </a>
-    </figure>
+    <div class="logo-container">
+      <a href="./index.html"><img src="./img/logo.png" alt=" "></a>
+    </div>
     <h1 class="title-center register-title">Login </h1>
   </header>
 
