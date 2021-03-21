@@ -19,7 +19,7 @@
 <body>
   <header class="main-header">
     <div class="logo-container">
-      <a href="./index.html"><img src="./img/logo.png" alt=" "></a>
+      <a href="index.jsp"><img src="./img/logo.png" alt=" "></a>
     </div>
     <h1 class="title-center register-title">Register </h1>
   </header>

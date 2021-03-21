@@ -23,7 +23,7 @@
 }
 
 .product-img {
-  align-self: flex-start;
+  /* align-self: flex-start; */
 }
 .product-title {
   font-weight: 400;
@@ -107,8 +107,12 @@
 
 .bid-options-container button{
   margin-right: 20px;
+  text-transform: uppercase;
 }
 
+.btn.btn-sm.btn-confirm {
+  text-transform: uppercase;
+}
 
 /* breadcrumb */
 .breadcrumb-container {

@@ -313,7 +313,7 @@ public class BuyMe {
 			if (BidsTable == null) {
 				BidsTable = new HashMap<String, Bid>();
 				Statement st = conn.createStatement();
-				ResultSet rs = st.executeQuery("select * from Bids;");
+				ResultSet rs = st.executeQuery("select * from Bid;");
 				while (rs.next()) {
 					Bid b = new Bid(rs);
 					BidsTable.put(b.listing_uuid, b);
@@ -594,6 +594,30 @@ public class BuyMe {
 				}
 			}
 			return null;
+		}
+	}
+	
+	public static class Categories {
+		static ArrayList<Category> CategoryTable;
+		
+		// categories as list
+		public static ArrayList<Category> getAsList() throws SQLException {
+			return new ArrayList<Category>(getAll());
+		}
+		
+		// updates table from db
+		static ArrayList<Category> getAll() throws SQLException {
+			loadDatabase();
+			if (CategoryTable == null) {
+				CategoryTable = new ArrayList<Category>();
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery("select * from Category;");
+				while (rs.next()) {
+					Category c = new Category(rs);
+					CategoryTable.add(c);
+				}
+			}
+			return CategoryTable;
 		}
 	}
 }

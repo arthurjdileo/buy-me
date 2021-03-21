@@ -1,0 +1,62 @@
+.in-form {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+}
+
+.listing-table {
+  min-width: auto;
+}
+
+.generate-sales-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.generate-earnings {
+  display: flex;
+  flex-direction: row;
+  width: 40vw;
+  /* background: red; */
+}
+
+.total-column {
+  min-width: 5rem;
+  text-align: center;
+  background: var(--white) !important;
+}
+
+.total-row {
+  /* text-align: center; */
+  color: var(--white);
+  background: var(--functional-red) !important;
+  border: none;
+  border-top: 1px solid black;
+}
+
+.sell-price-column {
+  font-family: monospace;
+  text-align: right;
+  font-weight: 500;
+  font-size: 1rem;
+}
+
+.total-price-cell {
+  border-right: 1px solid black;
+  border-left: 1px solid black;
+}
+
+.action-column {
+  max-width: 14rem !important;
+}
+
+
+.answer-area {
+  min-width: 360px;
+  height: 200px;
+}
+.question-cell {
+  width: 100%;
+}

@@ -64,12 +64,25 @@ ul {
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 1px 0px 2px 0px rgba(0, 0, 0, 0.3);
+  margin: 4px 4px 4px 0; /*easier to align left*/
 }
 
 .btn-sm {
   padding: 0.5rem 1rem;
 }
 
+.btn-pill {
+  display: inline-block;
+  border-radius: 300px;
+}
+
+.btn-bid {
+  background: var(--orange);
+}
+
+.btn-confirm {
+  background: var(--functional-green);
+}
 .green {
   background: var(--functional-green);
 }
@@ -332,3 +345,63 @@ footer {
   background: var(--grey-green);
   color: var(--white);
 }
+
+
+
+    /* modal */
+    .container {
+      display: flex;
+      justify-content: center;
+    }
+
+    .card {
+      min-width: 17rem;
+    }
+
+    .modal-form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-form>:not(:last-child) {
+      margin-bottom: 1rem;
+    }
+
+    .modal-outer {
+      display: grid;
+      background: rgba(29, 20, 20, 0.7);
+      position: fixed;
+      height: 100vh;
+      width: 100vw;
+      top: 0;
+      left: 0;
+      justify-content: center;
+      align-items: center;
+      /* hide the modal until needed */
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .modal-outer img {
+      width: 100%;
+    }
+
+    .modal-outer.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-inner {
+      max-width: 600px;
+      min-height: 200px;
+      background: whitesmoke;
+      padding: 2rem;
+      border-radius: 5px;
+      transform: translateY(-200%);
+      transition: transform 1s;
+    }
+
+    .modal-outer.open .modal-inner {
+      transform: translateY(0);
+    }

@@ -24,7 +24,8 @@ function handleTabClick(event) {
       panel => panel.getAttribute('aria-labelledby') === id
     );
     tabPanel.hidden = false;
-    // console.log(tabPanel);
+    // update the id in url
+    parent.location.hash = id;
 }
 
 tabButtons.forEach( (button) => {

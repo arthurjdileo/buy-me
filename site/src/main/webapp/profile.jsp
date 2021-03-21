@@ -21,18 +21,19 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.gstatic.com">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="./css/base.css">
   <link rel="stylesheet" href="./css/home.css">
   <link rel="stylesheet" href="./css/listing.css">
   <link rel="stylesheet" href="./css/profile.css">
   <title>BuyMe - Profile</title>
+ 
 </head>
 
 <body>
   <header class="main-header">
     <div class="logo-container">
-      <a href="./index.html"><img src="./img/logo.png" alt=" "></a>
+      <a href="index.jsp"><img src="./img/logo.png" alt=" "></a>
     </div>
     <nav class="top-nav">
       <p id="show-list-on-hover" class="">Shop By Category</p>
@@ -84,7 +85,7 @@
       <div class="panels-container">
         <div class="" role="tabpanel" aria-labelledby="dashboard">
           <section class="listing-panel dashboard-panel">
-            <article class="panel-article" >
+            <article class="panel-article">
               <h3 class="panel-article-title">My Activity</h3>
               <div class="activity-row">
                 <div class="activity-item">
@@ -105,7 +106,7 @@
               </div>
             </article>
 
-            <article class="panel-article" >
+            <article class="panel-article">
               <h3 class="credits">Credits available:
                 <p class="in-block"> <span class="currency-symbol">$</span><span class="credit-amount"><%= u.credits %></span></p>
               </h3>
@@ -115,7 +116,7 @@
         </div>
         <!--end panel-->
 
-        <div class="" role="tabpanel" aria-labelledby="personal-profile" hidden>
+        <div class="" role="tabpanel" aria-labelledby="personal-profile" id="personal-pro" hidden>
           <section class="listing-panel">
             <form action="updateProfile.jsp" class="listing-form">
               <div class="panel-article">
@@ -176,7 +177,8 @@
               <tbody class="listing-table__body">
                 <tr class="listing-table__tr">
                   <td class="listing-table__td">Orange juice pack...
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                   </td>
                   <td class="listing-table__td view-column">
                     <button type="button" name="button" class="btn btn-sm ">
@@ -195,7 +197,8 @@
 
                 <tr class="listing-table__tr">
                   <td class="listing-table__td">Orange juice pack...
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                   </td>
                   <td class="listing-table__td view-column">
                     <button type="button" name="button" class="btn btn-sm ">
@@ -214,7 +217,8 @@
 
                 <tr class="listing-table__tr">
                   <td class="listing-table__td">Orange juice pack...
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
                   </td>
                   <td class="listing-table__td view-column">
                     <button type="button" name="button" class="btn btn-sm ">
@@ -240,7 +244,7 @@
         <div class="" role="tabpanel" aria-labelledby="alerts" hidden>
           <!-- notifications -->
           <section class="listing-panel ">
-            <article class="panel-article notifications-panel" >
+            <article class="panel-article notifications-panel">
               <h3 class="panel-article-title">Notifications </h3>
               <div class="notifications-container">
                 <div class="notification-item">notification here</div>
@@ -615,7 +619,20 @@
   </footer>
 
   <script src="./js/tabs.js"></script>
+  <script src="./js/hash-url.js"></script>
 
 </body>
 
 </html>
+
+<%
+/* 	long start = System.currentTimeMillis();
+	while (true) {
+		long diff = System.currentTimeMillis() - start;
+		int sec = (int)diff / 1000;
+		if (sec != 0 && sec % 5 == 0) {
+			System.out.println("test");
+			start = System.currentTimeMillis();
+		}
+	} */
+%>
