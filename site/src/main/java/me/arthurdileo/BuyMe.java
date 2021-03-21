@@ -545,4 +545,55 @@ public class BuyMe {
 			FAQTable = null;
 		}
 	}
+	
+	public static class Admins {
+		static HashMap<String, Admin> AdminsTable;
+		
+		// get admin by acc_uuid
+		public static Admin get(String account_uuid) throws SQLException {
+			return getAll().get(account_uuid);
+		}
+		
+		// admins as list
+		public static ArrayList<Admin> getAsList() throws SQLException {
+			return new ArrayList<Admin>(getAll().values());
+		}
+		
+		// updates table from db
+		static HashMap<String, Admin> getAll() throws SQLException {
+			loadDatabase();
+			if (AdminsTable == null) {
+				AdminsTable = new HashMap<String, Admin>();
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery("select * from Admins;");
+				while (rs.next()) {
+					Admin a = new Admin(rs);
+					AdminsTable.put(a.acc_uuid, a);
+				}
+			}
+			return AdminsTable;
+		}
+		
+		// check if user is admin
+		public static boolean isAdmin(String account_uuid) throws SQLException {
+			loadDatabase();
+			for (Admin a : getAsList()) {
+				if (a.acc_uuid.equals(account_uuid)) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		// get role
+		public static String getRole(String account_uuid) throws SQLException {
+			loadDatabase();
+			for (Admin a : getAsList()) {
+				if (a.acc_uuid.equals(account_uuid)) {
+					return a.role;
+				}
+			}
+			return null;
+		}
+	}
 }

@@ -23,6 +23,9 @@
 		errors.add("Passwords are not matching");
 		response.sendRedirect("profile.jsp");
 		return;
+	} else if (pwd.length() < 8 || pwd == null) {
+		errors.add("Password must be at least 8 characters.");
+		response.sendRedirect("profile.jsp");
 	}
 	if (firstName.equals("")) {
 		firstName = u.firstName;
