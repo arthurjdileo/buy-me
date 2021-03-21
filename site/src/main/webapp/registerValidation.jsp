@@ -43,6 +43,6 @@ loginCookie.setMaxAge(30*60); // 30 mins
 response.addCookie(loginCookie);
 Session s = new Session(sessionUUID, accountUUID);
 BuyMe.Sessions.insert(s);
-response.sendRedirect("index.jsp");
+response.sendRedirect("profile.jsp");
 return;
 %>

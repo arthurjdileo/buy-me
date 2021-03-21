@@ -95,6 +95,19 @@ public class BuyMe {
 			return null;
 		}
 		
+		// get session UUID of page
+		public static String getCurrentSession(Cookie[] cookies) throws SQLException {
+        	String sessionUUID = null;
+        	if (cookies != null) {
+        		for (Cookie cookie : cookies) {
+        			if (cookie.getName().equals("SESSION_UUID")) {
+        				sessionUUID = cookie.getValue();
+        			}
+        		}
+        	}
+        	return sessionUUID;
+		}
+		
 		// sessions as list
 		public static ArrayList<Session> getAsList() throws SQLException {
 			return new ArrayList<Session>(getAll().values());
@@ -148,8 +161,7 @@ public class BuyMe {
 		
 		// if logged in: send to req page
 		// else: redirect to login
-		public static void safetyCheck(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
-			Cookie[] cookies = request.getCookies();
+		public static boolean safetyCheck(Cookie[] cookies) throws SQLException, IOException {
         	String sessionUUID = null;
         	if (cookies != null) {
         		for (Cookie cookie : cookies) {
@@ -159,10 +171,9 @@ public class BuyMe {
         		}
         	}
         	if (cookies == null || sessionUUID == null || !validateSession(sessionUUID)) {
-        		response.sendRedirect("login.jsp");
-        		return;
+        		return false;
         	}
-        	
+        	return true;
 		}
 		
 		// hash String using SHA256
@@ -329,6 +340,19 @@ public class BuyMe {
 				}
 			}
 			return listingBids;
+		}
+		
+		// get bid by user
+		public static ArrayList<Bid> getBidsByUser(String account_uuid) throws SQLException {
+			ArrayList<Bid> bids = getAsList();
+			ArrayList<Bid> userBids = new ArrayList<Bid>();
+			
+			for (Bid b : bids) {
+				if (b.buyer_uuid.equals(account_uuid)) {
+					userBids.add(b);
+				}
+			}
+			return userBids;
 		}
 		
 		// get top bid by listing

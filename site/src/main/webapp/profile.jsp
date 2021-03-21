@@ -1,10 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1" import="me.arthurdileo.*"%>
-<%@ page import="java.io.*,java.util.*,java.sql.*"%>
+<%@ page import="java.io.*,java.util.*,java.sql.*, java.util.concurrent.TimeUnit.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
 
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+<%
+	Cookie[] cookies = request.getCookies();
+	if (!BuyMe.Sessions.safetyCheck(cookies)) {
+		response.sendRedirect("login.jsp");
+		return;
+	}
+	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
+	ArrayList<Bid> userBids = BuyMe.Bids.getBidsByUser(u.account_uuid);
+	ArrayList<Transaction> buyerTrans = BuyMe.TransactionHistory.getByBuyer(u.account_uuid);
+	
+%>
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 
@@ -58,45 +68,44 @@
       <div class="listing-nav-container" role="tablist" aria-label="profile list">
         <picture class="user-profile-img-container">
           <img src="img/user.png" alt="" class="user-profile-img">
-          <p class="user-profile-name">User name</p>
-          <p class="user-profile-email">user@mail.com</p>
+          <p class="user-profile-name"><%= u.firstName + " " + u.lastName %></p>
+          <p class="user-profile-email"><%= u.email %></p>
         </picture>
-        <button role="tab" class="listing-nav" id="dashboard" aria-selected="true"><img src="./img/menu.svg" alt="" class="listing-nav-icon">dashboard</button>
-        <button role="tab" class="listing-nav" id="personal-profile" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">personal profile</button>
-        <button role="tab" class="listing-nav" id="listings" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">my listings</button>
-        <button role="tab" class="listing-nav" id="alerts" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">my alerts</button>
-        <button role="tab" class="listing-nav" id="won-auctions" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">won auctions</button>
-        <a href="/signout.html" class="btn btn-sm blue listing-nav" id="signout-btn">Sign Out</a>
+        <button role="tab" class="listing-nav" id="dashboard" aria-selected="true"><img src="./img/menu.svg" type="image/svg-xml" alt="" class="listing-nav-icon">dashboard</button>
+        <button role="tab" class="listing-nav" id="personal-profile" aria-selected="false"><img src="./img/menu.svg" type="image/svg-xml" alt="" class="listing-nav-icon">personal profile</button>
+        <button role="tab" class="listing-nav" id="listings" aria-selected="false"><img src="./img/menu.svg" type="image/svg-xml" alt="" class="listing-nav-icon">my listings</button>
+        <button role="tab" class="listing-nav" id="alerts" aria-selected="false"><img src="./img/menu.svg" type="image/svg-xml" alt="" class="listing-nav-icon">my alerts</button>
+        <button role="tab" class="listing-nav" id="won-auctions" aria-selected="false"><img src="./img/menu.svg" type="image/svg-xml" alt="" class="listing-nav-icon">won auctions</button>
+        <a href="logout.jsp" class="btn btn-sm blue listing-nav" id="signout-btn">Sign Out</a>
       </div>
 
       <div class="panels-container">
         <div class="" role="tabpanel" aria-labelledby="dashboard">
-          <!-- <h2 class="title-center">dashboard panel</h2> -->
           <section class="listing-panel dashboard-panel">
             <article class="panel-article" >
               <h3 class="panel-article-title">My Activity</h3>
               <div class="activity-row">
                 <div class="activity-item">
-                  <img src="./img/menu.svg" alt="" class="activity-icon">
-                  <p class="activity-figure">100</p>
-                  <h4 class="activity-name">Activity name</h4>
+                  <img src="./img/menu.svg" type="image/svg-xml" alt="" class="activity-icon">
+                  <p class="activity-figure"><%= userBids.size() %></p>
+                  <h4 class="activity-name">Active Bids</h4>
                 </div>
                 <div class="activity-item">
-                  <img src="./img/menu.svg" alt="" class="activity-icon">
-                  <p class="activity-figure">100</p>
-                  <h4 class="activity-name">Activity name</h4>
+                  <img src="./img/menu.svg" type="image/svg-xml" alt="" class="activity-icon">
+                  <p class="activity-figure"><%= buyerTrans.size() %></p>
+                  <h4 class="activity-name">Items Won</h4>
                 </div>
                 <div class="activity-item">
-                  <img src="./img/menu.svg" alt="" class="activity-icon">
+                  <img src="./img/menu.svg" type="image/svg-xml" alt="" class="activity-icon">
                   <p class="activity-figure">100</p>
-                  <h4 class="activity-name">Activity name</h4>
+                  <h4 class="activity-name">Alerts</h4>
                 </div>
               </div>
             </article>
 
             <article class="panel-article" >
               <h3 class="credits">Credits available:
-                <p class="in-block"> <span class="currency-symbol">$</span><span class="credit-amount">1000.00</span></p>
+                <p class="in-block"> <span class="currency-symbol">$</span><span class="credit-amount"><%= u.credits %></span></p>
               </h3>
             </article>
 
@@ -111,18 +120,18 @@
                 <h3 class="panel-article-title">Personal Details</h3>
                 <div class="input-group">
                   <label for="first-name" class="input-label">first name </label>
-                  <input type="text" class="input-field" name="first-name" id="first-name">
+                  <input type="text" class="input-field" name="first-name" id="first-name" value="<%= u.firstName %>">
                 </div>
                 <div class="input-group">
                   <label for="last-name" class="input-label">last name </label>
-                  <input type="text" class="input-field" name="last-name" id="last-name">
+                  <input type="text" class="input-field" name="last-name" id="last-name" value="<%= u.lastName %>">
                 </div>
               </div>
               <div class="panel-article">
                 <h3 class="panel-article-title">Email</h3>
                 <div class="input-group">
                   <label for="email" class="input-label">email </label>
-                  <input type="email" class="input-field" name="email" id="email">
+                  <input type="email" class="input-field" name="email" id="email" value="<%= u.email %>">
                 </div>
               </div>
               <div class="panel-article">

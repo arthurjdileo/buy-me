@@ -22,6 +22,7 @@ public class User {
 	public String account_uuid;
 	public String firstName;
 	public String lastName;
+	public float credits;
 	public Time created;
 	public Time updated;
 	public String lastIP;
@@ -29,13 +30,14 @@ public class User {
 	public int isActive;
 	
 	public User(String email, String password, String account_uuid,
-			String firstName, String lastName,
+			String firstName, String lastName, float credits,
 			String lastIP, int pwReset, int isActive) {
 		this.email = email;
 		this.password = password;
 		this.account_uuid = account_uuid;
 		this.firstName = firstName;
 		this.lastName = lastName;
+		this.credits = credits;
 		this.lastIP = lastIP;
 		this.pwReset = pwReset;
 		this.isActive = isActive;
@@ -43,7 +45,7 @@ public class User {
 	
 	public User(ResultSet rs) throws SQLException {
 		this(rs.getString("email"), rs.getString("pw"),rs.getString("acc_uuid"), rs.getString("f_name"),
-				rs.getString("l_name"), rs.getString("lastIP"), rs.getInt("pw_reset"),
+				rs.getString("l_name"), rs.getFloat("credits"), rs.getString("lastIP"), rs.getInt("pw_reset"),
 				rs.getInt("is_active"));
 		this.created = rs.getTime("created");
 		this.updated = rs.getTime("updated");

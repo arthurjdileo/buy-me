@@ -20,7 +20,7 @@
 				Session s = new Session(sessionUUID, u.account_uuid);
 				BuyMe.Sessions.insert(s);
 				session.setAttribute("errors", new ArrayList<String>());
-				response.sendRedirect("index.jsp");
+				response.sendRedirect("profile.jsp");
 				return;
 			} else {
 				errors.add("Incorrect password for " + u.email);
