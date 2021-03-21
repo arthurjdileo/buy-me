@@ -29,8 +29,13 @@
       <form action="registerValidation.jsp" class="login-form">
 
         <div class="input-group">
-          <label for="name" class="input-label">full name </label>
-          <input type="text" class="input-field" name="name" placeholder="Your name" id="name" required>
+          <label for="name" class="input-label">first name </label>
+          <input type="text" class="input-field" name="fname" placeholder="Your first name" id="fname" required>
+        </div>
+        
+        <div class="input-group">
+          <label for="name" class="input-label">last name </label>
+          <input type="text" class="input-field" name="lname" placeholder="Your last name" id="lname" required>
         </div>
 
         <div class="input-group">

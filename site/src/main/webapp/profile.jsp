@@ -12,7 +12,6 @@
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
 	ArrayList<Bid> userBids = BuyMe.Bids.getBidsByUser(u.account_uuid);
 	ArrayList<Transaction> buyerTrans = BuyMe.TransactionHistory.getByBuyer(u.account_uuid);
-	
 %>
 
 <!DOCTYPE html>
@@ -115,7 +114,7 @@
 
         <div class="" role="tabpanel" aria-labelledby="personal-profile" hidden>
           <section class="listing-panel">
-            <form action="" class="listing-form">
+            <form action="updateProfile.jsp" class="listing-form">
               <div class="panel-article">
                 <h3 class="panel-article-title">Personal Details</h3>
                 <div class="input-group">
@@ -145,6 +144,14 @@
                   <input type="password" class="input-field" name="change-password" id="change-password">
                 </div>
               </div>
+              <%
+	              if (session.getAttribute("errorUpdateProfile") != null) {
+	          		ArrayList<String> errors = (ArrayList<String>) session.getAttribute("errorUpdateProfile");
+	          		if (!errors.isEmpty()) {
+	          			out.println(errors + "<br>");
+	          		}
+	          	  }
+              %>
               <div class="input-group flex-end form-btn-group">
                 <input type="submit" value="update" class="btn btn-sm green btn-confirm">
               </div>

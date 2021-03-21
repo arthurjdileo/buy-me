@@ -7,7 +7,7 @@ CREATE TABLE Listing(
 	description varchar(350) NOT NULL,
 	image varchar(250) NOT NULL,
 	created datetime DEFAULT NOW() NOT NULL,
-	updated datetime DEFAULT NOW() NOT NULL,
+	updated datetime DEFAULT NOW() ON UPDATE NOW() NOT NULL,
 	listing_days int NOT NULL,
 	currency varchar(10) DEFAULT 'USD' NOT NULL,
 	start_price decimal(10,2) NOT NULL,

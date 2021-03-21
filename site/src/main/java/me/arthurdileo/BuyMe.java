@@ -74,6 +74,20 @@ public class BuyMe {
 			ps.executeUpdate();
 			UserTable = null;
 		}
+		
+		// update user
+		public static void update(User u) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE Users SET f_name = ?, l_name = ?, email = ?, pw = ? WHERE acc_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, u.firstName);
+			ps.setString(2, u.lastName);
+			ps.setString(3, u.email);
+			ps.setString(4, u.password);
+			ps.setString(5, u.account_uuid);
+			ps.executeUpdate();
+			UserTable = null;
+		}
 	}
 	
 	public static class Sessions {
