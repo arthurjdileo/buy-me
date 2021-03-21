@@ -13,7 +13,7 @@
 	for (User u : BuyMe.Users.getAsList()) {
 		if (u.email.equalsIgnoreCase(email)) {
 			if (u.password.equals(hashedPw)) {
-				String sessionUUID = UUID.randomUUID().toString();
+				String sessionUUID = BuyMe.genUUID();
 				Cookie loginCookie = new Cookie("SESSION_UUID", sessionUUID);
 				loginCookie.setMaxAge(30*60); // 30 mins
 				response.addCookie(loginCookie);

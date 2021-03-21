@@ -37,7 +37,7 @@ User u = new User(email, hashedPw, accountUUID, fname, lname, ipAddr, 0, 1);
 
 BuyMe.Users.insert(u);
 
-String sessionUUID = UUID.randomUUID().toString();
+String sessionUUID = BuyMe.genUUID();
 Cookie loginCookie = new Cookie("SESSION_UUID", sessionUUID);
 loginCookie.setMaxAge(30*60); // 30 mins
 response.addCookie(loginCookie);

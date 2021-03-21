@@ -14,7 +14,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;500;700&display=swap" rel="stylesheet"> 
   <link rel="stylesheet" href="./css/base.css">
   <link rel="stylesheet" href="./css/login.css">
-  <title>login</title>
+  <title>BuyMe - Login</title>
 </head>
 
 <body>

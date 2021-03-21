@@ -8,7 +8,7 @@ contains style for both login and register, because they are almost the same
   justify-content: center;
   align-items: flex-start;
   padding: 1rem;
-  background: var(--blue-grey);
+  background: var(--primary);
   background-image: url('/img/dot-grid.png');
   background-blend-mode: multiply;
 }

@@ -25,8 +25,7 @@
 .product-img {
   align-self: flex-start;
 }
-.product-title
- {
+.product-title {
   font-weight: 400;
   font-size: 2rem;
   text-align: left;
@@ -38,7 +37,6 @@
 }
 .product-details {
   /* background: blue; */
-  background: white;
   border-radius: 10px;
   padding: 1rem;
   flex: 1 1 auto;
@@ -46,8 +44,15 @@
 }
 
 .main-details {
+}
+
+.product-detail-box {
+  /* background: var(--blue-grey); */
+  background: white;
+  border-radius: 10px;
   border: 1px solid var(--grey-1);
-  color: var(--blue-grey);
+  padding: 1rem 2rem;
+  margin-bottom: 1rem;
 }
 .product-details-2 {
   flex:0 0 40%;
@@ -66,7 +71,9 @@
 
 .product-price {
   /* background: yellow; */
-  display: inline-block;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   width: 100%;
   font-size: 2rem;
 }
@@ -89,4 +96,44 @@
   font-size: 2.5rem;
   font-weight: 400;
   color: var(--danger);
+}
+
+
+/* bid options container  and buttons*/
+.bid-options-container {
+  display: flex;
+  justify-content: center;
+}
+
+.bid-options-container button{
+  margin-right: 20px;
+}
+
+
+/* breadcrumb */
+.breadcrumb-container {
+  /* background: blue; */
+}
+.breadcrumb {
+  /* background: red; */
+  padding:  0 1rem 1rem 0;
+
+}
+
+.breadcrumb-step {
+  font-size: 1.3rem;
+  /* align-self: baseline; */
+}
+
+.breadcrumb-step:not(:last-of-type):after {
+  display: inline-flex;
+  content:" ";
+  /* background: yellow; */
+  background-image:  url(../img/right-arrow.svg);
+  background-repeat: no-repeat;
+  background-size: 20px;
+  height: 20px;
+  width: 20px;
+  margin: 0.5rem 0 0.5rem 0.5rem;
+  transform: translateY(20%);
 }

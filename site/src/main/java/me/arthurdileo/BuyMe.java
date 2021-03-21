@@ -1,7 +1,13 @@
 package me.arthurdileo;
 
 import java.util.*;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import java.sql.*;
+import java.io.IOException;
 import java.math.BigInteger;  
 import java.nio.charset.StandardCharsets; 
 import java.security.MessageDigest;  
@@ -18,6 +24,10 @@ public class BuyMe {
 			db = new ApplicationDB();
 			conn = db.getConnection();
 		}
+	}
+	
+	public static String genUUID() {
+		return UUID.randomUUID().toString();
 	}
 	
 	// contains users hashmap
@@ -134,6 +144,25 @@ public class BuyMe {
 				}
 			}
 			return false;
+		}
+		
+		// if logged in: send to req page
+		// else: redirect to login
+		public static void safetyCheck(HttpServletRequest request, HttpServletResponse response) throws SQLException, IOException {
+			Cookie[] cookies = request.getCookies();
+        	String sessionUUID = null;
+        	if (cookies != null) {
+        		for (Cookie cookie : cookies) {
+        			if (cookie.getName().equals("SESSION_UUID")) {
+        				sessionUUID = cookie.getValue();
+        			}
+        		}
+        	}
+        	if (cookies == null || sessionUUID == null || !validateSession(sessionUUID)) {
+        		response.sendRedirect("login.jsp");
+        		return;
+        	}
+        	
 		}
 		
 		// hash String using SHA256
@@ -415,9 +444,8 @@ public class BuyMe {
 		public static void insert(Question q) throws SQLException {
 			loadDatabase();
 			String query = "INSERT INTO Questions(question_uuid, client_uuid, admin_uuid, question, answer) VALUES (?, ?, ?, ?, ?);";
-			String questionUUID = UUID.randomUUID().toString();
 			PreparedStatement ps = conn.prepareStatement(query);
-			ps.setString(1, questionUUID);
+			ps.setString(1, q.question_uuid);
 			ps.setString(2, q.client_uuid);
 			ps.setString(3, q.admin_uuid);
 			ps.setString(4, q.question);
@@ -438,9 +466,9 @@ public class BuyMe {
 		}
 	}
 	
-	public static class FAQ {
+	public static class FAQs {
 		static HashMap<String, FAQ> FAQTable;
-		
+
 		// get question by user
 		public static FAQ get(String question_uuid) throws SQLException {
 			return getAll().get(question_uuid);
@@ -463,33 +491,20 @@ public class BuyMe {
 					FAQTable.put(f.question_uuid, f);
 				}
 			}
-			return QuestionsTable;
+			return FAQTable;
 		}
 		
 		// create question
 		public static void insert(Question q) throws SQLException {
 			loadDatabase();
-			String query = "INSERT INTO Questions(question_uuid, client_uuid, admin_uuid, question, answer) VALUES (?, ?, ?, ?, ?);";
-			String questionUUID = UUID.randomUUID().toString();
+			String query = "INSERT INTO FAQ(question_uuid, admin_uuid, question, answer) VALUES (?, ?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
-			ps.setString(1, questionUUID);
-			ps.setString(2, q.client_uuid);
-			ps.setString(3, q.admin_uuid);
-			ps.setString(4, q.question);
-			ps.setString(5, q.answer);
+			ps.setString(1, q.question_uuid);
+			ps.setString(2, q.admin_uuid);
+			ps.setString(3, q.question);
+			ps.setString(4, q.answer);
 			ps.executeUpdate();
-			QuestionsTable = null;
-		}
-		
-		// answer question
-		public static void answer(Question q, String answer) throws SQLException {
-			loadDatabase();
-			String query = "UPDATE Questions SET answer = ? WHERE question_uuid = ?;";
-			PreparedStatement ps = conn.prepareStatement(query);
-			ps.setString(1, answer);
-			ps.setString(2, q.question_uuid);
-			ps.executeUpdate();
-			QuestionsTable = null;
+			FAQTable = null;
 		}
 	}
 }

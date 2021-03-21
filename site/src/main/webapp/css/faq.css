@@ -75,9 +75,10 @@
 
 /* accordion */
 .accordion-container {
-  max-width: 80%;
+  /* max-width: 80%; */
   border: 1px solid var(--grey-1);
   border-radius: 6px;
+  margin: 0 1rem;
 }
 
 /* Style the buttons that are used to open and close the accordion panel */
@@ -119,4 +120,13 @@
 .accordion-container button:last-of-type {
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;
+}
+
+/* contains each faq and my questions answered */
+.faq-sub-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
 }
