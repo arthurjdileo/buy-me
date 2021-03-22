@@ -225,7 +225,7 @@ public class BuyMe {
 			if (ListingsTable == null) {
 				ListingsTable = new HashMap<String, Listing>();
 				Statement st = conn.createStatement();
-				ResultSet rs = st.executeQuery("select * from Listings;");
+				ResultSet rs = st.executeQuery("select * from Listing;");
 				while (rs.next()) {
 					Listing l = new Listing(rs);
 					ListingsTable.put(l.listing_uuid, l);
@@ -237,24 +237,26 @@ public class BuyMe {
 		// insert listing into db
 		public static void insert(Listing l) throws SQLException {
 			loadDatabase();
-			String query = "INSERT INTO Listing(listing_uuid, seller_uuid, item_name, description, image, listing_days, currency, start_price, reserve_price, num_bids, bid_increment, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+			String query = "INSERT INTO Listing(listing_uuid, seller_uuid, cat_id, sub_id, item_name, description, image, listing_days, currency, start_price, reserve_price, num_bids, bid_increment, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, l.listing_uuid);
 			ps.setString(2, l.seller_uuid);
-			ps.setString(3, l.item_name);
-			ps.setString(4, l.description);
-			ps.setString(5, l.image);
-			ps.setInt(6, l.listing_days);
-			ps.setString(7, l.currency);
-			ps.setDouble(8, l.start_price);
+			ps.setInt(3, l.cat_id);
+			ps.setInt(4, l.sub_id);
+			ps.setString(5, l.item_name);
+			ps.setString(6, l.description);
+			ps.setString(7, l.image);
+			ps.setInt(8, l.listing_days);
+			ps.setString(9, l.currency);
+			ps.setDouble(10, l.start_price);
 			if (l.reserve_price == -1) {
-				ps.setNull(9, Types.NULL);
+				ps.setNull(11, Types.NULL);
 			} else {
-				ps.setDouble(9, l.reserve_price);
+				ps.setDouble(11, l.reserve_price);
 			}
-			ps.setInt(10, l.num_bids);
-			ps.setDouble(11, l.bid_increment);
-			ps.setTimestamp(12, l.end_time);
+			ps.setInt(12, l.num_bids);
+			ps.setDouble(13, l.bid_increment);
+			ps.setTimestamp(14, l.end_time);
 			ps.executeUpdate();
 			ListingsTable = null;
 		}
@@ -623,6 +625,28 @@ public class BuyMe {
 			}
 			return CategoryTable;
 		}
+		
+		public static Category getByName(String name) throws SQLException {
+			ArrayList<Category> categories = getAsList();
+			
+			for (Category c : categories) {
+				if (c.name.equalsIgnoreCase(name)) {
+					return c;
+				}
+			}
+			return null;
+		}
+		
+		public static Category getByID(int id) throws SQLException {
+			ArrayList<Category> categories = getAsList();
+			
+			for (Category c : categories) {
+				if (c.id == id) {
+					return c;
+				}
+			}
+			return null;
+		}
 	}
 	
 	public static class SubCategories {
@@ -648,7 +672,7 @@ public class BuyMe {
 			return SubCategoriesTable;
 		}
 		
-		static ArrayList<SubCategory> getByCategory(int cat_id) throws SQLException {
+		public static ArrayList<SubCategory> getByCategory(int cat_id) throws SQLException {
 			ArrayList<SubCategory> subCategories = getAsList();
 			ArrayList<SubCategory> filtered = new ArrayList<SubCategory>();
 			
@@ -658,6 +682,17 @@ public class BuyMe {
 				}
 			}
 			return filtered;
+		}
+		
+		public static SubCategory getByID(int id) throws SQLException {
+			ArrayList<SubCategory> subCategories = getAsList();
+			
+			for (SubCategory c : subCategories) {
+				if (c.id == id) {
+					return c;
+				}
+			}
+			return null;
 		}
 	}
 }

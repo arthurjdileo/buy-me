@@ -23,7 +23,7 @@
   <link rel="stylesheet" href="./css/base.css">
   <link rel="stylesheet" href="./css/home.css">
   <link rel="stylesheet" href="./css/slider.css">
-  <title>home</title>
+  <title>BuyMe - Home</title>
 </head>
 
 <body>

@@ -7,6 +7,8 @@ import java.util.*;
  * id
  * listing_uuid
  * seller_uuid
+ * cat_id
+ * sub_id
  * item_name
  * description
  * image
@@ -25,6 +27,8 @@ import java.util.*;
 public class Listing {
 	public String listing_uuid;
 	public String seller_uuid;
+	public int cat_id;
+	public int sub_id;
 	public String item_name;
 	public String description;
 	public String image;
@@ -39,12 +43,14 @@ public class Listing {
 	public double bid_increment;
 	public int is_active;
 	
-	public Listing(String listing_uuid, String seller_uuid,
+	public Listing(String listing_uuid, String seller_uuid, int cat_id, int sub_id,
 			String description, String item_name, String image, int listing_days,
 			String currency, double start_price, double reserve_price,
 			int num_bids, java.sql.Timestamp end_time, double bid_increment, int is_active) {
 		this.listing_uuid = listing_uuid;
 		this.seller_uuid = seller_uuid;
+		this.cat_id = cat_id;
+		this.sub_id = sub_id;
 		this.item_name = item_name;
 		this.description = description;
 		this.image = image;
@@ -59,10 +65,11 @@ public class Listing {
 	}
 	
 	public Listing(ResultSet rs) throws SQLException {
-		this(rs.getString("listing_uuid"), rs.getString("seller_uuid"), rs.getString("description"),
-				rs.getString("item_name"), rs.getString("image"), rs.getInt("listing_days"), 
-				rs.getString("currency"), rs.getFloat("start_price"), rs.getFloat("reserve_price"),
-				rs.getInt("num_bids"), rs.getTimestamp("end_time"), rs.getFloat("bid_increment"), rs.getInt("is_active"));
+		this(rs.getString("listing_uuid"), rs.getString("seller_uuid"), rs.getInt("cat_id"), 
+				rs.getInt("sub_id"), rs.getString("description"), rs.getString("item_name"),
+				rs.getString("image"), rs.getInt("listing_days"), rs.getString("currency"),
+				rs.getFloat("start_price"), rs.getFloat("reserve_price"), rs.getInt("num_bids"),
+				rs.getTimestamp("end_time"), rs.getFloat("bid_increment"), rs.getInt("is_active"));
 		this.created = rs.getTimestamp("created");
 		this.updated = rs.getTimestamp("updated");
 	}
