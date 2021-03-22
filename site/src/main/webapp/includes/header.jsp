@@ -19,13 +19,13 @@
       <% } %>
       </ul>
     </nav>
-    <form action="" class="search-form">
+    <form action="listings.jsp" class="search-form">
       <div class="search-input-container">
-        <input type="text" placeholder="Search" class="search-input">
+        <input type="text" placeholder="Search" name="search-query" class="search-input">
         <label for="search-filters" class="select-label">Filter by: </label>
         <select id="search-filters" name="search-filters" class="search-filters-select">
-          <option value="category">Category</option>
           <option value="item">Item</option>
+          <option value="category">Category</option>
           <option value="user">User</option>
         </select>
         <input type="submit" value="Search" class="search-btn">

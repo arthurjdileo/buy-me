@@ -10,6 +10,8 @@
 		return;
 	}
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
+	
+	ArrayList<Listing> listings = BuyMe.Listings.getAsList();
 %>
 
 <!DOCTYPE html>
@@ -81,40 +83,20 @@
     </div> <!-- end multislider-->
 
 
-    <h2 class="listing-title"><a href="listing.html">Recent listing</a></h2>
+    <h2 class="listing-title"><a href="listing.html">Recent Listings</a></h2>
 
     <div id="exampleSlider" class="slider">
       <!-- Give wrapper ID to target with jQuery & CSS -->
       <section class="MS-content product-listing">
+        <% for (Listing l : listings) { %>
         <article class="product-container item">
-          <a href="./listing-item.html">
-            <h3 class="product-title">product</h3>
-            <img src="https://picsum.photos/id/119/200" alt="" class="product-img">
+          <a href="<%= "listing-item.jsp?listingUUID=" + l.listing_uuid %>">
+            <h3 class="product-title"><%= l.item_name %></h3>
+            <img src="<%= l.image %>" width="300" height="300" alt="" class="product-img">
+            <h3 class="product-title">$<%= BuyMe.Listings.getCurrentPrice(l) %></h3>
           </a>
         </article>
-        <article class="product-container item">
-          <a href="./listing-item.html">
-            <h3 class="product-title">product</h3>
-            <img src="https://picsum.photos/id/119/200" alt="" class="product-img">
-          </a>
-        </article>
-        <article class="product-container item">
-          <a href="./listing-item.html">
-            <h3 class="product-title">product</h3>
-            <img src="https://picsum.photos/id/119/200" alt="" class="product-img">
-          </a>
-        </article>
-        <article class="product-container item">
-          <a href="./listing-item.html"></a>
-          <h3 class="product-title">product</h3>
-          <img src="https://picsum.photos/id/119/200" alt="" class="product-img">
-        </article>
-        <article class="product-container item">
-          <a href="./listing-item.html">
-            <h3 class="product-title">product</h3>
-            <img src="https://picsum.photos/id/119/200" alt="" class="product-img">
-          </a>
-        </article>
+      <% } %>
       </section>
 
       <div class="MS-controls">

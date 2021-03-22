@@ -148,14 +148,14 @@
             <h3 class="product-title"><%= l.item_name %></h3>
             <div class="item-data-row">
               <ul class="product-details main-details">
-                <li class="product-price product-detail-box">Current Price <span class="product-price-amount"><span class="currency-symbol">$</span><%= topBid != null ? topBid.amount : l.start_price %></span></li>
+                <li class="product-price product-detail-box">Current Price <span class="product-price-amount"><span class="currency-symbol">$</span><%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
                 <li class="product-detail-box"><%= l.description %></li>
                 <li class="bid-form-box">
                   <div class="row-container">
                     <div class="">
                       <form action="processBid.jsp" class="inline-form">
                         <div class="input-group">
-                          <input type="number" class="inline-form-input" name="bidAmt" placeholder="Enter your bid amount" step="0.01" value="<%= topBid != null ? topBid.amount + l.bid_increment : l.start_price + l.bid_increment %>" min="<%= topBid != null ? topBid.amount + l.bid_increment : l.start_price + l.bid_increment %>">
+                          <input type="number" class="inline-form-input" name="bidAmt" placeholder="Enter your bid amount" step="0.01" value="<%= BuyMe.Listings.getMinBidPrice(l) %>" min="<%= BuyMe.Listings.getMinBidPrice(l) %>">
                           <input type="text" name="listingUUID" value="<%= l.listing_uuid %>" hidden="true">
                           <input type="submit" value="SUBMIT A BID" class="btn btn-pill btn-confirm">
                           <%
@@ -176,9 +176,9 @@
                 <h3 class="">This Auction Ends in:</h3>
                 <h4 class="timeout-big"><span class="product-time" id="demo">00:00</span></h4>
                 <ul class="product-details">
-                  <li><span><%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() %></span> Bidders</li>
+                  <li><span><%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() %></span> Bidder(s)</li>
                   <li><span>100</span> Watching</li>
-                  <li><span><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> Bids</li>
+                  <li><span><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> Bid(s)</li>
                 </ul>
 
               </div>
@@ -212,7 +212,7 @@
               <th>Unit price</th>
             </thead>
             <tbody>
-              <%  for (Bid b : BuyMe.Bids.reverse(bids)) { %>
+              <%  for (Bid b : BuyMe.Bids.sort(bids)) { %>
               <tr>
                 <td class="user-row">
                   <div class="user-row-cell">
@@ -248,7 +248,7 @@
   <script src="./js/timeout.js"></script>
   
   <script>
-  countDown(new Date ('<%= l.end_time %>').getTime());
+  countDown(new Date ('<%= l.end_time %> UTC').getTime(), "demo");
   </script>
 
   <script type="text/javascript">

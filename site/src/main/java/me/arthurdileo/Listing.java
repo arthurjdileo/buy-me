@@ -24,7 +24,7 @@ import java.util.*;
  * is_active
  */
 
-public class Listing {
+public class Listing implements Comparable<Listing>{
 	public String listing_uuid;
 	public String seller_uuid;
 	public int cat_id;
@@ -76,5 +76,10 @@ public class Listing {
 	
 	public String toString(Listing l) {
 		return l.item_name;
+	}
+	
+	@Override
+	public int compareTo(Listing l) {
+		return this.created.compareTo(l.created);
 	}
 }

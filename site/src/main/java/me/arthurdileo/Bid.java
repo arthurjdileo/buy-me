@@ -11,7 +11,7 @@ import java.sql.*;
  * created
  */
 
-public class Bid {
+public class Bid implements Comparable<Bid>{
 	public String bid_uuid;
 	public String buyer_uuid;
 	public String listing_uuid;
@@ -28,6 +28,11 @@ public class Bid {
 	public Bid(ResultSet rs) throws SQLException {
 		this(rs.getString("bid_uuid"), rs.getString("buyer_uuid"), rs.getString("listing_uuid"), rs.getDouble("amount"));
 		this.created = rs.getTimestamp("created");
+	}
+	
+	@Override
+	public int compareTo(Bid b) {
+		return (int) (b.amount - this.amount);
 	}
 	
 }

@@ -39,5 +39,5 @@
 	BuyMe.Listings.insert(l);
 	
 	// redirect to listings page
-	response.sendRedirect("index.jsp");
+	response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID);
 %>

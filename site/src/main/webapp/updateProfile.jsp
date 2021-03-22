@@ -26,6 +26,7 @@
 	} else if (pwd.length() < 8 || pwd == null) {
 		errors.add("Password must be at least 8 characters.");
 		response.sendRedirect("profile.jsp");
+		return;
 	}
 	if (firstName.equals("")) {
 		firstName = u.firstName;

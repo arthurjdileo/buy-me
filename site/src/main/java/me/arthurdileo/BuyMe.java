@@ -7,7 +7,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.io.IOException;
 import java.math.BigInteger;  
 import java.nio.charset.StandardCharsets; 
@@ -272,6 +276,18 @@ public class BuyMe {
 			ListingsTable = null;
 		}
 		
+		public static ArrayList<Listing> getByUser(String account_uuid) throws SQLException {
+			ArrayList<Listing> listings = getAsList();
+			ArrayList<Listing> filtered = new ArrayList<Listing>();
+			
+			for (Listing l : listings) {
+				if (l.seller_uuid.equals(account_uuid)) {
+					filtered.add(l);
+				}
+			}
+			return filtered;
+		}
+		
 		public static ArrayList<Listing> searchByName(String query) throws SQLException {
 			ArrayList<Listing> listings = getAsList();
 			ArrayList<Listing> searchResults = new ArrayList<Listing>();
@@ -279,12 +295,91 @@ public class BuyMe {
 			
 			for (Listing l : listings) {
 				for (String s : split) {
-					if (l.item_name.contains(s)) {
+					if (l.item_name.toLowerCase().contains(s.toLowerCase())) {
 						searchResults.add(l);
 					}
 				}
 			}
 			return searchResults;
+		}
+		
+		public static ArrayList<Listing> getByCategory(int id) throws SQLException {
+			ArrayList<Listing> listings = getAsList();
+			ArrayList<Listing> filtered = new ArrayList<Listing>();
+			
+			for (Listing l : listings) {
+				if (l.cat_id == id) {
+					filtered.add(l);
+				}
+			}
+			return filtered;
+		}
+		
+		public static ArrayList<Listing> getBySubCategory(int id) throws SQLException {
+			ArrayList<Listing> listings = getAsList();
+			ArrayList<Listing> filtered = new ArrayList<Listing>();
+			
+			for (Listing l : listings) {
+				if (l.sub_id == id) {
+					filtered.add(l);
+				}
+			}
+			return filtered;
+		}
+		
+		public static ArrayList<Listing> searchByCategory(String query) throws SQLException {
+			ArrayList<Category> categories = BuyMe.Categories.getAsList();
+			ArrayList<SubCategory> subCategories = BuyMe.SubCategories.getAsList();
+			ArrayList<Listing> searchResults = new ArrayList<Listing>();
+			String[] split = query.split(" ");
+			
+			for (Category c : categories) {
+				for (String s : split) {
+					if (c.name.toLowerCase().contains(s.toLowerCase())) {
+						for (Listing l : getByCategory(c.id)) {
+							searchResults.add(l);
+						}
+					}
+				}
+			}
+			for (SubCategory c : subCategories) {
+				for (String s : split) {
+					if (c.name.toLowerCase().contains(s.toLowerCase())) {
+						for (Listing l : getBySubCategory(c.id)) {
+							searchResults.add(l);
+						}
+					}
+				}
+			}
+			return searchResults;
+		}
+		
+		public static ArrayList<Listing> searchByUser(String query) throws SQLException {
+			ArrayList<Listing> listings = getAsList();
+			ArrayList<Listing> searchResults = new ArrayList<Listing>();
+			String[] split = query.split(" ");
+			
+			for (Listing l : listings) {
+				User seller = BuyMe.Users.get(l.seller_uuid);
+				for (String s : split) {
+					s = s.toLowerCase();
+					if (seller.firstName.toLowerCase().contains(s) || seller.lastName.toLowerCase().contains(s)) {
+						for (Listing u : getByUser(seller.account_uuid)) {
+							searchResults.add(u);
+						}
+					}
+				}
+			}
+			return searchResults;
+		}
+		
+		public static double getCurrentPrice(Listing l) throws SQLException {
+			Bid topBid = BuyMe.Bids.topBid(l);
+			return topBid != null ? topBid.amount : l.start_price;
+		}
+		
+		public static double getMinBidPrice(Listing l) throws SQLException {
+			return getCurrentPrice(l) + l.bid_increment;
 		}
 		
 //		public static User getWinner()
@@ -374,7 +469,7 @@ public class BuyMe {
 				ArrayList<User> bidders = new ArrayList<User>();
 				
 				for (Bid b : bids) {
-					if (b.listing_uuid.equals(listing_uuid)) {
+					if (b.listing_uuid.equals(listing_uuid) && !bidders.contains(BuyMe.Users.get(b.buyer_uuid))) {
 						bidders.add(BuyMe.Users.get(b.buyer_uuid));
 					}
 				}
@@ -394,18 +489,14 @@ public class BuyMe {
 			return userBids;
 		}
 		
-		public static ArrayList<Bid> reverse(ArrayList<Bid> bids) {
-			if (bids.size() > 1) {
-				Bid b = bids.remove(0);
-				reverse(bids);
-				bids.add(b);
-			}
+		public static ArrayList<Bid> sort(ArrayList<Bid> bids) {
+			Collections.sort(bids);
 			return bids;
 		}
 		
 		public static String format(Bid b, String pattern) {
-			SimpleDateFormat f = new SimpleDateFormat(pattern);
-			return f.format(b.created);
+			LocalDateTime dt = b.created.toLocalDateTime();
+			return dt.atZone(ZoneOffset.UTC).format(DateTimeFormatter.ofPattern(pattern).withZone(ZoneId.of("America/New_York")));
 		}
 		
 		// get top bid by listing
