@@ -23,8 +23,8 @@ public class User {
 	public String firstName;
 	public String lastName;
 	public float credits;
-	public Time created;
-	public Time updated;
+	public java.sql.Timestamp created;
+	public java.sql.Timestamp updated;
 	public String lastIP;
 	public int pwReset;
 	public int isActive;
@@ -47,8 +47,8 @@ public class User {
 		this(rs.getString("email"), rs.getString("pw"),rs.getString("acc_uuid"), rs.getString("f_name"),
 				rs.getString("l_name"), rs.getFloat("credits"), rs.getString("lastIP"), rs.getInt("pw_reset"),
 				rs.getInt("is_active"));
-		this.created = rs.getTime("created");
-		this.updated = rs.getTime("updated");
+		this.created = rs.getTimestamp("created");
+		this.updated = rs.getTimestamp("updated");
 	}
 	
 	public String toString() {

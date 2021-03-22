@@ -1,8 +1,7 @@
 CREATE TABLE Listing(
 	id int NOT NULL AUTO_INCREMENT,
 	listing_uuid varchar(36) NOT NULL UNIQUE,
-	bidder_uuid varchar(36) NOT NULL UNIQUE,
-	seller_uuid varchar(36) NOT NULL UNIQUE,
+	seller_uuid varchar(36) NOT NULL,
 	item_name varchar(250) NOT NULL,
 	description varchar(350) NOT NULL,
 	image varchar(250) NOT NULL,
@@ -17,6 +16,5 @@ CREATE TABLE Listing(
 	bid_increment decimal(10,2) NOT NULL,
 	is_active int DEFAULT 1 NOT NULL,
 	PRIMARY KEY (id),
-	FOREIGN KEY (bidder_uuid) REFERENCES Users(acc_uuid),
 	FOREIGN KEY (seller_uuid) REFERENCES Users(acc_uuid)
 );

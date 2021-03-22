@@ -11,6 +11,9 @@
 	}
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
 	ArrayList<Category> categories = BuyMe.Categories.getAsList();
+	ArrayList<SubCategory> subCategories = BuyMe.SubCategories.getAsList();
+	
+	int currentCategory = 0;
 %>
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
@@ -55,41 +58,11 @@
       height: 1rem;
     }
   </style>
-  <title>Create Listing</title>
+  <title>BuyMe - Create Listing</title>
 </head>
 
 <body>
-  <header class="main-header">
-    <div class="logo-container">
-      <a href="index.jsp"><img src="./img/logo.png" alt=" "></a>
-    </div>
-    <nav class="top-nav">
-      <p id="show-list-on-hover" class="">Shop By Category</p>
-      <ul class="list-content" id="categories">
-      <% for (Category c : categories) { %>
-        <li class=""><a href=""><%= c.name %></a></li>
-      <% } %>
-      </ul>
-    </nav>
-    <form action="" class="search-form">
-      <div class="search-input-container">
-        <input type="text" placeholder="Search" class="search-input">
-        <label for="search-filters" class="select-label">Filter by: </label>
-        <select id="search-filters" name="search-filters" class="search-filters-select">
-          <option value="category">Category</option>
-          <option value="item">Item</option>
-          <option value="user">User</option>
-        </select>
-        <input type="submit" value="Search" class="search-btn">
-      </div>
-    </form>
-    <div class="profile-container">
-      <a href="profile.jsp">
-        <img src="./img/user.png" alt="" class="profile-img">
-        <span>Profile</span>
-      </a>
-    </div>
-  </header>
+  <%@include file="./includes/header.jsp" %>
   <main class="main-content">
     <div class="tabs">
       <div class="listing-nav-container" role="tablist" aria-label="profile list">
@@ -106,26 +79,25 @@
         <div class="" role="tabpanel" aria-labelledby="description">
           <h2>Create listing </h2>
           <section class="listing-panel">
-            <form action="" class="create-listing-form">
+            <form action="processCreateListing.jsp" class="create-listing-form">
               <div class="input-group">
                 <label for="name" class="input-label">product name* </label>
-                <input type="text" class="input-field" required>
+                <input type="text" class="input-field" name="product" required>
               </div>
               <div class="input-group">
                 <label for="category" class="input-label">category* </label>
                 <select id="category" name="category" required>
                   <% for (Category c : categories) { %>
-                  <option value="<%= c.name %>"><%= c.name %></option>
+                  <option value="<%= c.id %>"><%= c.name %></option>
                   <% } %>
                 </select>
               </div>
               <div class="input-group">
                 <label for="sub-category" class="input-label">sub-category* </label>
                 <select id="subcategory" name="sub-category" required>
-                  <option value="cat 1">sub cat 1</option>
-                  <option value="cat 2">sub cat 2</option>
-                  <option value="cat 3">sub cat 3</option>
-                  <option value="cat 4">sub cat 4</option>
+                  <% for (SubCategory c : subCategories) { %>
+                  <option value="<%= c.id %>"><%= c.name %></option>
+                  <% } %>
                 </select>
               </div>
               <div class="input-group">
@@ -133,9 +105,10 @@
                   <textarea name="description" rows="8" cols="" class="listing-text-area" required></textarea>
                 </label>
               </div>
+              
               <div class="input-group">
-                <label for="end-date" class="input-label">Ending date*</label>
-                <input type="date" id="end-date" name="end-date" class="input-field" required>
+                <label for="num-days" class="input-label">number of days* </label>
+                <input type="number" class="input-field" id="num-days" name="num-days" min="1" max="30" required>
               </div>
 
               <div class="input-group">
@@ -144,18 +117,18 @@
               </div>
 
               <div class="input-group">
-                <label for="price" class="input-label">price* </label>
-                <input type="number" class="input-field" id="price" name="price" min="1" required>
+                <label for="price" class="input-label">start price* </label>
+                <input type="number" class="input-field" id="price" name="price" min="0.01" step="0.01" required>
               </div>
 
               <div class="input-group">
                 <label for="reserve-price" class="input-label">reserve price </label>
-                <input type="number" class="input-field" id="reserve-price" name="reserve-price" min="0">
+                <input type="number" class="input-field" id="reserve-price" name="reserve-price" min="0.01" step="0.01">
               </div>
 
               <div class="input-group">
                 <label for="bid-increment" class="input-label">bid increment* </label>
-                <input type="number" class="input-field" id="bid-increment" name="bid-increment" min="0">
+                <input type="number" class="input-field" id="bid-increment" name="bid-increment" min="0.01" step="0.01">
               </div>
               <div class="input-group">
                 <label for="currency" class="input-label">currency* </label>

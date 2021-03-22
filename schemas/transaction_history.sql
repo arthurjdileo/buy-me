@@ -1,7 +1,7 @@
 CREATE TABLE TransactionHistory(
 	id int NOT NULL AUTO_INCREMENT,
-	buyer_uuid varchar(36) NOT NULL UNIQUE,
-	seller_uuid varchar(36) NOT NULL UNIQUE,
+	buyer_uuid varchar(36) NOT NULL,
+	seller_uuid varchar(36) NOT NULL,
 	listing_uuid varchar(36) NOT NULL UNIQUE,
 	amount decimal(10, 2) NOT NULL,
 	created datetime DEFAULT NOW() NOT NULL,

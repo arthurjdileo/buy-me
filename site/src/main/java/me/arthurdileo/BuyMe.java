@@ -237,20 +237,24 @@ public class BuyMe {
 		// insert listing into db
 		public static void insert(Listing l) throws SQLException {
 			loadDatabase();
-			String query = "INSERT INTO Listing(listing_uuid, bidder_uuid, seller_uuid, item_name, description, image, listing_days, currency, start_price, reserve_price, num_bids, bid_increment) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+			String query = "INSERT INTO Listing(listing_uuid, seller_uuid, item_name, description, image, listing_days, currency, start_price, reserve_price, num_bids, bid_increment, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, l.listing_uuid);
-			ps.setString(2, l.bidder_uuid);
-			ps.setString(3, l.seller_uuid);
-			ps.setString(4, l.item_name);
-			ps.setString(5, l.description);
-			ps.setString(6, l.image);
-			ps.setInt(7, l.listing_days);
-			ps.setString(8, l.currency);
-			ps.setFloat(9, l.start_price);
-			ps.setFloat(10, l.reserve_price);
-			ps.setInt(11, l.num_bids);
-			ps.setFloat(12, l.bid_increment);
+			ps.setString(2, l.seller_uuid);
+			ps.setString(3, l.item_name);
+			ps.setString(4, l.description);
+			ps.setString(5, l.image);
+			ps.setInt(6, l.listing_days);
+			ps.setString(7, l.currency);
+			ps.setDouble(8, l.start_price);
+			if (l.reserve_price == -1) {
+				ps.setNull(9, Types.NULL);
+			} else {
+				ps.setDouble(9, l.reserve_price);
+			}
+			ps.setInt(10, l.num_bids);
+			ps.setDouble(11, l.bid_increment);
+			ps.setTimestamp(12, l.end_time);
 			ps.executeUpdate();
 			ListingsTable = null;
 		}
@@ -618,6 +622,42 @@ public class BuyMe {
 				}
 			}
 			return CategoryTable;
+		}
+	}
+	
+	public static class SubCategories {
+		static ArrayList<SubCategory> SubCategoriesTable;
+		
+		// categories as list
+		public static ArrayList<SubCategory> getAsList() throws SQLException {
+			return new ArrayList<SubCategory>(getAll());
+		}
+		
+		// updates table from db
+		static ArrayList<SubCategory> getAll() throws SQLException {
+			loadDatabase();
+			if (SubCategoriesTable == null) {
+				SubCategoriesTable = new ArrayList<SubCategory>();
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery("select * from SubCategory;");
+				while (rs.next()) {
+					SubCategory c = new SubCategory(rs);
+					SubCategoriesTable.add(c);
+				}
+			}
+			return SubCategoriesTable;
+		}
+		
+		static ArrayList<SubCategory> getByCategory(int cat_id) throws SQLException {
+			ArrayList<SubCategory> subCategories = getAsList();
+			ArrayList<SubCategory> filtered = new ArrayList<SubCategory>();
+			
+			for (SubCategory c : subCategories) {
+				if (c.cat_id == cat_id) {
+					filtered.add(c);
+				}
+			}
+			return filtered;
 		}
 	}
 }

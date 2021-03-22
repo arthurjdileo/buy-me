@@ -19,8 +19,8 @@ public class Question {
 	public String admin_uuid;
 	public String question;
 	public String answer;
-	public Time created;
-	public Time updated;
+	public java.sql.Timestamp created;
+	public java.sql.Timestamp updated;
 	
 	public Question(String question_uuid, String client_uuid, String admin_uuid, String question, String answer) {
 		this.question_uuid = question_uuid;
@@ -33,8 +33,8 @@ public class Question {
 	public Question(ResultSet rs) throws SQLException {
 		this(rs.getString("question_uuid"), rs.getString("client_uuid"), rs.getString("admin_uuid"), rs.getString("question"),
 				rs.getString("answer"));
-		this.created = rs.getTime("created");
-		this.updated = rs.getTime("updated");
+		this.created = rs.getTimestamp("created");
+		this.updated = rs.getTimestamp("updated");
 	}
 	
 }

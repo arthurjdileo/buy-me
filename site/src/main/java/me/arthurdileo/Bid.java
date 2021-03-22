@@ -16,7 +16,7 @@ public class Bid {
 	public String seller_uuid;
 	public String listing_uuid;
 	public float amount;
-	public Time created;
+	public java.sql.Timestamp created;
 	
 	public Bid(String buyer_uuid, String seller_uuid, String listing_uuid, float amount) {
 		this.buyer_uuid = buyer_uuid;
@@ -27,7 +27,7 @@ public class Bid {
 	
 	public Bid(ResultSet rs) throws SQLException {
 		this(rs.getString("buyer_uuid"), rs.getString("seller_uuid"), rs.getString("listing_uuid"), rs.getFloat("amount"));
-		this.created = rs.getTime("created");
+		this.created = rs.getTimestamp("created");
 	}
 	
 }

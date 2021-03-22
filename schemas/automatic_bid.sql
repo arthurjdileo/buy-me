@@ -1,7 +1,7 @@
 CREATE TABLE AutomaticBid(
 	id int NOT NULL AUTO_INCREMENT,
-	buyer_uuid varchar(36) NOT NULL UNIQUE,
-	listing_uuid varchar(36) NOT NULL UNIQUE,
+	buyer_uuid varchar(36) NOT NULL,
+	listing_uuid varchar(36) NOT NULL,
 	upper_limit decimal(10,2) NOT NULL,
 	increment decimal(10,2) NOT NULL,
 	created datetime DEFAULT NOW() NOT NULL,
