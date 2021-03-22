@@ -1,5 +1,6 @@
 CREATE TABLE Bid(
 	id int NOT NULL AUTO_INCREMENT,
+	bid_uuid varchar(36) NOT NULL,
 	buyer_uuid varchar(36) NOT NULL,
 	listing_uuid varchar(36) NOT NULL,
 	amount decimal(10, 2) NOT NULL,

@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.sql.*;
+import java.text.SimpleDateFormat;
 import java.io.IOException;
 import java.math.BigInteger;  
 import java.nio.charset.StandardCharsets; 
@@ -304,8 +305,8 @@ public class BuyMe {
 		static HashMap<String, Bid> BidsTable;
 		
 		// get bids by listing
-		public static Bid get(String listing_uuid) throws SQLException {
-			return getAll().get(listing_uuid);
+		public static Bid get(String bid_uuid) throws SQLException {
+			return getAll().get(bid_uuid);
 		}
 		
 		// bids as list
@@ -322,7 +323,7 @@ public class BuyMe {
 				ResultSet rs = st.executeQuery("select * from Bid;");
 				while (rs.next()) {
 					Bid b = new Bid(rs);
-					BidsTable.put(b.listing_uuid, b);
+					BidsTable.put(b.bid_uuid, b);
 				}
 			}
 			return BidsTable;
@@ -332,13 +333,18 @@ public class BuyMe {
 		public static void insert(Bid b) throws SQLException {
 			loadDatabase();
 //			check for errors
-			String query = "INSERT INTO Bids(buyer_uuid, seller_uuid, listing_uuid, amount) VALUES (?, ?, ?, ?);";
+			// create transaction
+			String query = "INSERT INTO Bid(bid_uuid, buyer_uuid, listing_uuid, amount) VALUES (?, ?, ?, ?);";
+			String query2 = "UPDATE Listing SET num_bids = num_bids + 1 WHERE listing_uuid = ?;";
 			PreparedStatement ps = conn.prepareStatement(query);
-			ps.setString(1, b.buyer_uuid);
-			ps.setString(2, b.seller_uuid);
+			ps.setString(1, b.bid_uuid);
+			ps.setString(2, b.buyer_uuid);
 			ps.setString(3, b.listing_uuid);
-			ps.setFloat(4, b.amount);
+			ps.setDouble(4, b.amount);
 			ps.executeUpdate();
+			PreparedStatement ps2 = conn.prepareStatement(query2);
+			ps2.setString(1, b.listing_uuid);
+			ps2.executeUpdate();
 			BidsTable = null;
 			
 			// winner checks
@@ -362,6 +368,19 @@ public class BuyMe {
 			return listingBids;
 		}
 		
+		// get all bids for listing
+			public static ArrayList<User> getBiddersByListing(String listing_uuid) throws SQLException {
+				ArrayList<Bid> bids = getAsList();
+				ArrayList<User> bidders = new ArrayList<User>();
+				
+				for (Bid b : bids) {
+					if (b.listing_uuid.equals(listing_uuid)) {
+						bidders.add(BuyMe.Users.get(b.buyer_uuid));
+					}
+				}
+				return bidders;
+			}
+		
 		// get bid by user
 		public static ArrayList<Bid> getBidsByUser(String account_uuid) throws SQLException {
 			ArrayList<Bid> bids = getAsList();
@@ -375,11 +394,25 @@ public class BuyMe {
 			return userBids;
 		}
 		
+		public static ArrayList<Bid> reverse(ArrayList<Bid> bids) {
+			if (bids.size() > 1) {
+				Bid b = bids.remove(0);
+				reverse(bids);
+				bids.add(b);
+			}
+			return bids;
+		}
+		
+		public static String format(Bid b, String pattern) {
+			SimpleDateFormat f = new SimpleDateFormat(pattern);
+			return f.format(b.created);
+		}
+		
 		// get top bid by listing
 		public static Bid topBid(Listing l) throws SQLException {
 			ArrayList<Bid> bids = Bids.getBidsByListing(l.listing_uuid);
 			
-			float maxBid = 0;
+			double maxBid = 0;
 			Bid topBid = null;
 			for (Bid b : bids) {
 				if (b.amount > maxBid) {

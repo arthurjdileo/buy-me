@@ -31,38 +31,7 @@
 </head>
 
 <body>
-  <header class="main-header">
-    <div class="logo-container">
-      <a href="index.jsp"><img src="./img/logo.png" alt=" "></a>
-    </div>
-    <nav class="top-nav">
-      <p id="show-list-on-hover" class="">Shop By Category</p>
-      <ul class="list-content" id="categories">
-        <li class=""><a href="">Category 1</a></li>
-        <li class=""><a href="">Category 2</a></li>
-        <li class=""><a href="">Category 3</a></li>
-      </ul>
-    </nav>
-    <form action="" class="search-form">
-      <div class="search-input-container">
-        <input type="text" placeholder="Search" class="search-input">
-        <label for="search-filters" class="select-label">Filter by: </label>
-        <select id="search-filters" name="search-filters" class="search-filters-select">
-          <option value="category">Category</option>
-          <option value="item">Item</option>
-          <option value="user">User</option>
-        </select>
-        <input type="submit" value="Search" class="search-btn">
-      </div>
-    </form>
-    <div class="profile-container">
-      <a href="profile.jsp">
-        <img src="img/user.png" alt="" class="profile-img">
-        <span>Profile</span>
-      </a>
-    </div>
-  </header>
-
+  <%@include file="./includes/header.jsp" %>
   <main class="main-content">
     <div class="tabs">
       <div class="listing-nav-container" role="tablist" aria-label="profile list">

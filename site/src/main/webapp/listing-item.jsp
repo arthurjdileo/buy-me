@@ -17,6 +17,8 @@
 		return;
 	}
 	Listing l = BuyMe.Listings.get(listingUUID);
+	ArrayList<Bid> bids = BuyMe.Bids.getBidsByListing(listingUUID);
+	Bid topBid = BuyMe.Bids.topBid(l);
 %>
 
 <!DOCTYPE html>
@@ -146,15 +148,24 @@
             <h3 class="product-title"><%= l.item_name %></h3>
             <div class="item-data-row">
               <ul class="product-details main-details">
-                <li class="product-price product-detail-box">Current Price <span class="product-price-amount"><span class="currency-symbol">$</span><%= l.start_price %></span></li>
+                <li class="product-price product-detail-box">Current Price <span class="product-price-amount"><span class="currency-symbol">$</span><%= topBid != null ? topBid.amount : l.start_price %></span></li>
                 <li class="product-detail-box"><%= l.description %></li>
                 <li class="bid-form-box">
                   <div class="row-container">
                     <div class="">
-                      <form action="" class="inline-form">
+                      <form action="processBid.jsp" class="inline-form">
                         <div class="input-group">
-                          <input type="text" class="inline-form-input" placeholder="Enter your bid amount">
+                          <input type="number" class="inline-form-input" name="bidAmt" placeholder="Enter your bid amount" step="0.01" value="<%= topBid != null ? topBid.amount + l.bid_increment : l.start_price + l.bid_increment %>" min="<%= topBid != null ? topBid.amount + l.bid_increment : l.start_price + l.bid_increment %>">
+                          <input type="text" name="listingUUID" value="<%= l.listing_uuid %>" hidden="true">
                           <input type="submit" value="SUBMIT A BID" class="btn btn-pill btn-confirm">
+                          <%
+                          	if (session.getAttribute("errorsBid") != null) {
+	                      		ArrayList<String> errors = (ArrayList<String>) session.getAttribute("errorsBid");
+	                      		if (!errors.isEmpty()) {
+	                      			out.println(errors + "<br>");
+	                      		}
+                      		}
+                          %>
                         </div>
                       </form>
                     </div>
@@ -165,9 +176,9 @@
                 <h3 class="">This Auction Ends in:</h3>
                 <h4 class="timeout-big"><span class="product-time" id="demo">00:00</span></h4>
                 <ul class="product-details">
-                  <li><span>100</span> Bidders</li>
+                  <li><span><%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() %></span> Bidders</li>
                   <li><span>100</span> Watching</li>
-                  <li><span>100</span> Bids</li>
+                  <li><span><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> Bids</li>
                 </ul>
 
               </div>
@@ -188,7 +199,7 @@
 
 
       <div class="row-container">
-        <h2 class="previous-bids-title">Bid history</h2>
+        <h2 class="previous-bids-title">Bid History</h2>
       </div>
 
       <div class="row-container">
@@ -201,29 +212,19 @@
               <th>Unit price</th>
             </thead>
             <tbody>
+              <%  for (Bid b : BuyMe.Bids.reverse(bids)) { %>
               <tr>
                 <td class="user-row">
                   <div class="user-row-cell">
                     <img src="./img/user.png" alt="" class="profile-img">
-                    <span>John</span>
+                    <span><%= BuyMe.Users.get(b.buyer_uuid).firstName %></span>
                   </div>
                 </td>
-                <td>12/12/1220</td>
-                <td>23:00</td>
-                <td>100000</td>
+                <td><%= BuyMe.Bids.format(b, "MMMM d, yyyy") %></td>
+                <td><%= BuyMe.Bids.format(b, "h:m a") %></td>
+                <td><%= b.amount %></td>
               </tr>
-
-              <tr>
-                <td class="user-row">
-                  <div class="user-row-cell">
-                    <img src="./img/user.png" alt="" class="profile-img">
-                    <span>John</span>
-                  </div>
-                </td>
-                <td>12/12/1220</td>
-                <td>23:00</td>
-                <td>100000</td>
-              </tr>
+              <% } %>
             </tbody>
           </table>
         </article>

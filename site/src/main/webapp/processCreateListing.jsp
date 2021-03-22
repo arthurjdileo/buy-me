@@ -5,6 +5,10 @@
 
 <%
 	Cookie[] cookies = request.getCookies();
+	if (!BuyMe.Sessions.safetyCheck(cookies)) {
+		response.sendRedirect("login.jsp");
+		return;
+	}
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
 
 
