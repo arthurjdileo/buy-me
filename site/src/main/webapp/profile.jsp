@@ -471,65 +471,14 @@
             <table class="listing-table">
               <thead class="listing-table__head">
                 <th class="listing-table__th">Product</th>
-                <th class="listing-table__th view-column">View</th>
-                <th class="listing-table__th action-column">Action</th>
               </thead>
               <tbody class="listing-table__body">
+                <% for (Transaction t : buyerTrans) { %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td">Orange juice pack...
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                  <td class="listing-table__td"><b><%= BuyMe.Listings.get(t.listing_uuid).item_name %></b><br>
+                    <p><%= BuyMe.Listings.get(t.listing_uuid).description %></p>
                   </td>
-                  <td class="listing-table__td view-column">
-                    <button type="button" name="button" class="btn btn-sm ">
-                      view item
-                    </button>
-                  </td>
-                  <td class="listing-table__td action-column">
-                    <button type="button" name="button" class="btn btn-sm bg-caution">
-                      Edit
-                    </button>
-                    <button type="button" name="button" class="btn btn-sm bg-danger">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-
-                <tr class="listing-table__tr">
-                  <td class="listing-table__td">Orange juice pack...
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                  </td>
-                  <td class="listing-table__td view-column">
-                    <button type="button" name="button" class="btn btn-sm ">
-                      view item
-                    </button>
-                  </td>
-                  <td class="listing-table__td action-column">
-                    <button type="button" name="button" class="btn btn-sm bg-caution">
-                      Edit
-                    </button>
-                    <button type="button" name="button" class="btn btn-sm bg-danger">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-
-                <tr class="listing-table__tr">
-                  <td class="listing-table__td">Orange juice pack...
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                  </td>
-                  <td class="listing-table__td view-column">
-                    <button type="button" name="button" class="btn btn-sm ">
-                      view item
-                    </button>
-                  </td>
-                  <td class="listing-table__td action-column">
-                    <button type="button" name="button" class="btn btn-sm bg-caution">
-                      Edit
-                    </button>
-                    <button type="button" name="button" class="btn btn-sm bg-danger">
-                      Delete
-                    </button>
-                  </td>
+				<% } %>
                 </tr>
               </tbody>
             </table>
