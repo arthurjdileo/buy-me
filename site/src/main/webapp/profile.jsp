@@ -12,6 +12,7 @@
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
 	ArrayList<Bid> userBids = BuyMe.Bids.getBidsByUser(u.account_uuid);
 	ArrayList<Transaction> buyerTrans = BuyMe.TransactionHistory.getByBuyer(u.account_uuid);
+	ArrayList<Listing> listings = BuyMe.Listings.getByUser(u.account_uuid);
 %>
 
 <!DOCTYPE html>
@@ -144,68 +145,28 @@
                 <th class="listing-table__th action-column">Action</th>
               </thead>
               <tbody class="listing-table__body">
+              <% for (Listing l : listings) { %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td">Orange juice pack...
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+                  <td class="listing-table__td"><b><%= l.item_name %></b><br>
+                    <p><%= l.description %></p>
                   </td>
                   <td class="listing-table__td view-column">
-                    <button type="button" name="button" class="btn btn-sm ">
+                    <button type="button" name="button" class="btn btn-sm" onclick="location.href='listing-item.jsp?listingUUID=<%= l.listing_uuid %>'">
                       view item
                     </button>
                   </td>
                   <td class="listing-table__td action-column">
-                    <button type="button" name="button" class="btn btn-sm bg-caution">
+                    <button type="button" name="button" class="btn btn-sm bg-caution" onclick="location.href='create-listing.jsp?edit=1&listingUUID=<%= l.listing_uuid %>'">
                       Edit
                     </button>
-                    <button type="button" name="button" class="btn btn-sm bg-danger">
+                    <button type="button" name="button" class="btn btn-sm bg-danger" onclick="deleteListing('<%= l.listing_uuid %>', '<%= l.item_name %>');">
                       Delete
                     </button>
                   </td>
                 </tr>
-
-                <tr class="listing-table__tr">
-                  <td class="listing-table__td">Orange juice pack...
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                  </td>
-                  <td class="listing-table__td view-column">
-                    <button type="button" name="button" class="btn btn-sm ">
-                      view item
-                    </button>
-                  </td>
-                  <td class="listing-table__td action-column">
-                    <button type="button" name="button" class="btn btn-sm bg-caution">
-                      Edit
-                    </button>
-                    <button type="button" name="button" class="btn btn-sm bg-danger">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-
-                <tr class="listing-table__tr">
-                  <td class="listing-table__td">Orange juice pack...
-                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                      consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-                  </td>
-                  <td class="listing-table__td view-column">
-                    <button type="button" name="button" class="btn btn-sm ">
-                      view item
-                    </button>
-                  </td>
-                  <td class="listing-table__td action-column">
-                    <button type="button" name="button" class="btn btn-sm bg-caution">
-                      Edit
-                    </button>
-                    <button type="button" name="button" class="btn btn-sm bg-danger">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
+				<% } %>
               </tbody>
             </table>
-            <!-- <button class="btn btn-sm danger">Create alert</button> -->
           </section>
         </div>
         <!--end panel-->
@@ -589,6 +550,15 @@
 
   <script src="./js/tabs.js"></script>
   <script src="./js/hash-url.js"></script>
+  
+  <script>
+  function deleteListing(listingUUID, itemName) {
+	  if (!window.confirm("Are you sure you want to delete " + itemName)) return;
+
+	  fetch("deleteListing.jsp?listingUUID=" + listingUUID);
+	  
+  }
+  </script>
 
 </body>
 

@@ -10,8 +10,6 @@
 		return;
 	}
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
-
-
 	String product = request.getParameter("product");
 	int category = Integer.parseInt(request.getParameter("category"));
 	int subCategory = Integer.parseInt(request.getParameter("sub-category"));
@@ -30,12 +28,22 @@
 	c.add(Calendar.DATE, numDays);
 	java.sql.Timestamp endDate = new java.sql.Timestamp(c.getTimeInMillis());
 
-	
-	String listingUUID = BuyMe.genUUID();
+	String listingUUID;
+	if (request.getParameter("edit") != null && Integer.parseInt(request.getParameter("edit")) == 1) {
+		Listing l = BuyMe.Listings.get(request.getParameter("listingUUID"));
+		if (!l.seller_uuid.equals(u.account_uuid)) {
+			response.sendRedirect("index.jsp");
+			return;
+		}
+		listingUUID = l.listing_uuid;
+	} else {
+		listingUUID = BuyMe.genUUID();
+	}
 	Listing l = new Listing(listingUUID, u.account_uuid, category,
 			subCategory, description, product, imgURL, numDays,
 			currency, startPrice, reservePrice,
 			0, endDate, bidIncrement, 1);
+
 	BuyMe.Listings.insert(l);
 	
 	// redirect to listings page

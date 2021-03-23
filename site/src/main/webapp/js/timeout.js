@@ -2,7 +2,6 @@ function countDown(countDownDate, elementId) {
   // Update the count down every 1 second
   console.log(countDownDate);
   let x = setInterval(function() {
-
     // Get today's date and time
     let now = new Date().getTime();
 

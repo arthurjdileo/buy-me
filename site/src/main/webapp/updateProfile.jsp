@@ -18,12 +18,12 @@
 	String confirmPw = request.getParameter("change-password");
 	ArrayList<String> errors = new ArrayList<String>();
 	session.setAttribute("errorUpdateProfile", errors);
-	
+
 	if (!pwd.equals(confirmPw)) {
 		errors.add("Passwords are not matching");
 		response.sendRedirect("profile.jsp");
 		return;
-	} else if (pwd.length() < 8 || pwd == null) {
+	} else if (!pwd.equals("") && (pwd.length() < 8 || pwd == null)) {
 		errors.add("Password must be at least 8 characters.");
 		response.sendRedirect("profile.jsp");
 		return;
@@ -37,7 +37,7 @@
 	if (email.equals("")) {
 		email = u.email;
 	}
-	if (pwd.equals("") || confirmPw.equals("")) {
+	if (pwd.equals("") && confirmPw.equals("")) {
 		pwd = u.password;
 	}
 	

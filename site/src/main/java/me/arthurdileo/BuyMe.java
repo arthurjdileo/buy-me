@@ -230,7 +230,7 @@ public class BuyMe {
 			if (ListingsTable == null) {
 				ListingsTable = new HashMap<String, Listing>();
 				Statement st = conn.createStatement();
-				ResultSet rs = st.executeQuery("select * from Listing;");
+				ResultSet rs = st.executeQuery("select * from Listing WHERE is_active = 1;");
 				while (rs.next()) {
 					Listing l = new Listing(rs);
 					ListingsTable.put(l.listing_uuid, l);
@@ -242,7 +242,7 @@ public class BuyMe {
 		// insert listing into db
 		public static void insert(Listing l) throws SQLException {
 			loadDatabase();
-			String query = "INSERT INTO Listing(listing_uuid, seller_uuid, cat_id, sub_id, item_name, description, image, listing_days, currency, start_price, reserve_price, num_bids, bid_increment, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+			String query = "INSERT INTO Listing(listing_uuid, seller_uuid, cat_id, sub_id, item_name, description, image, listing_days, currency, start_price, reserve_price, num_bids, bid_increment, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE cat_id = ?, sub_id = ?, item_name = ?, description = ?, image = ?, listing_days = ?, currency = ?, start_price = ?, reserve_price = ?, bid_increment = ?, end_time = ?;";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, l.listing_uuid);
 			ps.setString(2, l.seller_uuid);
@@ -262,6 +262,17 @@ public class BuyMe {
 			ps.setInt(12, l.num_bids);
 			ps.setDouble(13, l.bid_increment);
 			ps.setTimestamp(14, l.end_time);
+			ps.setInt(15, l.cat_id);
+			ps.setInt(16, l.sub_id);
+			ps.setString(17, l.item_name);
+			ps.setString(18, l.description);
+			ps.setString(19, l.image);
+			ps.setInt(20, l.listing_days);
+			ps.setString(21, l.currency);
+			ps.setDouble(22, l.start_price);
+			ps.setDouble(23, l.reserve_price);
+			ps.setDouble(24, l.bid_increment);
+			ps.setTimestamp(25, l.end_time);
 			ps.executeUpdate();
 			ListingsTable = null;
 		}
@@ -269,7 +280,7 @@ public class BuyMe {
 		// remove listing from db
 		public static void remove(String listing_uuid) throws SQLException {
 			loadDatabase();
-			String query = "UPDATE Listings SET is_active = 0 WHERE listing_uuid = ?;";
+			String query = "UPDATE Listing SET is_active = 0 WHERE listing_uuid = ?;";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, listing_uuid);
 			ps.executeUpdate();
