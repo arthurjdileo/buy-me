@@ -61,10 +61,9 @@
         <input type="text" placeholder="Search" name="search-query" value="<%= query %>" class="search-input">
         <label for="search-filters" class="select-label">Filter by: </label>
         <select id="search-filters" name="search-filters" class="search-filters-select">
-          <% if () %>
-          <option value="item">Item</option>
-          <option value="category">Category</option>
-          <option value="user">User</option>
+          <option value="item" <%= filter.equalsIgnoreCase("item") ? "selected" : "null" %>>Item</option>
+          <option value="category" <%= filter.equalsIgnoreCase("category") ? "selected" : "null" %>>Category</option>
+          <option value="user" <%= filter.equalsIgnoreCase("user") ? "selected" : "null" %>>User</option>
         </select>
         <input type="submit" value="Search" class="search-btn">
       </div>

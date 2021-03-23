@@ -227,7 +227,24 @@ public class BuyMe {
 		
 		// listings as list
 		public static ArrayList<Listing> getAsList() throws SQLException {
-			return new ArrayList<Listing>(getAll().values());
+			ArrayList<Listing> active = new ArrayList<Listing>();
+			for (Listing l : getAll().values()) {
+				if (l.is_active == 1) {
+					active.add(l);
+				}
+			}
+			return active;
+		}
+		
+		// inactive listings
+		public static ArrayList<Listing> getInActiveAsList() throws SQLException {
+			ArrayList<Listing> inactive = new ArrayList<Listing>();
+			for (Listing l : getAll().values()) {
+				if (l.is_active == 0) {
+					inactive.add(l);
+				}
+			}
+			return inactive;
 		}
 				
 		// updates table from db
@@ -236,7 +253,7 @@ public class BuyMe {
 			if (ListingsTable == null) {
 				ListingsTable = new HashMap<String, Listing>();
 				Statement st = conn.createStatement();
-				ResultSet rs = st.executeQuery("select * from Listing WHERE is_active = 1;");
+				ResultSet rs = st.executeQuery("select * from Listing;");
 				while (rs.next()) {
 					Listing l = new Listing(rs);
 					ListingsTable.put(l.listing_uuid, l);
@@ -399,14 +416,16 @@ public class BuyMe {
 			return getCurrentPrice(l) + l.bid_increment;
 		}
 		
-		public static void checkWin(Listing l) throws SQLException {
+		public static boolean checkWin(Listing l) throws SQLException {
 			User winner = getWinnerReserve(l);
 			if (winner != null) {
 				remove(l.listing_uuid);
 				Transaction t = new Transaction(winner.account_uuid, l.seller_uuid, l.listing_uuid, BuyMe.Bids.topBid(l).amount);
 				BuyMe.TransactionHistory.insert(t);
+				return true;
 				// set alert
 			}
+			return false;
 		}
 		
 		// determine winner by reserve

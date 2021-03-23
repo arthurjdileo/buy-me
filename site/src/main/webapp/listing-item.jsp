@@ -16,7 +16,19 @@
 		response.sendRedirect("index.jsp");
 		return;
 	}
-	Listing l = BuyMe.Listings.get(listingUUID);
+	
+	int sold = 0;
+	Listing l = null;
+	if (request.getParameter("sold") != null && Integer.parseInt(request.getParameter("sold")) == 1) {
+		l = BuyMe.Listings.get(request.getParameter("listingUUID"));
+		sold = 1;
+	} else {
+		l = BuyMe.Listings.get(listingUUID);
+		if (l.is_active == 0) {
+			response.sendRedirect("listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid);
+			return;
+		}
+	}
 	ArrayList<Bid> bids = BuyMe.Bids.getBidsByListing(listingUUID);
 	Bid topBid = BuyMe.Bids.topBid(l);
 %>
@@ -148,8 +160,9 @@
             <h3 class="product-title"><%= l.item_name %></h3>
             <div class="item-data-row">
               <ul class="product-details main-details">
-                <li class="product-price product-detail-box">Current Price <span class="product-price-amount"><span class="currency-symbol">$</span><%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
+                <li class="product-price product-detail-box"><%= sold == 0 ? "Current Price" : "Sold Price" %> <span class="product-price-amount"><span class="currency-symbol">$</span><%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
                 <li class="product-detail-box"><%= l.description %></li>
+                <% if (sold == 0) { %>
                 <li class="bid-form-box">
                   <div class="row-container">
                     <div class="">
@@ -171,24 +184,31 @@
                     </div>
                   </div>
                 </li>
+                <% } %>
               </ul>
               <div class="product-details-2">
                 <h3 class="">This Auction Ends in:</h3>
+                <% if (sold == 0) { %>
                 <h4 class="timeout-big"><span class="product-time" id="demo">00:00</span></h4>
+                <% } else { %>
+                <h4 class="timeout-big"><span class="product-time">SOLD</span></h4>
+                <% } %>
                 <ul class="product-details">
-                  <li><span><%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() %></span> Bidder(s)</li>
-                  <li><span>100</span> Watching</li>
-                  <li><span><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> Bid(s)</li>
+                  <li><span><%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() %></span> <%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() > 1 ? "Bidders" : "Bidder" %></li>
+                  <li><span>100</span> <%= sold == 0 ? "Watching" : "Watched" %></li>
+                  <li><span><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> <%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() > 1 ? "Bids" : "Bid" %></li>
                 </ul>
 
               </div>
               <!--end details 2-->
             </div>
+            <% if (sold == 0) { %>
             <div class="bid-options-container">
               <!-- <button class="btn  danger cardbutton" data-btn="bid">bid</button> -->
               <button class="btn  blue cardbutton">create autobid</button>
               <button class="btn   btn-bid">create alert</button>
             </div>
+            <% } %>
             <!--end row-->
           </div>
 
