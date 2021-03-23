@@ -93,6 +93,16 @@ public class BuyMe {
 			ps.executeUpdate();
 			UserTable = null;
 		}
+		
+		public static void updateCredits(User u, double credits) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE Users SET credits = ? WHERE acc_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setDouble(1, credits);
+			ps.setString(2, u.account_uuid);
+			ps.executeUpdate();
+			UserTable = null;
+		}
 	}
 	
 	public static class Sessions {

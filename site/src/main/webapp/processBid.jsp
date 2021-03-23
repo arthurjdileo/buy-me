@@ -27,10 +27,18 @@
 		response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID);
 		return;
 	}
+	
+	if (u.credits < bidAmount) {
+		errors.add("You do not have enough funds. Balance: $" + u.credits);
+		response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID);
+		return;
+	}
+	
 	String bidUUID = BuyMe.genUUID();
 	
 	Bid b = new Bid(bidUUID, u.account_uuid, listingUUID, bidAmount);
 	
 	BuyMe.Bids.insert(b);
+	BuyMe.Users.updateCredits(u, u.credits-bidAmount);
 	response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID);
 %>

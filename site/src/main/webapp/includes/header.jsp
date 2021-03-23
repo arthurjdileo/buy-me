@@ -15,7 +15,7 @@
       <p id="show-list-on-hover" class="">Shop By Category</p>
       <ul class="list-content" id="categories">
       <% for (Category c : cat) { %>
-        <li class=""><a href=""><%= c.name %></a></li>
+        <li class=""><a href="listings.jsp?search-filters=category&search-query=<%= c.name %>"><%= c.name %></a></li>
       <% } %>
       </ul>
     </nav>

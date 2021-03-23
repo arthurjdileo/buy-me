@@ -10,6 +10,7 @@
 		return;
 	}
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
+	ArrayList<Category> cat = BuyMe.Categories.getAsList();
 	
 	String query = request.getParameter("search-query");
 	String filter = request.getParameter("search-filters");
@@ -43,7 +44,37 @@
 </head>
 
 <body>
-  <%@include file="./includes/header.jsp" %>
+    <header class="main-header">
+    <div class="logo-container">
+      <a href="index.jsp"><img src="./img/logo.png" alt=" "></a>
+    </div>
+    <nav class="top-nav">
+      <p id="show-list-on-hover" class="">Shop By Category</p>
+      <ul class="list-content" id="categories">
+      <% for (Category c : cat) { %>
+        <li class=""><a href="listings.jsp?search-filters=category&search-query=<%= c.name %>"><%= c.name %></a></li>
+      <% } %>
+      </ul>
+    </nav>
+    <form action="listings.jsp" class="search-form">
+      <div class="search-input-container">
+        <input type="text" placeholder="Search" name="search-query" value="<%= query %>" class="search-input">
+        <label for="search-filters" class="select-label">Filter by: </label>
+        <select id="search-filters" name="search-filters" class="search-filters-select">
+          <option value="item">Item</option>
+          <option value="category">Category</option>
+          <option value="user">User</option>
+        </select>
+        <input type="submit" value="Search" class="search-btn">
+      </div>
+    </form>
+    <div class="profile-container">
+      <a href="profile.jsp">
+        <img src="./img/user.png" alt="" class="profile-img">
+        <span>Profile</span>
+      </a>
+    </div>
+  </header>
   <main class="main-content">
     <section id="recent-listing" class="listing-section">
       <h2 class="listing-title">Listings</h2>
