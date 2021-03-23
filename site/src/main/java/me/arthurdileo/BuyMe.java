@@ -3,14 +3,10 @@ package me.arthurdileo;
 import java.util.*;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.io.IOException;
 import java.math.BigInteger;  
@@ -403,7 +399,15 @@ public class BuyMe {
 			return getCurrentPrice(l) + l.bid_increment;
 		}
 		
-//		public static User getWinner()
+		public static void checkWin(Listing l) throws SQLException {
+			User winner = getWinnerReserve(l);
+			if (winner != null) {
+				remove(l.listing_uuid);
+				Transaction t = new Transaction(winner.account_uuid, l.seller_uuid, l.listing_uuid, BuyMe.Bids.topBid(l).amount);
+				BuyMe.TransactionHistory.insert(t);
+				// set alert
+			}
+		}
 		
 		// determine winner by reserve
 		public static User getWinnerReserve(Listing l) throws SQLException {
@@ -571,7 +575,7 @@ public class BuyMe {
 			ps.setString(1, t.buyer_uuid);
 			ps.setString(2, t.seller_uuid);
 			ps.setString(3, t.listing_uuid);
-			ps.setFloat(4, t.amount);
+			ps.setDouble(4, t.amount);
 			ps.executeUpdate();
 			TransactionsTable = null;
 		}

@@ -61,6 +61,7 @@
         <input type="text" placeholder="Search" name="search-query" value="<%= query %>" class="search-input">
         <label for="search-filters" class="select-label">Filter by: </label>
         <select id="search-filters" name="search-filters" class="search-filters-select">
+          <% if () %>
           <option value="item">Item</option>
           <option value="category">Category</option>
           <option value="user">User</option>
@@ -173,7 +174,7 @@
               </ul>
             </a>
             <div class="bid-options">
-              <button class="btn btn-sm btn-bid" onclick="location.href=location.hostname+'listing-item.jsp?listingUUID=<%= l.listing_uuid %>'">bid</button>
+              <button class="btn btn-sm btn-bid" onclick="window.location.href='listing-item.jsp?listingUUID=<%= l.listing_uuid %>'">bid</button>
               <p class="number-of-bids"><span class="product-time"><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> Bids</p>
             </div>
           </article>

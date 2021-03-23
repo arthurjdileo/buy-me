@@ -41,31 +41,31 @@
       <!-- Give wrapper ID to target with jQuery & CSS -->
       <section class="MS-content product-listing">
         <article class="product-container item">
-          <a href="listings.jsp?search-filters=category&search-query=sports">
+          <a href="listings.jsp?search-filters=category&search-query=Sports">
             <h3 class="category-title">sports</h3>
             <img src="./img/volleyball.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
-          <a href="listings.jsp?search-filters=category&search-query=clothing">
+          <a href="listings.jsp?search-filters=category&search-query=Clothing">
             <h3 class="category-title">clothing</h3>
             <img src="./img/tshirt.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
-          <a href="listings.jsp?search-filters=category&search-query=vehicles">
+          <a href="listings.jsp?search-filters=category&search-query=Vehicles">
             <h3 class="category-title">vehicles</h3>
             <img src="./img/car.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
-          <a href="listings.jsp?search-filters=category&search-query=jewelry">
+          <a href="listings.jsp?search-filters=category&search-query=Jewelry">
             <h3 class="category-title">jewelry</h3>
             <img src="./img/diamond.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
-          <a href="#listings.jsp?search-filters=category&search-query=electronics">
+          <a href="#listings.jsp?search-filters=category&search-query=Electronics">
             <h3 class="category-title">electronics</h3>
             <img src="./img/desktop.png" alt="" class="category-img">
           </a>
