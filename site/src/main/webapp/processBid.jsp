@@ -39,10 +39,10 @@
 	Bid b = new Bid(bidUUID, u.account_uuid, listingUUID, bidAmount);
 	
 	BuyMe.Bids.insert(b);
-	BuyMe.Users.updateCredits(u, u.credits-bidAmount);
 	BuyMe.AutomaticBids.process(l.listing_uuid);
 	
 	if (BuyMe.Listings.checkWin(l)) {
+		BuyMe.Users.updateCredits(u, u.credits-bidAmount);
 		response.sendRedirect("listing-item.jsp?sold=1&listingUUID=" + listingUUID);
 		return;
 	}

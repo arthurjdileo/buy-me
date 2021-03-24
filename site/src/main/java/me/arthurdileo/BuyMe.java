@@ -954,9 +954,17 @@ public class BuyMe {
 					Bid newBid = new Bid(bidUUID, b.buyer_uuid, b.listing_uuid, bidAmt);
 					
 					BuyMe.Bids.insert(newBid);
-					BuyMe.Users.updateCredits(BuyMe.Users.get(b.buyer_uuid), BuyMe.Users.get(b.buyer_uuid).credits-bidAmt);
+					if (BuyMe.Listings.checkWin(BuyMe.Listings.get(b.listing_uuid))) {
+						BuyMe.Users.updateCredits(BuyMe.Users.get(b.buyer_uuid), BuyMe.Users.get(b.buyer_uuid).credits-bidAmt);
+					}
 				}
 			}
 		}
+	}
+	
+	public static class Alerts {
+		static ArrayList<Alert> AlertsTable;
+		
+		
 	}
 }
