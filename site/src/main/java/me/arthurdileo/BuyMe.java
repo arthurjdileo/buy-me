@@ -329,7 +329,7 @@ public class BuyMe {
 			
 			for (Listing l : listings) {
 				for (String s : split) {
-					if (l.item_name.toLowerCase().contains(s.toLowerCase())) {
+					if (l.item_name.toLowerCase().contains(s.toLowerCase()) && !searchResults.contains(l)) {
 						searchResults.add(l);
 					}
 				}
@@ -371,7 +371,9 @@ public class BuyMe {
 				for (String s : split) {
 					if (c.name.toLowerCase().contains(s.toLowerCase())) {
 						for (Listing l : getByCategory(c.id)) {
-							searchResults.add(l);
+							if (!searchResults.contains(l)) {
+								searchResults.add(l);
+							}
 						}
 					}
 				}
@@ -380,7 +382,9 @@ public class BuyMe {
 				for (String s : split) {
 					if (c.name.toLowerCase().contains(s.toLowerCase())) {
 						for (Listing l : getBySubCategory(c.id)) {
-							searchResults.add(l);
+							if (!searchResults.contains(l)) {
+								searchResults.add(l);
+							}
 						}
 					}
 				}
@@ -531,6 +535,17 @@ public class BuyMe {
 				}
 			}
 			return userBids;
+		}
+		
+		public static ArrayList<Bid> getBidsByUserForListing(String account_uuid, String listing_uuid) throws SQLException {
+			ArrayList<Bid> userBids = getBidsByUser(account_uuid);
+			ArrayList<Bid> userBidsForListing = new ArrayList<Bid>();
+			for (Bid b : userBids) {
+				if (b.listing_uuid.equals(listing_uuid)) {
+					userBidsForListing.add(b);
+				}
+			}
+			return userBidsForListing;
 		}
 		
 		public static ArrayList<Bid> sort(ArrayList<Bid> bids) {
@@ -861,6 +876,87 @@ public class BuyMe {
 				}
 			}
 			return null;
+		}
+	}
+	
+	public static class AutomaticBids {
+		static ArrayList<AutomaticBid> AutomaticBidTable;
+		
+		// categories as list
+		public static ArrayList<AutomaticBid> getAsList() throws SQLException {
+			return new ArrayList<AutomaticBid>(getAll());
+		}
+		
+		// updates table from db
+		static ArrayList<AutomaticBid> getAll() throws SQLException {
+			loadDatabase();
+			if (AutomaticBidTable == null) {
+				AutomaticBidTable = new ArrayList<AutomaticBid>();
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery("select * from AutomaticBid;");
+				while (rs.next()) {
+					AutomaticBid b = new AutomaticBid(rs);
+					AutomaticBidTable.add(b);
+				}
+			}
+			return AutomaticBidTable;
+		}
+		
+		public static void insert(AutomaticBid b) throws SQLException {
+			loadDatabase();
+			String query = "INSERT INTO AutomaticBid(buyer_uuid, listing_uuid, upper_limit, increment) VALUES (?, ?, ?, ?);";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, b.buyer_uuid);
+			ps.setString(2, b.listing_uuid);
+			ps.setDouble(3, b.upper_limit);
+			ps.setDouble(4, b.increment);
+			ps.executeUpdate();
+			AutomaticBidTable = null;
+		}
+		
+		public static ArrayList<AutomaticBid> getByListing(String listing_uuid) throws SQLException {
+			ArrayList<AutomaticBid> bids = getAsList();
+			ArrayList<AutomaticBid> listingBids = new ArrayList<>();
+			for (AutomaticBid b : bids) {
+				if (b.listing_uuid.equals(listing_uuid)) {
+					listingBids.add(b);
+				}
+			}
+			return listingBids;
+		}
+		
+		public static AutomaticBid exists(String listing_uuid, String buyer_uuid) throws SQLException {
+			ArrayList<AutomaticBid> bids = getAsList();
+			
+			for (AutomaticBid b : bids) {
+				if (b.listing_uuid.equals(listing_uuid) && b.buyer_uuid.equals(buyer_uuid)) {
+					return b;
+				}
+			}
+			return null;
+		}
+		
+		public static void process(String listing_uuid) throws SQLException {
+			ArrayList<AutomaticBid> autoBids = getByListing(listing_uuid);
+			
+			for (AutomaticBid b : autoBids) {
+				Bid topBid = BuyMe.Bids.topBid(BuyMe.Listings.get(b.listing_uuid));
+				ArrayList<Bid> userBids = BuyMe.Bids.getBidsByUserForListing(b.buyer_uuid, listing_uuid);
+				double userMax;
+				if (userBids.size() == 0) {
+					userMax = 0;
+				} else {
+					userMax = Collections.max(userBids).amount;
+				}
+				double bidAmt = BuyMe.Listings.getCurrentPrice(BuyMe.Listings.get(listing_uuid)) + b.increment;
+				if (topBid.amount > userMax && bidAmt <= b.upper_limit && !topBid.buyer_uuid.equals(b.buyer_uuid) && bidAmt <= BuyMe.Users.get(b.buyer_uuid).credits) {
+					String bidUUID = BuyMe.genUUID();
+					Bid newBid = new Bid(bidUUID, b.buyer_uuid, b.listing_uuid, bidAmt);
+					
+					BuyMe.Bids.insert(newBid);
+					BuyMe.Users.updateCredits(BuyMe.Users.get(b.buyer_uuid), BuyMe.Users.get(b.buyer_uuid).credits-bidAmt);
+				}
+			}
 		}
 	}
 }

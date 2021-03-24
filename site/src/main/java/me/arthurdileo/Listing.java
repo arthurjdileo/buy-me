@@ -1,7 +1,6 @@
 package me.arthurdileo;
 
 import java.sql.*;
-import java.util.*;
 
 /*
  * id

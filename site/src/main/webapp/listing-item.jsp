@@ -31,6 +31,7 @@
 	}
 	ArrayList<Bid> bids = BuyMe.Bids.getBidsByListing(listingUUID);
 	Bid topBid = BuyMe.Bids.topBid(l);
+	AutomaticBid autoBid = BuyMe.AutomaticBids.exists(listingUUID, u.account_uuid);
 %>
 
 <!DOCTYPE html>
@@ -148,9 +149,9 @@
     <section id="recent-listing" class="listing-section">
       <div class=" breadcrumb-container">
         <div class="breadcrumb">
-          <span class="breadcrumb-step"><a href="./category.html"><%= BuyMe.Categories.getByID(l.cat_id).name %></a></span>
-          <span class="breadcrumb-step"><a href="./category.html"><%= BuyMe.SubCategories.getByID(l.sub_id).name %></a></span>
-          <span class="breadcrumb-step"><a href="./category.html"><%= l.item_name %></a></span>
+          <span class="breadcrumb-step"><a href="listings.jsp?search-filters=category&search-query=<%=BuyMe.Categories.getByID(l.cat_id).name%>"><%= BuyMe.Categories.getByID(l.cat_id).name %></a></span>
+          <span class="breadcrumb-step"><a href="listings.jsp?search-filters=category&search-query=<%=BuyMe.SubCategories.getByID(l.sub_id).name%>"><%= BuyMe.SubCategories.getByID(l.sub_id).name %></a></span>
+          <span class="breadcrumb-step"><a href="listings.jsp?search-filters=item&search-query=<%= l.item_name %>"><%= l.item_name %></a></span>
         </div>
       </div>
       <div class="row-container">
@@ -205,7 +206,11 @@
             <% if (sold == 0) { %>
             <div class="bid-options-container">
               <!-- <button class="btn  danger cardbutton" data-btn="bid">bid</button> -->
+              <% if (autoBid != null) { %>
+              <button class="btn  blue cardbutton">update autobid</button>
+              <% } else { %>
               <button class="btn  blue cardbutton">create autobid</button>
+              <% } %>
               <button class="btn   btn-bid">create alert</button>
             </div>
             <% } %>
@@ -279,33 +284,21 @@
 
     function handleBidButton(event) {
       const button = event.currentTarget;
-      if (event.currentTarget.getAttribute("data-btn") === "bid") {
-        modalInner.innerHTML = `
-      <form action="" class="card">
-        <h2>Create bid</h2>
-        <div class="input-group">
-          <label for="bid-amount">Bid amount</label>
-          <input type="number" id="bid-number" name="bid-number" min="0" />
-        </div>
-        <input type="submit" value="Create  bid" class='btn btn-sm btn-confirm'>
-      </form>
+      modalInner.innerHTML = `
+	      <form action="processAutoBid.jsp" class="card">
+	      <h2><%= autoBid != null ? "Update Auto Bid" : "Create Auto Bid" %></h2>
+	      <div class="input-group">
+	      <label for="max-amount">Max Amount</label>
+	      <input type="number" id="max-number" name="max-number" value="<%= autoBid != null ? autoBid.upper_limit : BuyMe.Listings.getMinBidPrice(l) %>" min="<%= BuyMe.Listings.getMinBidPrice(l) %>" />
+	      </div>
+	      <div class="input-group">
+	      <label for="bid-amount">Increment Amt.</label>
+	      <input type="number" id="bid-number" name="bid-number" value="<%= autoBid != null ? autoBid.increment : l.bid_increment %>" min="<%= l.bid_increment %>" />
+	      </div>
+	      <input type="text" name="listingUUID" value="<%= l.listing_uuid %>" hidden/>
+	      <input type="submit" value="<%= autoBid != null ? "update auto bid" : "create auto bid" %>" class='btn btn-sm btn-confirm'>
+	      </form>
       `;
-      } else {
-        modalInner.innerHTML = `
-      <form action="" class="card">
-      <h2>Create auto bid</h2>
-      <div class="input-group">
-      <label for="max-amount">Max amount</label>
-      <input type="number" id="max-number" name="max-number" min="0" />
-      </div>
-      <div class="input-group">
-      <label for="bid-amount">Bid amount</label>
-      <input type="number" id="bid-number" name="bid-number" min="0" />
-      </div>
-      <input type="submit" value="create auto bid" class='btn btn-sm btn-confirm'>
-      </form>
-      `;
-      }
       // show the modal
       modalOuter.classList.add('open');
     }

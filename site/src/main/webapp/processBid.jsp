@@ -40,6 +40,7 @@
 	
 	BuyMe.Bids.insert(b);
 	BuyMe.Users.updateCredits(u, u.credits-bidAmount);
+	BuyMe.AutomaticBids.process(l.listing_uuid);
 	
 	if (BuyMe.Listings.checkWin(l)) {
 		response.sendRedirect("listing-item.jsp?sold=1&listingUUID=" + listingUUID);
