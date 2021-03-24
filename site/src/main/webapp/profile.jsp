@@ -13,6 +13,7 @@
 	ArrayList<Bid> userBids = BuyMe.Bids.getBidsByUser(u.account_uuid);
 	ArrayList<Transaction> buyerTrans = BuyMe.TransactionHistory.getByBuyer(u.account_uuid);
 	ArrayList<Listing> listings = BuyMe.Listings.getByUser(u.account_uuid);
+	ArrayList<SetAlert> setAlerts = BuyMe.SetAlerts.getByUser(u.account_uuid);
 	ArrayList<Alert> userAlerts = BuyMe.Alerts.getByUser(u.account_uuid);
 %>
 
@@ -71,8 +72,8 @@
                 </div>
                 <div class="activity-item">
                   <img src="./img/menu.svg" type="image/svg-xml" alt="" class="activity-icon">
-                  <p class="activity-figure">100</p>
-                  <h4 class="activity-name">Alerts</h4>
+                  <p class="activity-figure"><%= setAlerts.size() %></p>
+                  <h4 class="activity-name">Watching</h4>
                 </div>
               </div>
             </article>
@@ -160,9 +161,12 @@
                     <button type="button" name="button" class="btn btn-sm bg-caution" onclick="location.href='create-listing.jsp?edit=1&listingUUID=<%= l.listing_uuid %>'">
                       Edit
                     </button>
-                    <button type="button" name="button" class="btn btn-sm bg-danger" onclick="deleteListing('<%= l.listing_uuid %>', '<%= l.item_name %>');">
+                    <form action="deleteListing.jsp">
+                    <input name="listingUUID" value="<%= l.listing_uuid %>" type="text" hidden></input>
+                    <button type="submit" name="button" class="btn btn-sm bg-danger">
                       Delete
                     </button>
+                    </form>
                   </td>
                 </tr>
 				<% } %>
@@ -179,7 +183,10 @@
               <h3 class="panel-article-title">Notifications </h3>
               <div class="notifications-container">
                 <% for (Alert a : userAlerts) { %>
-                <div class="notification-item"><%= a.msg %><span onclick="ackNotification('<%= a.alert_uuid %>')" class="closebtn">&times;</span></div>
+                <form name="ackNotification">
+                <input name="alertUUID" value="<%= a.alert_uuid %>" hidden></input>
+                <div class="notification-item"><%= a.msg %><span onclick="document.forms['ackNotification'].submit();" class="closebtn">&times;</span></div>
+                </form>
                 <% } %>
               </div>
             </article>
@@ -505,18 +512,6 @@
 
   <script src="./js/tabs.js"></script>
   <script src="./js/hash-url.js"></script>
-  
-  <script>
-  function deleteListing(listingUUID, itemName) {
-	  if (!window.confirm("Are you sure you want to delete " + itemName)) return;
-
-	  fetch("deleteListing.jsp?listingUUID=" + listingUUID);
-  }
-  
-  function ackNotification(alert_uuid) {
-	  fetch("ackNotification.jsp?alertUUID=" + alert_uuid);
-  }
-  </script>
 
 </body>
 

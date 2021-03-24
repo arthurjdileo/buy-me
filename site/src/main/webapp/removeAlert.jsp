@@ -14,13 +14,8 @@
 	String alert_type = request.getParameter("alert_type");
 	String alert = request.getParameter("alert");
 	
-	String alertUUID = BuyMe.genUUID();
 	SetAlert userAlert = BuyMe.SetAlerts.exists(u.account_uuid, alert_type, alert);
-	if (userAlert == null) {
-		SetAlert a = new SetAlert(alertUUID, u.account_uuid, alert_type, alert);
-		BuyMe.SetAlerts.insert(a);
-	} else if (userAlert != null && userAlert.is_active == 0) {
-		BuyMe.SetAlerts.setActive(userAlert);
-	}
+	
+	if (userAlert != null && userAlert.is_active == 1) BuyMe.SetAlerts.remove(userAlert.alert_uuid);
 	response.sendRedirect(request.getHeader("referer"));
 %>

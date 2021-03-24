@@ -25,5 +25,12 @@
 	
 	AutomaticBid b = new AutomaticBid(u.account_uuid, listing_uuid, upper_limit, increment);
 	BuyMe.AutomaticBids.insert(b);
+	SetAlert userAlert = BuyMe.SetAlerts.exists(u.account_uuid, "bid", listing_uuid);
+	if (userAlert == null) {
+		SetAlert a = new SetAlert(BuyMe.genUUID(), u.account_uuid, "bid", listing_uuid);
+		BuyMe.SetAlerts.insert(a);
+	} else if (userAlert != null && userAlert.is_active == 0) {
+		BuyMe.SetAlerts.setActive(userAlert);
+	}
 	response.sendRedirect("listing-item.jsp?listingUUID=" + listing_uuid);
 %>

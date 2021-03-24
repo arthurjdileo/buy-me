@@ -43,31 +43,31 @@
       <section class="MS-content product-listing">
         <article class="product-container item">
           <a href="listings.jsp?search-filters=category&search-query=Sports">
-            <h3 class="category-title">sports<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'sports')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "sports") != null ? "fa" : "far" %> fa-star"></i></span></h3>
+            <h3 class="category-title">sports<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'sports')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "sports") != null && BuyMe.SetAlerts.exists(u.account_uuid, "category", "sports").is_active == 1 ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/volleyball.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
           <a href="listings.jsp?search-filters=category&search-query=Clothing">
-            <h3 class="category-title">clothing<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'clothing')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "clothing") != null ? "fa" : "far" %> fa-star"></i></span></h3>
+            <h3 class="category-title">clothing<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'clothing')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "clothing") != null && BuyMe.SetAlerts.exists(u.account_uuid, "category", "clothing").is_active == 1 ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/tshirt.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
           <a href="listings.jsp?search-filters=category&search-query=Vehicles">
-            <h3 class="category-title">vehicles<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'vehicles')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "vehicles") != null ? "fa" : "far" %> fa-star"></i></span></h3>
+            <h3 class="category-title">vehicles<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'vehicles')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "vehicles") != null && BuyMe.SetAlerts.exists(u.account_uuid, "category", "vehicles").is_active == 1 ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/car.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
           <a href="listings.jsp?search-filters=category&search-query=Jewelry">
-            <h3 class="category-title">jewelry<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'jewelry')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "jewelry") != null ? "fa" : "far" %> fa-star"></i></span></h3>
+            <h3 class="category-title">jewelry<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'jewelry')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "jewelry") != null && BuyMe.SetAlerts.exists(u.account_uuid, "category", "jewelry").is_active == 1 ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/diamond.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
           <a href="#listings.jsp?search-filters=category&search-query=Electronics">
-            <h3 class="category-title">electronics<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'electronics')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "electronics") != null ? "fa" : "far" %> fa-star"></i></span></h3>
+            <h3 class="category-title">electronics<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'electronics')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "electronics") != null && BuyMe.SetAlerts.exists(u.account_uuid, "category", "electronics").is_active == 1 ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/desktop.png" alt="" class="category-img">
           </a>
         </article>

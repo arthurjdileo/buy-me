@@ -40,6 +40,14 @@
 	
 	BuyMe.Bids.insert(b);
 	BuyMe.AutomaticBids.process(l.listing_uuid);
+	SetAlert userAlert = BuyMe.SetAlerts.exists(u.account_uuid, "bid", l.listing_uuid);
+	if (userAlert == null) {
+		SetAlert a = new SetAlert(BuyMe.genUUID(), u.account_uuid, "bid", l.listing_uuid);
+		BuyMe.SetAlerts.insert(a);
+	} else if (userAlert != null && userAlert.is_active == 0) {
+		BuyMe.SetAlerts.setActive(userAlert);
+	}
+	BuyMe.SetAlerts.bidProcess(l.listing_uuid, b);
 	
 	if (BuyMe.Listings.checkWin(l)) {
 		BuyMe.Users.updateCredits(u, u.credits-bidAmount);

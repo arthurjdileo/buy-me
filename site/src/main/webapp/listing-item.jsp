@@ -32,6 +32,8 @@
 	ArrayList<Bid> bids = BuyMe.Bids.getBidsByListing(listingUUID);
 	Bid topBid = BuyMe.Bids.topBid(l);
 	AutomaticBid autoBid = BuyMe.AutomaticBids.exists(listingUUID, u.account_uuid);
+	SetAlert userAlert = BuyMe.SetAlerts.exists(u.account_uuid, "bid", l.listing_uuid);
+	if (userAlert != null && userAlert.is_active == 0) userAlert = null;
 %>
 
 <!DOCTYPE html>
@@ -198,7 +200,7 @@
                 <% } %>
                 <ul class="product-details">
                   <li><span><%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() %></span> <%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() > 1 ? "Bidders" : "Bidder" %></li>
-                  <li><span>100</span> <%= sold == 0 ? "Watching" : "Watched" %></li>
+                  <li><span><%= BuyMe.SetAlerts.getByListing(l.listing_uuid).size() %></span> <%= sold == 0 ? "Watching" : "Watched" %></li>
                   <li><span><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> <%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() > 1 ? "Bids" : "Bid" %></li>
                 </ul>
 
@@ -213,7 +215,19 @@
               <% } else { %>
               <button class="btn  blue cardbutton">create autobid</button>
               <% } %>
-              <button class="btn   btn-bid">create alert</button>
+              <% if (userAlert == null) { %>
+              <form action="setAlert.jsp">
+              <input type="text" name="alert_type" value="bid" hidden></input>
+              <input type="text" name="alert" value="<%= l.listing_uuid %>" hidden></input>
+              <button class="btn   btn-bid" type="submit">watch item</button>
+              </form>
+              <% } else {%>
+              <form action="removeAlert.jsp">
+              <input type="text" name="alert_type" value="bid" hidden></input>
+              <input type="text" name="alert" value="<%= l.listing_uuid %>" hidden></input>
+              <button class="btn   btn-bid" type="submit">unwatch item</button>
+              </form>
+              <% } %>
             </div>
             <% } %>
             <!--end row-->

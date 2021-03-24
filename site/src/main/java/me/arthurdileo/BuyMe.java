@@ -959,7 +959,14 @@ public class BuyMe {
 						String alertUUID = BuyMe.genUUID();
 						Alert a = new Alert(alertUUID, b.buyer_uuid, "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'You won " + BuyMe.Listings.get(listing_uuid).item_name + "!></a>");
 						BuyMe.Alerts.insert(a);
+						
+						ArrayList<SetAlert> listingAlerts = BuyMe.SetAlerts.getByListing(listing_uuid);
+						for (SetAlert sa : listingAlerts) {
+							if (sa.acc_uuid.equals(b.buyer_uuid)) continue;
+							BuyMe.Alerts.insert(new Alert(BuyMe.genUUID(), sa.acc_uuid, "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'You lost " + BuyMe.Listings.get(listing_uuid).item_name + "!></a>"));
+						}
 					}
+					BuyMe.SetAlerts.bidProcess(listing_uuid, newBid);
 				}
 			}
 		}
@@ -1002,6 +1009,15 @@ public class BuyMe {
 			SetAlertsTable = null;
 		}
 		
+		public static void setActive(SetAlert a) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE SetAlerts SET is_active = 1 WHERE alert_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, a.alert_uuid);
+			ps.executeUpdate();
+			SetAlertsTable = null;
+		}
+		
 		public static void remove(String alert_uuid) throws SQLException {
 			loadDatabase();
 			String query = "UPDATE SetAlerts SET is_active = 0 WHERE alert_uuid = ?;";
@@ -1032,6 +1048,37 @@ public class BuyMe {
 				}
 			}
 			return userAlerts;
+		}
+		
+		public static ArrayList<SetAlert> getByListing(String listing_uuid) throws SQLException {
+			ArrayList<SetAlert> setAlerts = getAll();
+			ArrayList<SetAlert> listingAlerts = new ArrayList<SetAlert>();
+			
+			for (SetAlert a : setAlerts) {
+				if (a.alert_type.equalsIgnoreCase("bid") && a.alert.equals(listing_uuid)) {
+					listingAlerts.add(a);
+				}
+			}
+			return listingAlerts;
+		}
+		
+		public static void bidProcess(String listing_uuid, Bid most_recent) throws SQLException {
+			ArrayList<SetAlert> setAlerts = getAll();
+			ArrayList<Bid> listingBids = BuyMe.Bids.getBidsByListing(listing_uuid);
+
+			for (SetAlert a : setAlerts) {
+				if (a.alert_type.equalsIgnoreCase("bid") && a.alert.equals(listing_uuid) && !most_recent.buyer_uuid.equals(a.acc_uuid)) {
+					boolean userHasBid = false;
+					for (Bid lb : listingBids) {
+						if (lb.buyer_uuid.equals(a.acc_uuid)) userHasBid = true;
+					}
+					if (userHasBid) {
+						BuyMe.Alerts.insert(new Alert(BuyMe.genUUID(), a.acc_uuid, "<a href='" + "listing-item.jsp?listingUUID=" + listing_uuid + "'>You were outbid on " + BuyMe.Listings.get(listing_uuid).item_name + "</a>"));
+					} else {
+						BuyMe.Alerts.insert(new Alert(BuyMe.genUUID(), a.acc_uuid, "<a href='" + "listing-item.jsp?listingUUID=" + listing_uuid + "'>A bid was placed on " + BuyMe.Listings.get(listing_uuid).item_name + "</a>"));
+					}
+				}
+			}
 		}
 	}
 
