@@ -956,6 +956,9 @@ public class BuyMe {
 					BuyMe.Bids.insert(newBid);
 					if (BuyMe.Listings.checkWin(BuyMe.Listings.get(b.listing_uuid))) {
 						BuyMe.Users.updateCredits(BuyMe.Users.get(b.buyer_uuid), BuyMe.Users.get(b.buyer_uuid).credits-bidAmt);
+						String alertUUID = BuyMe.genUUID();
+						Alert a = new Alert(alertUUID, b.buyer_uuid, "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'You won " + BuyMe.Listings.get(listing_uuid).item_name + "!></a>");
+						BuyMe.Alerts.insert(a);
 					}
 				}
 			}
@@ -989,13 +992,12 @@ public class BuyMe {
 		
 		public static void insert(SetAlert a) throws SQLException {
 			loadDatabase();
-			String query = "INSERT INTO SetAlerts(alert_uuid, acc_uuid, alert_type, alert, is_active) VALUES (?, ?, ?, ?, ?);";
+			String query = "INSERT INTO SetAlerts(alert_uuid, acc_uuid, alert_type, alert) VALUES (?, ?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, a.alert_uuid);
 			ps.setString(2, a.acc_uuid);
 			ps.setString(3, a.alert_type);
 			ps.setString(4, a.alert);
-			ps.setInt(5, a.is_active);
 			ps.executeUpdate();
 			SetAlertsTable = null;
 		}
@@ -1007,6 +1009,17 @@ public class BuyMe {
 			ps.setString(1, alert_uuid);
 			ps.executeUpdate();
 			SetAlertsTable = null;
+		}
+		
+		public static SetAlert exists(String account_uuid, String alert_type, String alert) throws SQLException {
+			ArrayList<SetAlert> alerts = get();
+			
+			for (SetAlert a : alerts) {
+				if (a.acc_uuid.equals(account_uuid) && a.alert_type.equalsIgnoreCase(alert_type) && a.alert.equalsIgnoreCase(alert)) {
+					return a;
+				}
+			}
+			return null;
 		}
 		
 		public static ArrayList<SetAlert> getByUser(String acc_uuid) throws SQLException {
@@ -1027,7 +1040,14 @@ public class BuyMe {
 		
 		// get admin by acc_uuid
 		public static ArrayList<Alert> get() throws SQLException {
-			return getAll();
+			ArrayList<Alert> alerts = getAll();
+			ArrayList<Alert> filtered = new ArrayList<Alert>();
+			for (Alert a : alerts) {
+				if (a.ack == 0) {
+					filtered.add(a);
+				}
+			}
+			return filtered;
 		}
 		
 		// updates table from db
@@ -1047,11 +1067,11 @@ public class BuyMe {
 		
 		public static void insert(Alert a) throws SQLException {
 			loadDatabase();
-			String query = "INSERT INTO SetAlerts(acc_uuid, msg, ack) VALUES (?, ?, ?);";
+			String query = "INSERT INTO Alerts(alert_uuid, acc_uuid, msg) VALUES (?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
-			ps.setString(1, a.acc_uuid);
-			ps.setString(2, a.msg);
-			ps.setInt(3, a.ack);
+			ps.setString(1, a.alert_uuid);
+			ps.setString(2, a.acc_uuid);
+			ps.setString(3, a.msg);
 			ps.executeUpdate();
 			AlertsTable = null;
 		}
@@ -1066,7 +1086,7 @@ public class BuyMe {
 		}
 		
 		public static ArrayList<Alert> getByUser(String acc_uuid) throws SQLException {
-			ArrayList<Alert> alerts = getAll();
+			ArrayList<Alert> alerts = get();
 			ArrayList<Alert> userAlerts = new ArrayList<Alert>();
 			
 			for (Alert a : alerts) {

@@ -26,6 +26,7 @@
   <link rel="stylesheet" href="./css/home.css">
   <link rel="stylesheet" href="./css/slider.css">
   <title>BuyMe - Home</title>
+  <script src="https://kit.fontawesome.com/56050ab723.js" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -42,31 +43,31 @@
       <section class="MS-content product-listing">
         <article class="product-container item">
           <a href="listings.jsp?search-filters=category&search-query=Sports">
-            <h3 class="category-title">sports</h3>
+            <h3 class="category-title">sports<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'sports')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "sports") != null ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/volleyball.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
           <a href="listings.jsp?search-filters=category&search-query=Clothing">
-            <h3 class="category-title">clothing</h3>
+            <h3 class="category-title">clothing<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'clothing')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "clothing") != null ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/tshirt.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
           <a href="listings.jsp?search-filters=category&search-query=Vehicles">
-            <h3 class="category-title">vehicles</h3>
+            <h3 class="category-title">vehicles<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'vehicles')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "vehicles") != null ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/car.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
           <a href="listings.jsp?search-filters=category&search-query=Jewelry">
-            <h3 class="category-title">jewelry</h3>
+            <h3 class="category-title">jewelry<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'jewelry')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "jewelry") != null ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/diamond.png" alt="" class="category-img">
           </a>
         </article>
         <article class="product-container item">
           <a href="#listings.jsp?search-filters=category&search-query=Electronics">
-            <h3 class="category-title">electronics</h3>
+            <h3 class="category-title">electronics<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'electronics')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "electronics") != null ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/desktop.png" alt="" class="category-img">
           </a>
         </article>
@@ -116,6 +117,12 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="./js/multislider.min.js"></script>
   <script src="./js/initialize-slider.js"></script>
+  <script>
+  	function setAlert(alert_type, alert) {
+  		fetch("setAlert.jsp?alert_type=" + alert_type + "&alert=" + alert);
+  		location.reload(true);
+  	}
+  </script>
 </body>
 
 </html>

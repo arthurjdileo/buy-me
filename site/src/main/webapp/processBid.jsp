@@ -43,6 +43,9 @@
 	
 	if (BuyMe.Listings.checkWin(l)) {
 		BuyMe.Users.updateCredits(u, u.credits-bidAmount);
+		String alertUUID = BuyMe.genUUID();
+		Alert a = new Alert(alertUUID, b.buyer_uuid, "<a href='listing-item.jsp?sold=1&listingUUID=" + listingUUID + "'>You won " + l.item_name + "!</a>");
+		BuyMe.Alerts.insert(a);
 		response.sendRedirect("listing-item.jsp?sold=1&listingUUID=" + listingUUID);
 		return;
 	}

@@ -191,8 +191,10 @@
                 <h3 class="">This Auction Ends in:</h3>
                 <% if (sold == 0) { %>
                 <h4 class="timeout-big"><span class="product-time" id="demo">00:00</span></h4>
-                <% } else { %>
-                <h4 class="timeout-big"><span class="product-time">SOLD</span></h4>
+                <% } else if (sold == 1 && BuyMe.TransactionHistory.get(l.listing_uuid).buyer_uuid.equals(u.account_uuid)) { %>
+                <h4 class="timeout-big"><span class="product-time">YOU WON!</span></h4>
+                <% } else {%>
+                <h4 class="timeout-big"><span class="product-time">SOLD TO <%= BuyMe.Users.get(BuyMe.TransactionHistory.get(l.listing_uuid).buyer_uuid) %>!</span></h4>
                 <% } %>
                 <ul class="product-details">
                   <li><span><%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() %></span> <%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() > 1 ? "Bidders" : "Bidder" %></li>

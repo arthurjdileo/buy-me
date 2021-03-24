@@ -13,6 +13,7 @@
 	ArrayList<Bid> userBids = BuyMe.Bids.getBidsByUser(u.account_uuid);
 	ArrayList<Transaction> buyerTrans = BuyMe.TransactionHistory.getByBuyer(u.account_uuid);
 	ArrayList<Listing> listings = BuyMe.Listings.getByUser(u.account_uuid);
+	ArrayList<Alert> userAlerts = BuyMe.Alerts.getByUser(u.account_uuid);
 %>
 
 <!DOCTYPE html>
@@ -177,10 +178,9 @@
             <article class="panel-article notifications-panel">
               <h3 class="panel-article-title">Notifications </h3>
               <div class="notifications-container">
-                <div class="notification-item">notification here</div>
-                <div class="notification-item">notification here</div>
-                <div class="notification-item">notification here</div>
-                <div class="notification-item">notification here</div>
+                <% for (Alert a : userAlerts) { %>
+                <div class="notification-item"><%= a.msg %><span onclick="ackNotification('<%= a.alert_uuid %>')" class="closebtn">&times;</span></div>
+                <% } %>
               </div>
             </article>
           </section>
@@ -471,12 +471,18 @@
             <table class="listing-table">
               <thead class="listing-table__head">
                 <th class="listing-table__th">Product</th>
+                <th class="listing-table__th view-column">View</th>
               </thead>
               <tbody class="listing-table__body">
                 <% for (Transaction t : buyerTrans) { %>
                 <tr class="listing-table__tr">
                   <td class="listing-table__td"><b><%= BuyMe.Listings.get(t.listing_uuid).item_name %></b><br>
                     <p><%= BuyMe.Listings.get(t.listing_uuid).description %></p>
+                  </td>
+                  <td class="listing-table__td view-column">
+                    <button type="button" name="button" class="btn btn-sm" onclick="location.href='listing-item.jsp?sold=1&listingUUID=<%= t.listing_uuid %>'">
+                      view item
+                    </button>
                   </td>
 				<% } %>
                 </tr>
@@ -505,7 +511,10 @@
 	  if (!window.confirm("Are you sure you want to delete " + itemName)) return;
 
 	  fetch("deleteListing.jsp?listingUUID=" + listingUUID);
-	  
+  }
+  
+  function ackNotification(alert_uuid) {
+	  fetch("ackNotification.jsp?alertUUID=" + alert_uuid);
   }
   </script>
 

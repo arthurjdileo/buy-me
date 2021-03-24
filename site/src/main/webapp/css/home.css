@@ -1,3 +1,18 @@
+/* The close button */
+.closebtn {
+  color: #ff7800;
+  font-weight: bold;
+  float: right;
+  font-size: 22px;
+  line-height: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+  color: green;
+}
 
 /* ******************* home general style ***************************/
 
