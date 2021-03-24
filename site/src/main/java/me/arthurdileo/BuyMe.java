@@ -962,9 +962,119 @@ public class BuyMe {
 		}
 	}
 	
+	// table to contain user alert information
+	// on matching criteria, send to actual alerts table
+	public static class SetAlerts {
+		static ArrayList<SetAlert> SetAlertsTable;
+		
+		// get admin by acc_uuid
+		public static ArrayList<SetAlert> get() throws SQLException {
+			return getAll();
+		}
+		
+		// updates table from db
+		static ArrayList<SetAlert> getAll() throws SQLException {
+			loadDatabase();
+			if (SetAlertsTable == null) {
+				SetAlertsTable = new ArrayList<SetAlert>();
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery("select * from SetAlerts;");
+				while (rs.next()) {
+					SetAlert a = new SetAlert(rs);
+					SetAlertsTable.add(a);
+				}
+			}
+			return SetAlertsTable;
+		}
+		
+		public static void insert(SetAlert a) throws SQLException {
+			loadDatabase();
+			String query = "INSERT INTO SetAlerts(alert_uuid, acc_uuid, alert_type, alert, is_active) VALUES (?, ?, ?, ?, ?);";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, a.alert_uuid);
+			ps.setString(2, a.acc_uuid);
+			ps.setString(3, a.alert_type);
+			ps.setString(4, a.alert);
+			ps.setInt(5, a.is_active);
+			ps.executeUpdate();
+			SetAlertsTable = null;
+		}
+		
+		public static void remove(String alert_uuid) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE SetAlerts SET is_active = 0 WHERE alert_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, alert_uuid);
+			ps.executeUpdate();
+			SetAlertsTable = null;
+		}
+		
+		public static ArrayList<SetAlert> getByUser(String acc_uuid) throws SQLException {
+			ArrayList<SetAlert> setAlerts = getAll();
+			ArrayList<SetAlert> userAlerts = new ArrayList<SetAlert>();
+			
+			for (SetAlert a : setAlerts) {
+				if (a.acc_uuid.equals(acc_uuid)) {
+					userAlerts.add(a);
+				}
+			}
+			return userAlerts;
+		}
+	}
+
 	public static class Alerts {
 		static ArrayList<Alert> AlertsTable;
 		
+		// get admin by acc_uuid
+		public static ArrayList<Alert> get() throws SQLException {
+			return getAll();
+		}
 		
+		// updates table from db
+		static ArrayList<Alert> getAll() throws SQLException {
+			loadDatabase();
+			if (AlertsTable == null) {
+				AlertsTable = new ArrayList<Alert>();
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery("select * from Alerts;");
+				while (rs.next()) {
+					Alert a = new Alert(rs);
+					AlertsTable.add(a);
+				}
+			}
+			return AlertsTable;
+		}
+		
+		public static void insert(Alert a) throws SQLException {
+			loadDatabase();
+			String query = "INSERT INTO SetAlerts(acc_uuid, msg, ack) VALUES (?, ?, ?);";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, a.acc_uuid);
+			ps.setString(2, a.msg);
+			ps.setInt(3, a.ack);
+			ps.executeUpdate();
+			AlertsTable = null;
+		}
+		
+		public static void ack(String alert_uuid) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE Alerts SET ack = 1 WHERE alert_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, alert_uuid);
+			ps.executeUpdate();
+			AlertsTable = null;
+		}
+		
+		public static ArrayList<Alert> getByUser(String acc_uuid) throws SQLException {
+			ArrayList<Alert> alerts = getAll();
+			ArrayList<Alert> userAlerts = new ArrayList<Alert>();
+			
+			for (Alert a : alerts) {
+				if (a.acc_uuid.equals(acc_uuid)) {
+					userAlerts.add(a);
+				}
+			}
+			return userAlerts;
+		}
 	}
 }
