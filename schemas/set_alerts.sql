@@ -1,6 +1,6 @@
 CREATE TABLE SetAlerts(
 	id int NOT NULL AUTO_INCREMENT,
-	alert_uuid varchar(36) NOT NULL,
+	alert_uuid varchar(36) UNIQUE NOT NULL,
 	acc_uuid varchar(36) NOT NULL,
 	created datetime DEFAULT NOW() NOT NULL,
 	alert_type varchar(15) NOT NULL,

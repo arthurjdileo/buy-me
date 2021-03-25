@@ -4,28 +4,28 @@ import java.sql.*;
 
 /*
  * id
+ * set_alert_uuid
  * alert_uuid
- * acc_uuid
  * created
  * msg
  * ack
  */
 
 public class Alert {
+	public String set_alert_uuid;
 	public String alert_uuid;
-	public String acc_uuid;
 	public java.sql.Timestamp created;
 	public String msg;
 	public int ack;
 	
-	public Alert(String alert_uuid, String acc_uuid, String msg) {
+	public Alert(String set_alert_uuid, String alert_uuid, String msg) {
+		this.set_alert_uuid = set_alert_uuid;
 		this.alert_uuid = alert_uuid;
-		this.acc_uuid = acc_uuid;
 		this.msg = msg;
 	}
 	
 	public Alert(ResultSet rs) throws SQLException {
-		this(rs.getString("alert_uuid"), rs.getString("acc_uuid"), rs.getString("msg"));
+		this(rs.getString("set_alert_uuid"), rs.getString("alert_uuid"), rs.getString("msg"));
 		this.created = rs.getTimestamp("created");
 		this.ack = rs.getInt("ack");
 	}

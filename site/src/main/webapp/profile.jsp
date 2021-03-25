@@ -14,7 +14,9 @@
 	ArrayList<Transaction> buyerTrans = BuyMe.TransactionHistory.getByBuyer(u.account_uuid);
 	ArrayList<Listing> listings = BuyMe.Listings.getByUser(u.account_uuid);
 	ArrayList<SetAlert> setAlerts = BuyMe.SetAlerts.getByUser(u.account_uuid);
-	ArrayList<Alert> userAlerts = BuyMe.Alerts.getByUser(u.account_uuid);
+	ArrayList<Alert> userAlerts = BuyMe.Alerts.getByUserBid(u.account_uuid);
+	ArrayList<SetAlert> setAlertsCategory = BuyMe.SetAlerts.getByUserCategory(u.account_uuid);
+	ArrayList<Alert> userAlertsCategory = BuyMe.Alerts.getByUserCategory(u.account_uuid);
 %>
 
 <!DOCTYPE html>
@@ -183,9 +185,9 @@
               <h3 class="panel-article-title">Notifications </h3>
               <div class="notifications-container">
                 <% for (Alert a : userAlerts) { %>
-                <form name="ackNotification">
+                <form action="ackNotification.jsp" id="<%= a.alert_uuid %>">
                 <input name="alertUUID" value="<%= a.alert_uuid %>" hidden></input>
-                <div class="notification-item"><%= a.msg %><span onclick="document.forms['ackNotification'].submit();" class="closebtn">&times;</span></div>
+                <div class="notification-item"><%= a.msg %><span onclick="document.getElementById('<%= a.alert_uuid %>').submit(); console.log('hit');" class="closebtn">&times;</span></div>
                 </form>
                 <% } %>
               </div>
@@ -197,277 +199,43 @@
           <section class="">
             <!-- Tab links -->
             <div class="tab">
-              <button class="tablinks" onclick="showAlertListing(event, 'alert-type-1')">Alert 1</button>
-              <button class="tablinks" onclick="showAlertListing(event, 'alert-type-2')">Alert 2</button>
-              <button class="tablinks" onclick="showAlertListing(event, 'alert-type-3')">Alert 3</button>
+              <% for (SetAlert sa : setAlertsCategory) { %>
+              <button class="tablinks" onclick="showAlertListing(event, '<%= sa.alert_uuid %>')"><%= sa.alert %></button>
+              <% } %>
             </div>
 
             <!-- Tab content -->
-            <div id="alert-type-1" class="tabcontent">
-              <h3>List of listing alert type 1</h3>
+            <% for (SetAlert sa : setAlertsCategory) { %>
+            <div id="<%= sa.alert_uuid %>" class="tabcontent">
+              <h3>List of <%= sa.alert %> Alert</h3>
               <ul class="alert-type-list">
+              <% for (Alert a : userAlertsCategory) { %>
+              <% Listing l = BuyMe.Listings.get(a.msg); %>
                 <li>
                   <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/119/100" alt="" class="product-img">
+                    <img src="<%= l.image %>" width="100" height="100" alt="" class="product-img">
                     <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
+                      <h3 class="product-title"><%= l.item_name %></h3>
                       <ul class="product-details">
                         <li>
-                          <p>Product description This product...</p>
+                          <p><%= l.description %></p>
                         </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
+                        <li>Price <span class="product-price"><%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
+                        <li>Time <span class="product-time" id="<%= l.listing_uuid %>">00:00</span></li>
+                        <!--  <li>Currency <span class="product-currency">USD</span></li>-->
                       </ul>
                       <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
+                        <button class="btn btn-sm btn-bid " onclick="location.href='listing-item.jsp?listingUUID=<%= l.listing_uuid %>'">view listing</button>
 
                       </div>
                     </div>
                   </article>
                 </li>
-                <li>
-                  <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/119/100" alt="" class="product-img">
-                    <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
-                      <ul class="product-details">
-                        <li>
-                          <p>Product description This product...</p>
-                        </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
-                      </ul>
-                      <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
-
-                      </div>
-                    </div>
-                  </article>
-                </li>
-                <li>
-                  <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/119/100" alt="" class="product-img">
-                    <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
-                      <ul class="product-details">
-                        <li>
-                          <p>Product description This product...</p>
-                        </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
-                      </ul>
-                      <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
-
-                      </div>
-                    </div>
-                  </article>
-                </li>
-
-                <li>
-                  <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/119/100" alt="" class="product-img">
-                    <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
-                      <ul class="product-details">
-                        <li>
-                          <p>Product description This product...</p>
-                        </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
-                      </ul>
-                      <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
-
-                      </div>
-                    </div>
-                  </article>
-                </li>
+                <% } %>
               </ul>
             </div>
+            <% } %>
             <!--end tabcontent-->
-
-            <div id="alert-type-2" class="tabcontent">
-              <h3>List of listing alert type 2</h3>
-              <ul class="alert-type-list">
-                <li>
-                  <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/118/100" alt="" class="product-img">
-                    <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
-                      <ul class="product-details">
-                        <li>
-                          <p>Product description This product...</p>
-                        </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
-                      </ul>
-                      <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
-
-                      </div>
-                    </div>
-                  </article>
-                </li>
-                <li>
-                  <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/118/100" alt="" class="product-img">
-                    <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
-                      <ul class="product-details">
-                        <li>
-                          <p>Product description This product...</p>
-                        </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
-                      </ul>
-                      <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
-
-                      </div>
-                    </div>
-                  </article>
-                </li>
-                <li>
-                  <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/118/100" alt="" class="product-img">
-                    <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
-                      <ul class="product-details">
-                        <li>
-                          <p>Product description This product...</p>
-                        </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
-                      </ul>
-                      <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
-
-                      </div>
-                    </div>
-                  </article>
-                </li>
-
-                <li>
-                  <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/118/100" alt="" class="product-img">
-                    <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
-                      <ul class="product-details">
-                        <li>
-                          <p>Product description This product...</p>
-                        </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
-                      </ul>
-                      <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
-
-                      </div>
-                    </div>
-                  </article>
-                </li>
-              </ul>
-            </div>
-            <!--end tabcontent-->
-
-            <div id="alert-type-3" class="tabcontent">
-              <h3>List of listing alert type 3</h3>
-              <ul class="alert-type-list">
-                <li>
-                  <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/117/100" alt="" class="product-img">
-                    <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
-                      <ul class="product-details">
-                        <li>
-                          <p>Product description This product...</p>
-                        </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
-                      </ul>
-                      <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
-
-                      </div>
-                    </div>
-                  </article>
-                </li>
-                <li>
-                  <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/117/100" alt="" class="product-img">
-                    <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
-                      <ul class="product-details">
-                        <li>
-                          <p>Product description This product...</p>
-                        </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
-                      </ul>
-                      <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
-
-                      </div>
-                    </div>
-                  </article>
-                </li>
-                <li>
-                  <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/117/100" alt="" class="product-img">
-                    <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
-                      <ul class="product-details">
-                        <li>
-                          <p>Product description This product...</p>
-                        </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
-                      </ul>
-                      <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
-
-                      </div>
-                    </div>
-                  </article>
-                </li>
-
-                <li>
-                  <article class="product-container alert-listing-item">
-                    <img src="https://picsum.photos/id/117/100" alt="" class="product-img">
-                    <div class="product-data-container">
-                      <h3 class="product-title">product name</h3>
-                      <ul class="product-details">
-                        <li>
-                          <p>Product description This product...</p>
-                        </li>
-                        <li>Price <span class="product-price">100</span></li>
-                        <li>Time <span class="product-time" id="demo">00:00</span></li>
-                        <li>Currency <span class="product-currency">USD</span></li>
-                      </ul>
-                      <div class="bid-options">
-                        <button class="btn btn-sm btn-bid ">view listing</button>
-
-                      </div>
-                    </div>
-                  </article>
-                </li>
-              </ul>
-            </div>
-            <!--end tabcontent-->
-
-            <button class="btn btn-sm danger create-alert-btn">Create alert</button>
           </section>
         </div>
         <!--end panel-->
@@ -512,6 +280,14 @@
 
   <script src="./js/tabs.js"></script>
   <script src="./js/hash-url.js"></script>
+  <script src="./js/timeout.js"></script>
+  
+  <script>
+    <% for (Alert a : userAlertsCategory) { %>
+    <% Listing l = BuyMe.Listings.get(a.msg); %>
+	countDown(new Date ('<%= l.end_time %> UTC').getTime(),"<%= l.listing_uuid %>");
+	<%}%>
+  </script>
 
 </body>
 

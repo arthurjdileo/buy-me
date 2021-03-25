@@ -12,6 +12,16 @@
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
 	
 	ArrayList<Listing> listings = BuyMe.Listings.getAsList();
+	SetAlert sportsAlert = BuyMe.SetAlerts.exists(u.account_uuid, "category", "sports");
+	if (sportsAlert != null && sportsAlert.is_active == 0) sportsAlert = null;
+	SetAlert clothingAlert = BuyMe.SetAlerts.exists(u.account_uuid, "category", "clothing");
+	if (clothingAlert != null && clothingAlert.is_active == 0) clothingAlert = null;
+	SetAlert vehiclesAlert = BuyMe.SetAlerts.exists(u.account_uuid, "category", "vehicles");
+	if (vehiclesAlert != null && vehiclesAlert.is_active == 0) vehiclesAlert = null;
+	SetAlert jewelryAlert = BuyMe.SetAlerts.exists(u.account_uuid, "category", "jewelry");
+	if (jewelryAlert != null && jewelryAlert.is_active == 0) jewelryAlert = null;
+	SetAlert electronicsAlert = BuyMe.SetAlerts.exists(u.account_uuid, "category", "electronics");
+	if (electronicsAlert != null && electronicsAlert.is_active == 0) electronicsAlert = null;
 %>
 
 <!DOCTYPE html>
@@ -41,35 +51,56 @@
     <div id="categoriesSlider" class="slider">
       <!-- Give wrapper ID to target with jQuery & CSS -->
       <section class="MS-content product-listing">
+      <!-- fetch("setAlert.jsp?alert_type=" + alert_type + "&alert=" + alert); -->
         <article class="product-container item">
+          <form action="<%= sportsAlert == null ? "setAlert.jsp" : "removeAlert.jsp" %>" id="sports-alert">
+          <input name="alert_type" value="category" hidden>
+          <input name="alert" value="Sports" hidden>
           <a href="listings.jsp?search-filters=category&search-query=Sports">
-            <h3 class="category-title">sports<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'sports')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "sports") != null && BuyMe.SetAlerts.exists(u.account_uuid, "category", "sports").is_active == 1 ? "fa" : "far" %> fa-star"></i></span></h3>
+            <h3 class="category-title">sports<span onclick="event.preventDefault(); document.getElementById('sports-alert').submit()" class="closebtn"><i class="<%= sportsAlert != null ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/volleyball.png" alt="" class="category-img">
           </a>
+        </form>
         </article>
         <article class="product-container item">
+          <form action="<%= clothingAlert == null ? "setAlert.jsp" : "removeAlert.jsp" %>" id="clothing-alert">
+          <input name="alert_type" value="category" hidden>
+          <input name="alert" value="Clothing" hidden>
           <a href="listings.jsp?search-filters=category&search-query=Clothing">
-            <h3 class="category-title">clothing<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'clothing')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "clothing") != null && BuyMe.SetAlerts.exists(u.account_uuid, "category", "clothing").is_active == 1 ? "fa" : "far" %> fa-star"></i></span></h3>
+            <h3 class="category-title">clothing<span onclick="event.preventDefault(); document.getElementById('clothing-alert').submit()" class="closebtn"><i class="<%= clothingAlert != null ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/tshirt.png" alt="" class="category-img">
           </a>
+          </form>
         </article>
         <article class="product-container item">
+          <form action="<%= vehiclesAlert == null ? "setAlert.jsp" : "removeAlert.jsp" %>" id="vehicles-alert">
+          <input name="alert_type" value="category" hidden>
+          <input name="alert" value="Vehicles" hidden>
           <a href="listings.jsp?search-filters=category&search-query=Vehicles">
-            <h3 class="category-title">vehicles<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'vehicles')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "vehicles") != null && BuyMe.SetAlerts.exists(u.account_uuid, "category", "vehicles").is_active == 1 ? "fa" : "far" %> fa-star"></i></span></h3>
+            <h3 class="category-title">vehicles<span onclick="event.preventDefault(); document.getElementById('vehicles-alert').submit()" class="closebtn"><i class="<%= vehiclesAlert != null ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/car.png" alt="" class="category-img">
           </a>
+        </form>
         </article>
         <article class="product-container item">
+          <form action="<%= jewelryAlert == null ? "setAlert.jsp" : "removeAlert.jsp" %>" id="jewelry-alert">
+          <input name="alert_type" value="category" hidden>
+          <input name="alert" value="Jewelry" hidden>
           <a href="listings.jsp?search-filters=category&search-query=Jewelry">
-            <h3 class="category-title">jewelry<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'jewelry')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "jewelry") != null && BuyMe.SetAlerts.exists(u.account_uuid, "category", "jewelry").is_active == 1 ? "fa" : "far" %> fa-star"></i></span></h3>
+            <h3 class="category-title">jewelry<span onclick="event.preventDefault(); document.getElementById('jewelry-alert').submit()" class="closebtn"><i class="<%= jewelryAlert != null ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/diamond.png" alt="" class="category-img">
           </a>
+          </form>
         </article>
         <article class="product-container item">
-          <a href="#listings.jsp?search-filters=category&search-query=Electronics">
-            <h3 class="category-title">electronics<span class="closebtn"><i onclick="event.preventDefault(); setAlert('category', 'electronics')" class="<%= BuyMe.SetAlerts.exists(u.account_uuid, "category", "electronics") != null && BuyMe.SetAlerts.exists(u.account_uuid, "category", "electronics").is_active == 1 ? "fa" : "far" %> fa-star"></i></span></h3>
+          <form action="<%= electronicsAlert == null ? "setAlert.jsp" : "removeAlert.jsp" %>" id="electronics-alert">
+          <input name="alert_type" value="category" hidden>
+          <input name="alert" value="Electronics" hidden>
+          <a href="listings.jsp?search-filters=category&search-query=Electronics">
+            <h3 class="category-title">electronics<span onclick="event.preventDefault(); document.getElementById('electronics-alert').submit()" class="closebtn"><i class="<%= electronicsAlert != null ? "fa" : "far" %> fa-star"></i></span></h3>
             <img src="./img/desktop.png" alt="" class="category-img">
           </a>
+          </form>
         </article>
       </section>
 
@@ -117,12 +148,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="./js/multislider.min.js"></script>
   <script src="./js/initialize-slider.js"></script>
-  <script>
-  	function setAlert(alert_type, alert) {
-  		fetch("setAlert.jsp?alert_type=" + alert_type + "&alert=" + alert);
-  		location.reload(true);
-  	}
-  </script>
 </body>
 
 </html>

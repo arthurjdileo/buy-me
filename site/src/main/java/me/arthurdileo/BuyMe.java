@@ -956,14 +956,16 @@ public class BuyMe {
 					BuyMe.Bids.insert(newBid);
 					if (BuyMe.Listings.checkWin(BuyMe.Listings.get(b.listing_uuid))) {
 						BuyMe.Users.updateCredits(BuyMe.Users.get(b.buyer_uuid), BuyMe.Users.get(b.buyer_uuid).credits-bidAmt);
-						String alertUUID = BuyMe.genUUID();
-						Alert a = new Alert(alertUUID, b.buyer_uuid, "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'You won " + BuyMe.Listings.get(listing_uuid).item_name + "!></a>");
-						BuyMe.Alerts.insert(a);
+						SetAlert currentAlert = BuyMe.SetAlerts.exists(b.buyer_uuid, "bid", b.listing_uuid);
+						if (currentAlert != null) {
+							Alert a = new Alert(currentAlert.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'You won " + BuyMe.Listings.get(listing_uuid).item_name + "!></a>");
+							BuyMe.Alerts.insert(a);
+						}
 						
 						ArrayList<SetAlert> listingAlerts = BuyMe.SetAlerts.getByListing(listing_uuid);
 						for (SetAlert sa : listingAlerts) {
 							if (sa.acc_uuid.equals(b.buyer_uuid)) continue;
-							BuyMe.Alerts.insert(new Alert(BuyMe.genUUID(), sa.acc_uuid, "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'You lost " + BuyMe.Listings.get(listing_uuid).item_name + "!></a>"));
+							BuyMe.Alerts.insert(new Alert(sa.alert_uuid, sa.acc_uuid, "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'You lost " + BuyMe.Listings.get(listing_uuid).item_name + "!></a>"));
 						}
 					}
 					BuyMe.SetAlerts.bidProcess(listing_uuid, newBid);
@@ -975,23 +977,27 @@ public class BuyMe {
 	// table to contain user alert information
 	// on matching criteria, send to actual alerts table
 	public static class SetAlerts {
-		static ArrayList<SetAlert> SetAlertsTable;
+		static HashMap<String, SetAlert> SetAlertsTable;
 		
 		// get admin by acc_uuid
-		public static ArrayList<SetAlert> get() throws SQLException {
-			return getAll();
+		public static SetAlert get(String alert_uuid) throws SQLException {
+			return getAll().get(alert_uuid);
+		}
+		
+		public static ArrayList<SetAlert> getAsList() throws SQLException {
+			return new ArrayList<SetAlert>(getAll().values());
 		}
 		
 		// updates table from db
-		static ArrayList<SetAlert> getAll() throws SQLException {
+		static HashMap<String, SetAlert> getAll() throws SQLException {
 			loadDatabase();
 			if (SetAlertsTable == null) {
-				SetAlertsTable = new ArrayList<SetAlert>();
+				SetAlertsTable = new HashMap<String, SetAlert>();
 				Statement st = conn.createStatement();
 				ResultSet rs = st.executeQuery("select * from SetAlerts;");
 				while (rs.next()) {
 					SetAlert a = new SetAlert(rs);
-					SetAlertsTable.add(a);
+					SetAlertsTable.put(a.alert_uuid, a);
 				}
 			}
 			return SetAlertsTable;
@@ -1028,7 +1034,7 @@ public class BuyMe {
 		}
 		
 		public static SetAlert exists(String account_uuid, String alert_type, String alert) throws SQLException {
-			ArrayList<SetAlert> alerts = get();
+			ArrayList<SetAlert> alerts = getAsList();
 			
 			for (SetAlert a : alerts) {
 				if (a.acc_uuid.equals(account_uuid) && a.alert_type.equalsIgnoreCase(alert_type) && a.alert.equalsIgnoreCase(alert)) {
@@ -1039,7 +1045,7 @@ public class BuyMe {
 		}
 		
 		public static ArrayList<SetAlert> getByUser(String acc_uuid) throws SQLException {
-			ArrayList<SetAlert> setAlerts = getAll();
+			ArrayList<SetAlert> setAlerts = getAsList();
 			ArrayList<SetAlert> userAlerts = new ArrayList<SetAlert>();
 			
 			for (SetAlert a : setAlerts) {
@@ -1050,12 +1056,36 @@ public class BuyMe {
 			return userAlerts;
 		}
 		
+		public static ArrayList<SetAlert> getByUserCategory(String acc_uuid) throws SQLException {
+			ArrayList<SetAlert> setAlerts = getAsList();
+			ArrayList<SetAlert> userAlerts = new ArrayList<SetAlert>();
+			
+			for (SetAlert a : setAlerts) {
+				if (a.acc_uuid.equals(acc_uuid) && a.alert_type.equalsIgnoreCase("category") && a.is_active == 1) {
+					userAlerts.add(a);
+				}
+			}
+			return userAlerts;
+		}
+		
+		public static ArrayList<SetAlert> getByUserItem(String acc_uuid) throws SQLException {
+			ArrayList<SetAlert> setAlerts = getAsList();
+			ArrayList<SetAlert> userAlerts = new ArrayList<SetAlert>();
+			
+			for (SetAlert a : setAlerts) {
+				if (a.acc_uuid.equals(acc_uuid) && a.alert_type.equalsIgnoreCase("item") && a.is_active == 1) {
+					userAlerts.add(a);
+				}
+			}
+			return userAlerts;
+		}
+		
 		public static ArrayList<SetAlert> getByListing(String listing_uuid) throws SQLException {
-			ArrayList<SetAlert> setAlerts = getAll();
+			ArrayList<SetAlert> setAlerts = getAsList();
 			ArrayList<SetAlert> listingAlerts = new ArrayList<SetAlert>();
 			
 			for (SetAlert a : setAlerts) {
-				if (a.alert_type.equalsIgnoreCase("bid") && a.alert.equals(listing_uuid)) {
+				if (a.alert_type.equalsIgnoreCase("bid") && a.alert.equals(listing_uuid) && a.is_active == 1) {
 					listingAlerts.add(a);
 				}
 			}
@@ -1063,7 +1093,7 @@ public class BuyMe {
 		}
 		
 		public static void bidProcess(String listing_uuid, Bid most_recent) throws SQLException {
-			ArrayList<SetAlert> setAlerts = getAll();
+			ArrayList<SetAlert> setAlerts = getAsList();
 			ArrayList<Bid> listingBids = BuyMe.Bids.getBidsByListing(listing_uuid);
 
 			for (SetAlert a : setAlerts) {
@@ -1073,9 +1103,9 @@ public class BuyMe {
 						if (lb.buyer_uuid.equals(a.acc_uuid)) userHasBid = true;
 					}
 					if (userHasBid) {
-						BuyMe.Alerts.insert(new Alert(BuyMe.genUUID(), a.acc_uuid, "<a href='" + "listing-item.jsp?listingUUID=" + listing_uuid + "'>You were outbid on " + BuyMe.Listings.get(listing_uuid).item_name + "</a>"));
+						BuyMe.Alerts.insert(new Alert(a.alert_uuid, BuyMe.genUUID(), "<a href='" + "listing-item.jsp?listingUUID=" + listing_uuid + "'>You were outbid on " + BuyMe.Listings.get(listing_uuid).item_name + "</a>"));
 					} else {
-						BuyMe.Alerts.insert(new Alert(BuyMe.genUUID(), a.acc_uuid, "<a href='" + "listing-item.jsp?listingUUID=" + listing_uuid + "'>A bid was placed on " + BuyMe.Listings.get(listing_uuid).item_name + "</a>"));
+						BuyMe.Alerts.insert(new Alert(a.alert_uuid, BuyMe.genUUID(), "<a href='" + "listing-item.jsp?listingUUID=" + listing_uuid + "'>A bid was placed on " + BuyMe.Listings.get(listing_uuid).item_name + "</a>"));
 					}
 				}
 			}
@@ -1114,11 +1144,10 @@ public class BuyMe {
 		
 		public static void insert(Alert a) throws SQLException {
 			loadDatabase();
-			String query = "INSERT INTO Alerts(alert_uuid, acc_uuid, msg) VALUES (?, ?, ?);";
+			String query = "INSERT INTO Alerts(set_alert_uuid, alert_uuid, msg) VALUES (?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, a.alert_uuid);
-			ps.setString(2, a.acc_uuid);
-			ps.setString(3, a.msg);
+			ps.setString(2, a.msg);
 			ps.executeUpdate();
 			AlertsTable = null;
 		}
@@ -1132,12 +1161,24 @@ public class BuyMe {
 			AlertsTable = null;
 		}
 		
-		public static ArrayList<Alert> getByUser(String acc_uuid) throws SQLException {
+		public static ArrayList<Alert> getByUserBid(String acc_uuid) throws SQLException {
 			ArrayList<Alert> alerts = get();
 			ArrayList<Alert> userAlerts = new ArrayList<Alert>();
 			
 			for (Alert a : alerts) {
-				if (a.acc_uuid.equals(acc_uuid)) {
+				if (BuyMe.SetAlerts.get(a.set_alert_uuid).acc_uuid.equals(acc_uuid) && BuyMe.SetAlerts.get(a.set_alert_uuid).alert_type.equalsIgnoreCase("bid")) {
+					userAlerts.add(a);
+				}
+			}
+			return userAlerts;
+		}
+		
+		public static ArrayList<Alert> getByUserCategory(String acc_uuid) throws SQLException {
+			ArrayList<Alert> alerts = get();
+			ArrayList<Alert> userAlerts = new ArrayList<Alert>();
+			
+			for (Alert a : alerts) {
+				if (BuyMe.SetAlerts.get(a.set_alert_uuid).acc_uuid.equals(acc_uuid)) {
 					userAlerts.add(a);
 				}
 			}
