@@ -218,7 +218,7 @@
                       <h3 class="product-title"><%= l.item_name %></h3>
                       <ul class="product-details">
                         <li>
-                          <p><%= l.description %></p>
+                          <p style="max-width: 315px;"><%= l.description %></p>
                         </li>
                         <li>Price <span class="product-price"><%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
                         <li>Time <span class="product-time" id="<%= l.listing_uuid %>">00:00</span></li>

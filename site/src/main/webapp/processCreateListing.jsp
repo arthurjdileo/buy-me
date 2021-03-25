@@ -42,9 +42,10 @@
 	Listing l = new Listing(listingUUID, u.account_uuid, category,
 			subCategory, description, product, imgURL, numDays,
 			currency, startPrice, reservePrice,
-			0, endDate, bidIncrement, 1);
+			endDate, bidIncrement, 1);
 
 	BuyMe.Listings.insert(l);
+	BuyMe.SetAlerts.categoryProcess(l);
 	
 	// redirect to listings page
 	response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID);

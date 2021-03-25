@@ -13,7 +13,6 @@ CREATE TABLE Listing(
 	currency varchar(10) DEFAULT 'USD' NOT NULL,
 	start_price decimal(10,2) NOT NULL,
 	reserve_price decimal(10,2),
-	num_bids int DEFAULT 0 NOT NULL,
 	end_time datetime NOT NULL,
 	bid_increment decimal(10,2) NOT NULL,
 	is_active int DEFAULT 1 NOT NULL,

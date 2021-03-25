@@ -165,7 +165,7 @@
               <ul class="product-details main-details">
                 <li class="product-price product-detail-box"><%= sold == 0 ? "Current Price" : "Sold Price" %> <span class="product-price-amount"><span class="currency-symbol">$</span><%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
                 <li class="product-detail-box"><%= l.description %></li>
-                <% if (sold == 0) { %>
+                <% if (sold == 0 && !l.seller_uuid.equals(u.account_uuid)) { %>
                 <li class="bid-form-box">
                   <div class="row-container">
                     <div class="">

@@ -265,7 +265,7 @@ public class BuyMe {
 		// insert listing into db
 		public static void insert(Listing l) throws SQLException {
 			loadDatabase();
-			String query = "INSERT INTO Listing(listing_uuid, seller_uuid, cat_id, sub_id, item_name, description, image, listing_days, currency, start_price, reserve_price, num_bids, bid_increment, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE cat_id = ?, sub_id = ?, item_name = ?, description = ?, image = ?, listing_days = ?, currency = ?, start_price = ?, reserve_price = ?, bid_increment = ?, end_time = ?;";
+			String query = "INSERT INTO Listing(listing_uuid, seller_uuid, cat_id, sub_id, item_name, description, image, listing_days, currency, start_price, reserve_price, bid_increment, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE cat_id = ?, sub_id = ?, item_name = ?, description = ?, image = ?, listing_days = ?, currency = ?, start_price = ?, reserve_price = ?, bid_increment = ?, end_time = ?;";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, l.listing_uuid);
 			ps.setString(2, l.seller_uuid);
@@ -282,20 +282,19 @@ public class BuyMe {
 			} else {
 				ps.setDouble(11, l.reserve_price);
 			}
-			ps.setInt(12, l.num_bids);
-			ps.setDouble(13, l.bid_increment);
-			ps.setTimestamp(14, l.end_time);
-			ps.setInt(15, l.cat_id);
-			ps.setInt(16, l.sub_id);
-			ps.setString(17, l.item_name);
-			ps.setString(18, l.description);
-			ps.setString(19, l.image);
-			ps.setInt(20, l.listing_days);
-			ps.setString(21, l.currency);
-			ps.setDouble(22, l.start_price);
-			ps.setDouble(23, l.reserve_price);
-			ps.setDouble(24, l.bid_increment);
-			ps.setTimestamp(25, l.end_time);
+			ps.setDouble(12, l.bid_increment);
+			ps.setTimestamp(13, l.end_time);
+			ps.setInt(14, l.cat_id);
+			ps.setInt(15, l.sub_id);
+			ps.setString(16, l.item_name);
+			ps.setString(17, l.description);
+			ps.setString(18, l.image);
+			ps.setInt(19, l.listing_days);
+			ps.setString(20, l.currency);
+			ps.setDouble(21, l.start_price);
+			ps.setDouble(22, l.reserve_price);
+			ps.setDouble(23, l.bid_increment);
+			ps.setTimestamp(24, l.end_time);
 			ps.executeUpdate();
 			ListingsTable = null;
 		}
@@ -426,6 +425,16 @@ public class BuyMe {
 				remove(l.listing_uuid);
 				Transaction t = new Transaction(winner.account_uuid, l.seller_uuid, l.listing_uuid, BuyMe.Bids.topBid(l).amount);
 				BuyMe.TransactionHistory.insert(t);
+				ArrayList<SetAlert> listingAlerts = BuyMe.SetAlerts.getByListing(l.listing_uuid);
+				for (SetAlert sa : listingAlerts) {
+					ArrayList<Alert> alerts = BuyMe.Alerts.getBySA(sa.alert_uuid);
+					for (Alert a : alerts) {
+						BuyMe.Alerts.ack(a.alert_uuid);
+					}
+				}
+				for (SetAlert sa : listingAlerts) {
+					BuyMe.SetAlerts.remove(sa.alert_uuid);
+				}
 				return true;
 				// set alert
 			}
@@ -475,27 +484,14 @@ public class BuyMe {
 		// create a new bid
 		public static void insert(Bid b) throws SQLException {
 			loadDatabase();
-//			check for errors
-			// create transaction
 			String query = "INSERT INTO Bid(bid_uuid, buyer_uuid, listing_uuid, amount) VALUES (?, ?, ?, ?);";
-			String query2 = "UPDATE Listing SET num_bids = num_bids + 1 WHERE listing_uuid = ?;";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, b.bid_uuid);
 			ps.setString(2, b.buyer_uuid);
 			ps.setString(3, b.listing_uuid);
 			ps.setDouble(4, b.amount);
 			ps.executeUpdate();
-			PreparedStatement ps2 = conn.prepareStatement(query2);
-			ps2.setString(1, b.listing_uuid);
-			ps2.executeUpdate();
 			BidsTable = null;
-			
-			// winner checks
-//			if (isWinner(b) != null) {
-//				Listings.remove(b.listing_uuid);
-//				Transaction t = new Transaction(b.buyer_uuid, b.seller_uuid, b.listing_uuid, b.amount);
-//				TransactionHistory.insert(t);
-//			}
 		}
 		
 		// get all bids for listing
@@ -1110,6 +1106,17 @@ public class BuyMe {
 				}
 			}
 		}
+		
+		public static void categoryProcess(Listing l) throws SQLException {
+			ArrayList<SetAlert> alerts = getAsList();
+			
+			for (SetAlert sa : alerts) {
+				if (sa.alert_type.equalsIgnoreCase("category") && sa.alert.equalsIgnoreCase(BuyMe.Categories.getByID(l.cat_id).name)) {
+					Alert a = new Alert(sa.alert_uuid, BuyMe.genUUID(), l.listing_uuid);
+					BuyMe.Alerts.insert(a);
+				}
+			}
+		}
 	}
 
 	public static class Alerts {
@@ -1146,8 +1153,9 @@ public class BuyMe {
 			loadDatabase();
 			String query = "INSERT INTO Alerts(set_alert_uuid, alert_uuid, msg) VALUES (?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
-			ps.setString(1, a.alert_uuid);
-			ps.setString(2, a.msg);
+			ps.setString(1, a.set_alert_uuid);
+			ps.setString(2, a.alert_uuid);
+			ps.setString(3, a.msg);
 			ps.executeUpdate();
 			AlertsTable = null;
 		}
@@ -1166,7 +1174,7 @@ public class BuyMe {
 			ArrayList<Alert> userAlerts = new ArrayList<Alert>();
 			
 			for (Alert a : alerts) {
-				if (BuyMe.SetAlerts.get(a.set_alert_uuid).acc_uuid.equals(acc_uuid) && BuyMe.SetAlerts.get(a.set_alert_uuid).alert_type.equalsIgnoreCase("bid")) {
+				if (BuyMe.SetAlerts.get(a.set_alert_uuid).acc_uuid.equals(acc_uuid) && BuyMe.SetAlerts.get(a.set_alert_uuid).alert_type.equalsIgnoreCase("bid") && a.ack == 0) {
 					userAlerts.add(a);
 				}
 			}
@@ -1178,11 +1186,23 @@ public class BuyMe {
 			ArrayList<Alert> userAlerts = new ArrayList<Alert>();
 			
 			for (Alert a : alerts) {
-				if (BuyMe.SetAlerts.get(a.set_alert_uuid).acc_uuid.equals(acc_uuid)) {
+				if (BuyMe.SetAlerts.get(a.set_alert_uuid).acc_uuid.equals(acc_uuid) && a.ack == 0) {
 					userAlerts.add(a);
 				}
 			}
 			return userAlerts;
+		}
+		
+		public static ArrayList<Alert> getBySA(String set_alert_uuid) throws SQLException {
+			ArrayList<Alert> alerts = get();
+			ArrayList<Alert> saAlerts = new ArrayList<Alert>();
+			
+			for (Alert a : alerts) {
+				if (a.set_alert_uuid.equals(set_alert_uuid) && a.ack == 0) {
+					saAlerts.add(a);
+				}
+			}
+			return saAlerts;
 		}
 	}
 }
