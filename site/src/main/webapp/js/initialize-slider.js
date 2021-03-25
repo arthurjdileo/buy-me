@@ -12,4 +12,7 @@ $('#exampleSlider').multislider({
 $('#categoriesSlider').multislider();
 
 // <!-- Initialize with options, if needed -->
-$('#categoriesSlider').multislider('pause');
+$('#categoriesSlider').multislider({
+	interval: 1000,
+	slideAll: false,
+});

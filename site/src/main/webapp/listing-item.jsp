@@ -47,6 +47,7 @@
   <link rel="stylesheet" href="./css/base.css">
   <link rel="stylesheet" href="./css/home.css">
   <link rel="stylesheet" href="./css/listing-item.css">
+  <link rel="stylesheet" href="./css/slider.css">
   <style media="screen">
     .listing-section {
       flex-direction: column;
@@ -207,7 +208,7 @@
               </div>
               <!--end details 2-->
             </div>
-            <% if (sold == 0) { %>
+            <% if (sold == 0 && !l.seller_uuid.equals(u.account_uuid)) { %>
             <div class="bid-options-container">
               <!-- <button class="btn  danger cardbutton" data-btn="bid">bid</button> -->
               <% if (autoBid != null) { %>
@@ -271,6 +272,40 @@
         </article>
 
       </div>
+      <h2 class="listing-title">Other Products Sold by This Seller</h2>
+
+      <section id="exampleSlider">
+        <!-- Give wrapper ID to target with jQuery & CSS -->
+        <section class="MS-content content">
+        <% for (Listing ul : BuyMe.Listings.getByUser(l.seller_uuid)) { %>
+          <article class="product-container card" style="max-width: 360px;">
+            <a href="<%= "listing-item.jsp?listingUUID=" + l.listing_uuid %>" class="listing-item-link">
+              <img src="<%= l.image %>" width="300" height="150" alt="" class="product-img">
+              <h3 class="product-title"><%= l.item_name %></h3>
+              <ul class="product-details">
+                <li>
+                  <p><%= l.description %></p>
+                </li>
+                <li>Price <span class="product-price">$<%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
+                <li>Time <span class="product-time" id="<%= l.listing_uuid %>">00:00</span></li>
+                <!--<li>Currency <span class="product-currency">USD</span></li>-->
+              </ul>
+            </a>
+            <div class="bid-options">
+              <button class="btn btn-sm btn-bid" onclick="window.location.href='listing-item.jsp?listingUUID=<%= l.listing_uuid %>'">bid</button>
+              <p class="number-of-bids"><span class="product-time"><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> Bids</p>
+            </div>
+          </article>
+        <% } %>
+        </section>
+
+        <div class="MS-controls">
+          <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i><
+          </button>
+          <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i>></button>
+        </div>
+      </section>
+      <!-- end multislider-->
     </section>
   </main>
   <footer>
@@ -287,6 +322,8 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="./js/timeout.js"></script>
+  <script src="./js/multislider.min.js"></script>
+  <script src="./js/initialize-slider.js"></script>
   
   <script>
   countDown(new Date ('<%= l.end_time %> UTC').getTime(), "demo");
