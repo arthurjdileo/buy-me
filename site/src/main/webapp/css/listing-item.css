@@ -1,3 +1,31 @@
+/* similar items */
+.similar-product-title {
+	margin-bottom: 0.5rem;
+	font-weight: 500;
+	font-size: 1rem;
+	text-align: center;
+	text-transform: capitalize;
+	border-bottom: 1px solid var(--grey-1);
+	line-height: 1.5;
+}
+
+.similar-product-details {
+	margin-bottom: 1rem;
+}
+
+.similar-product-details li {
+	margin-bottom: 0.5rem;
+}
+
+.similar-product-details span, .similar-product-time {
+	font-weight: 600;
+}
+
+.similar-product-img {
+	margin-bottom: 0.5rem;
+	object-fit: contain;
+}
+
 /* style for  listing a single item   */
 .main-content {
   flex-direction: column;

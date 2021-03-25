@@ -195,7 +195,7 @@
           </section>
           <!-- end notifications -->
 
-          <h2 class="panel-article-title">alerts panel</h2>
+          <h2 class="panel-article-title">w</h2>
           <section class="">
             <!-- Tab links -->
             <div class="tab">

@@ -47,6 +47,7 @@
   <link rel="stylesheet" href="./css/base.css">
   <link rel="stylesheet" href="./css/home.css">
   <link rel="stylesheet" href="./css/listing-item.css">
+  <link rel="stylesheet" href="./css/listing.css">
   <link rel="stylesheet" href="./css/slider.css">
   <style media="screen">
     .listing-section {
@@ -272,6 +273,7 @@
         </article>
 
       </div>
+      <% if (BuyMe.Listings.getByUser(l.seller_uuid).size() > 1) { %>
       <h2 class="listing-title">Other Products Sold by This Seller</h2>
 
       <section id="exampleSlider">
@@ -280,14 +282,14 @@
         <% for (Listing ul : BuyMe.Listings.getByUser(l.seller_uuid)) { %>
           <article class="product-container card" style="max-width: 360px;">
             <a href="<%= "listing-item.jsp?listingUUID=" + l.listing_uuid %>" class="listing-item-link">
-              <img src="<%= l.image %>" width="300" height="150" alt="" class="product-img">
-              <h3 class="product-title"><%= l.item_name %></h3>
-              <ul class="product-details">
+              <img src="<%= l.image %>" width="300" height="150" alt="" class="similar-product-img">
+              <h3 class="similar-product-title"><%= l.item_name %></h3>
+              <ul class="similar-product-details">
                 <li>
                   <p><%= l.description %></p>
                 </li>
-                <li>Price <span class="product-price">$<%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
-                <li>Time <span class="product-time" id="<%= l.listing_uuid %>">00:00</span></li>
+                <li>Price <span>$<%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
+                <li>Time <span class="similar-product-time" id="<%= l.listing_uuid %>">00:00</span></li>
                 <!--<li>Currency <span class="product-currency">USD</span></li>-->
               </ul>
             </a>
@@ -296,6 +298,7 @@
               <p class="number-of-bids"><span class="product-time"><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> Bids</p>
             </div>
           </article>
+        <% } %>
         <% } %>
         </section>
 
