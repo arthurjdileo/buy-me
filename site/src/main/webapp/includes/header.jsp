@@ -11,16 +11,24 @@
     <div class="logo-container">
       <a href="index.jsp"><img src="./img/logo.png" alt=" "></a>
     </div>
-    <nav class="top-nav">
-      <p id="show-list-on-hover" class="">Shop By Category</p>
-      <ul class="list-content" id="categories">
-      <% for (Category c : cat) { %>
-        <li class="">
-        	<a href="listings.jsp?search-filters=category&search-query=<%= c.name %>"><%= c.name %></a>
+    <nav class="">
+      <ul class="dropdown">
+        <li class="list-top-level-item"><a href="">Shop by category</a>
+          <ul class="list-content" id="">
+            <% for (Category c : cat) { %>
+            <li class=""><a href="listings.jsp?search-filters=category&search-query=<%= c.name %>"><%= c.name %></a>
+              <ul class="sublist-content">
+                <% for (SubCategory s : BuyMe.SubCategories.getByCategory(c.id)) { %>
+                <li><a href="listings.jsp?search-filters=category&search-query=<%= s.name %>"><%= s.name %></a></li>
+				<% } %>
+              </ul>
+            </li>
+            <% } %>
+          </ul>
         </li>
-      <% } %>
       </ul>
     </nav>
+    <!-- end multidropdown -->
     <form action="listings.jsp" class="search-form">
       <div class="search-input-container">
         <input type="text" placeholder="Search" name="search-query" class="search-input">

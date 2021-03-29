@@ -205,6 +205,7 @@
                   <li><span><%= BuyMe.SetAlerts.getByListing(l.listing_uuid).size() %></span> <%= sold == 0 ? "Watching" : "Watched" %></li>
                   <li><span><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> <%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() > 1 ? "Bids" : "Bid" %></li>
                 </ul>
+                <h3 class="">Sold By: <%= BuyMe.Users.get(l.seller_uuid).firstName %></h3>
 
               </div>
               <!--end details 2-->
@@ -240,7 +241,7 @@
       </div>
 
 
-
+	  <% if (bids.size() > 0) { %>
       <div class="row-container">
         <h2 class="previous-bids-title">Bid History</h2>
       </div>
@@ -271,44 +272,45 @@
             </tbody>
           </table>
         </article>
-
       </div>
+      <% } %>
       <% if (BuyMe.Listings.getByUser(l.seller_uuid).size() > 1) { %>
       <h2 class="listing-title">Other Products Sold by This Seller</h2>
-
-      <section id="exampleSlider">
-        <!-- Give wrapper ID to target with jQuery & CSS -->
-        <section class="MS-content content">
-        <% for (Listing ul : BuyMe.Listings.getByUser(l.seller_uuid)) { %>
-          <article class="product-container card" style="max-width: 360px;">
-            <a href="<%= "listing-item.jsp?listingUUID=" + l.listing_uuid %>" class="listing-item-link">
-              <img src="<%= l.image %>" width="300" height="150" alt="" class="similar-product-img">
-              <h3 class="similar-product-title"><%= l.item_name %></h3>
-              <ul class="similar-product-details">
+      <div id="similarSlider">
+      <section class="MS-content content">
+          <% for (Listing ul : BuyMe.Listings.getByUser(l.seller_uuid)) { %>
+          <% if (!ul.listing_uuid.equals(l.listing_uuid)) { %>
+          <article class="product-container card item" style="max-width: 360px;">
+            <a href="<%= "listing-item.jsp?listingUUID=" + ul.listing_uuid %>" class="listing-item-link">
+              <img src="<%= ul.image %>" width="300" height="150" alt="" class="product-img">
+              <h3 class="similar-product-title"><%= ul.item_name %></h3>
+              <ul class="product-details">
                 <li>
-                  <p><%= l.description %></p>
+                  <p class="similar-desc"><%= ul.description %></p>
                 </li>
-                <li>Price <span>$<%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
-                <li>Time <span class="similar-product-time" id="<%= l.listing_uuid %>">00:00</span></li>
+                <li>Price <span class="similar-product-price">$<%= BuyMe.Listings.getCurrentPrice(ul) %></span></li>
+                <li>Time <span class="product-time" id="<%= ul.listing_uuid %>">00:00</span></li>
                 <!--<li>Currency <span class="product-currency">USD</span></li>-->
               </ul>
             </a>
             <div class="bid-options">
-              <button class="btn btn-sm btn-bid" onclick="window.location.href='listing-item.jsp?listingUUID=<%= l.listing_uuid %>'">bid</button>
-              <p class="number-of-bids"><span class="product-time"><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> Bids</p>
+              <button class="btn btn-sm btn-bid" onclick="window.location.href='listing-item.jsp?listingUUID=<%= ul.listing_uuid %>'">bid</button>
+              <p class="number-of-bids"><span class="product-time"><%= BuyMe.Bids.getBidsByListing(ul.listing_uuid).size() %></span> Bids</p>
             </div>
           </article>
-        <% } %>
-        <% } %>
+          <% } %>
+          <% } %>
         </section>
-
         <div class="MS-controls">
-          <button class="MS-left"><i class="fa fa-chevron-left" aria-hidden="true"></i><
-          </button>
-          <button class="MS-right"><i class="fa fa-chevron-right" aria-hidden="true"></i>></button>
+		    <button class="MS-left">
+		      <img src="./img/left-arrow.svg" alt="" class="slider-arrow-img" />
+		    </button>
+		    <button class="MS-right">
+		      <img src="./img/right-arrow.svg" alt="" class="slider-arrow-img" />
+		    </button>
+	    </div>
         </div>
-      </section>
-      <!-- end multislider-->
+      <% } %>
     </section>
   </main>
   <footer>
@@ -379,6 +381,12 @@
         closeModal();
       }
     })
+    
+    <% for (Listing ul : BuyMe.Listings.getByUser(l.seller_uuid)) {%>
+    	<% if (!ul.listing_uuid.equals(l.listing_uuid)) { %>
+    	countDown(new Date ('<%= ul.end_time %> UTC').getTime(),"<%= ul.listing_uuid %>");
+    	<%}%>
+    <%}%>
   </script>
 </body>
 

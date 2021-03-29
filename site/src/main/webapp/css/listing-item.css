@@ -9,6 +9,13 @@
 	line-height: 1.5;
 }
 
+.similar-desc {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+}
+
 .similar-product-details {
 	margin-bottom: 1rem;
 }

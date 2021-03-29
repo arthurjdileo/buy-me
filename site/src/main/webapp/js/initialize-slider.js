@@ -16,3 +16,11 @@ $('#categoriesSlider').multislider({
 	interval: 1000,
 	slideAll: false,
 });
+
+$('#similarSlider').multislider();
+
+// <!-- Initialize with options, if needed -->
+$('#similarSlider').multislider({
+	interval: 10000,
+	slideAll: false,
+});

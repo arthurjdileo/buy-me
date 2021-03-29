@@ -21,6 +21,13 @@
   --functional-blue: #577fde;
   --danger: #ff1111;
   --bg-white: #f8fcf7;
+  --list-accent: plum;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: inherit;
 }
 
 /* clean padding, margin, define box-sizing */
@@ -256,13 +263,91 @@ ul {
   position: absolute;
   background-color: var(--cream);
   min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 8px 6px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
+}
+.sublist-content {
+	display: none;
+	position: absolute;
+	background-color: var(--cream);
+	min-width: 160px;
+	box-shadow: 4px 8px 6px 0px rgba(0, 0, 0, 0.2);
+	z-index: 0;
 }
 
 .top-nav {
   position: relative;
   display: inline-block;
+}
+
+.dropdown {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	width: 200px;
+}
+
+.dropdown li {
+	position: relative;
+	width: 160px;
+	text-align: center;
+	margin: 0 auto;
+}
+
+.dropdown li a {
+	text-transform: capitalize;
+	color: #000;
+	text-align: center;
+	text-decoration: none;
+	display: block;
+	padding: 10px;
+}
+
+.dropdown li ul {
+  position: absolute;
+  top: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: none;
+  line-height: normal;
+  background-color: #eaeaea;
+}
+
+.dropdown li ul li a {
+  text-align: left;
+  color: black;
+  font-size: 14px;
+  padding: 10px;
+  display: block;
+  white-space: nowrap;
+}
+
+.dropdown li ul li a:hover {
+  background-color: var(--list-accent);
+  color: #000;
+}
+
+.dropdown li ul li ul {
+  left: 100%;
+  top: 0;
+}
+
+.dropdown li:hover>a {
+  background-color: var(--list-accent);
+  color: #000 !important;
+}
+
+.dropdown  li:hover>ul {
+  display: block;
+}
+
+.list-top-level-item {
+  background: white;
+  color: black;
+}
+.list-top-level-item:hover>a {
+  background: transparent!important;
 }
 
 .list-content a {

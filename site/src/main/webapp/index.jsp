@@ -139,7 +139,7 @@
           <img src="./img/right-arrow.svg" alt="" class="slider-arrow-img" />
         </button>
       </div>
-    </div> <!-- end multislider-->
+    </div>
   </main>
   <footer>
     &copy; 2020
