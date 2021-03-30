@@ -666,26 +666,38 @@ public class BuyMe {
 		// create question
 		public static void insert(Question q) throws SQLException {
 			loadDatabase();
-			String query = "INSERT INTO Questions(question_uuid, client_uuid, admin_uuid, question, answer) VALUES (?, ?, ?, ?, ?);";
+			String query = "INSERT INTO Questions(question_uuid, client_uuid, question) VALUES (?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, q.question_uuid);
 			ps.setString(2, q.client_uuid);
-			ps.setString(3, q.admin_uuid);
-			ps.setString(4, q.question);
-			ps.setString(5, q.answer);
+			ps.setString(3, q.question);
 			ps.executeUpdate();
 			QuestionsTable = null;
 		}
 		
 		// answer question
-		public static void answer(Question q, String answer) throws SQLException {
+		public static void answer(Question q, String answer, String admin_uuid) throws SQLException {
 			loadDatabase();
-			String query = "UPDATE Questions SET answer = ? WHERE question_uuid = ?;";
+			String query = "UPDATE Questions SET answer = ?, admin_uuid = ? WHERE question_uuid = ?;";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, answer);
-			ps.setString(2, q.question_uuid);
+			ps.setString(2, admin_uuid);
+			ps.setString(3, q.question_uuid);
 			ps.executeUpdate();
 			QuestionsTable = null;
+		}
+		
+		// get users questions
+		public static ArrayList<Question> getByUser(String acc_uuid) throws SQLException {
+			ArrayList<Question> questions = getAsList();
+			ArrayList<Question> userQ = new ArrayList<Question>();
+			
+			for (Question q : questions) {
+				if (q.client_uuid.equals(acc_uuid)) {
+					userQ.add(q);
+				}
+			}
+			return userQ;
 		}
 	}
 	

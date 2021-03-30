@@ -116,8 +116,39 @@
 
 
     <h2 class="listing-title"><a href="listing.html">Recent Listings</a></h2>
-
-    <div id="exampleSlider" class="slider">
+	<div id="exampleSlider">
+      <section class="MS-content content">
+          <% for (Listing l : listings) { %>
+          <article class="product-container card item" style="max-width: 360px;">
+            <a href="<%= "listing-item.jsp?listingUUID=" + l.listing_uuid %>" class="listing-item-link">
+              <img src="<%= l.image %>" width="300" height="150" alt="" class="product-img">
+              <h3 class="similar-product-title"><%= l.item_name %></h3>
+              <ul class="similar-product-details">
+                <li>
+                  <p class="similar-desc"><%= l.description %></p>
+                </li>
+                <li>Price <span class="similar-product-price">$<%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
+                <li>Time <span class="product-time" id="<%= l.listing_uuid %>">00:00</span></li>
+                <!--<li>Currency <span class="product-currency">USD</span></li>-->
+              </ul>
+            </a>
+            <div class="bid-options">
+              <button class="btn btn-sm btn-bid" onclick="window.location.href='listing-item.jsp?listingUUID=<%= l.listing_uuid %>'">bid</button>
+              <p class="number-of-bids"><span class="product-time"><%= BuyMe.Bids.getBidsByListing(l.listing_uuid).size() %></span> Bids</p>
+            </div>
+          </article>
+          <% } %>
+        </section>
+        <div class="MS-controls">
+		    <button class="MS-left">
+		      <img src="./img/left-arrow.svg" alt="" class="slider-arrow-img" />
+		    </button>
+		    <button class="MS-right">
+		      <img src="./img/right-arrow.svg" alt="" class="slider-arrow-img" />
+		    </button>
+	    </div>
+        </div>
+    <%-- <div id="exampleSlider" class="slider">
       <!-- Give wrapper ID to target with jQuery & CSS -->
       <section class="MS-content product-listing">
         <% for (Listing l : listings) { %>
@@ -139,7 +170,7 @@
           <img src="./img/right-arrow.svg" alt="" class="slider-arrow-img" />
         </button>
       </div>
-    </div>
+    </div> --%>
   </main>
   <footer>
     &copy; 2020
@@ -148,6 +179,13 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="./js/multislider.min.js"></script>
   <script src="./js/initialize-slider.js"></script>
+  <script src="./js/timeout.js"></script>
+  
+  <script>
+    <% for (Listing l : listings) {%>
+	countDown(new Date ('<%= l.end_time %> UTC').getTime(),"<%= l.listing_uuid %>");
+	<%}%>
+  </script>
 </body>
 
 </html>

@@ -1,7 +1,7 @@
-// <!-- Initialize the plugin -->
+ //<!-- Initialize the plugin -->
 $('#exampleSlider').multislider();
 
-// <!-- Initialize with options, if needed -->
+ //<!-- Initialize with options, if needed -->
 $('#exampleSlider').multislider({
   interval: 10000,
   slideAll: false
@@ -11,7 +11,7 @@ $('#exampleSlider').multislider({
 
 $('#categoriesSlider').multislider();
 
-// <!-- Initialize with options, if needed -->
+ //<!-- Initialize with options, if needed -->
 $('#categoriesSlider').multislider({
 	interval: 1000,
 	slideAll: false,
@@ -19,7 +19,7 @@ $('#categoriesSlider').multislider({
 
 $('#similarSlider').multislider();
 
-// <!-- Initialize with options, if needed -->
+ //<!-- Initialize with options, if needed -->
 $('#similarSlider').multislider({
 	interval: 10000,
 	slideAll: false,

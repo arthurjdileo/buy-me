@@ -1,3 +1,63 @@
+/* similar items */
+.similar-product-title {
+	margin-bottom: 0.5rem;
+	font-weight: 500;
+	font-size: 1rem;
+	text-align: center;
+	text-transform: capitalize;
+	border-bottom: 1px solid var(--grey-1);
+	line-height: 1.5;
+}
+
+.similar-desc {
+	overflow: hidden;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+}
+
+.similar-product-details {
+	margin-bottom: 1rem;
+}
+
+.bid-options {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.btn {
+  text-transform: uppercase;
+}
+
+.number-of-bids {
+  flex: 1 1 auto;
+  padding: 1rem 0;
+  background: var(--primary);
+  text-align: center;
+  border-radius: 6px;
+  margin: 4px 4px 4px 0; /*easier to align left*/
+}
+
+.btn-bid {
+  flex: 1 1 auto;
+  background: var(--functional-green);
+  margin-right: 10px;
+}
+
+.similar-product-details li {
+	margin-bottom: 0.5rem;
+}
+
+.similar-product-details span, .similar-product-time {
+	font-weight: 600;
+}
+
+.similar-product-img {
+	margin-bottom: 0.5rem;
+	object-fit: contain;
+}
+
 /* The close button */
 .closebtn {
   color: #ff7800;
@@ -26,7 +86,7 @@
 #sell-your-item {
   min-height: 120px;
   background: var(--primary);
-  background-image: url('/img/dot-grid.png');
+  background-image: url('../img/dot-grid.png');
   background-blend-mode: multiply;
   display: flex;
   margin-bottom: 1rem;
