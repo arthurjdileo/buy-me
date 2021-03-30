@@ -49,6 +49,9 @@
   <link rel="stylesheet" href="./css/listing-item.css">
   <link rel="stylesheet" href="./css/listing.css">
   <link rel="stylesheet" href="./css/slider.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
   <style media="screen">
     .listing-section {
       flex-direction: column;
