@@ -44,6 +44,18 @@
 		}
 		return filtered;
 	}
+  	
+  	public ArrayList<Listing> sortByName(ArrayList<Listing> listings) {
+  		ArrayList<Listing> filtered = listings;
+  		Comparator<Listing> nameOrder = new Comparator<Listing>() {
+  			public int compare(Listing l1, Listing l2) {
+  				return l1.item_name.compareToIgnoreCase(l2.item_name);
+  			}
+  		};
+  		
+  		Collections.sort(filtered, nameOrder);
+  		return filtered;
+  	}
 %>
 
 <%
@@ -64,7 +76,7 @@
 	ArrayList<Listing> listings;
 
 	if (filter.equalsIgnoreCase("item")) {
-		listings = BuyMe.Listings.searchByName(query);
+		listings = BuyMe.Listings.searchByName(null, query);
 	} else if (filter.equalsIgnoreCase("user")) {
 		listings = BuyMe.Listings.searchByUser(query);
 	} else if (filter.equalsIgnoreCase("category")) {
@@ -72,10 +84,11 @@
 	} else {
 		listings = new ArrayList<Listing>();
 	}
-	
 	String priceMin = request.getParameter("price-min");
 	String priceMax = request.getParameter("price-max");
 	String endingWithin = request.getParameter("ending-within");
+	String sortBy = request.getParameter("sort-by");
+	String subSearch = request.getParameter("sub-search");
 	if (priceMin != null) {
 		listings = filterByPrice(listings, Double.parseDouble(priceMin), true);
 	}
@@ -84,8 +97,13 @@
 	}
  	if (endingWithin != null) {
 		listings = filterByEnding(listings, endingWithin);
-	} 
-	
+	}
+ 	if (subSearch != null) {
+ 		listings = BuyMe.Listings.searchByName(listings, subSearch);
+ 	}
+ 	if (sortBy != null) {
+ 		listings = sortByName(listings);
+ 	}
 %>
 
 <!DOCTYPE html>
@@ -159,11 +177,10 @@
         <div class="filter-top">
           <div class="filter-top-container">
             <form action="" class="inline-form">
-              <label for="">Sort by</label>
-              <select class="" name="sort-by">
-                <option value="all">All</option>
-                <option value="name">Name</option>
-                <option value="type">Type</option>
+              <label for="">Sort By</label>
+              <select class="" id="sort-by">
+                <option value="n/a" <%= sortBy == null ? "selected" : "null" %>>N/A</option>
+                <option value="name" <%= sortBy != null ? "selected" : "null" %>>Name</option>
               </select>
             </form>
 
@@ -176,11 +193,11 @@
               </select>
             </form>
 
-            <form action="" class="inline-form">
+            <div class="inline-form">
               <!-- <label for="">Show</label> -->
-              <input type="text" placeholder="search...">
-              <input type="submit" value="search">
-            </form>
+              <input type="text" id="sub-search" value="<%= subSearch != null ? subSearch : "" %>" placeholder="search...">
+              <button onclick="subSearch();" value="search">Search</button>
+            </div>
           </div>
         </div>
         <div class="side-column">
@@ -306,11 +323,23 @@
 	
 	let form = document.querySelector("#ending");
 	form.addEventListener("change", function(event) {
-		console.log(event.target.defaultValue);
-		console.log(location.href);
 		var url = new URL(location.href);
 		url.searchParams.set("ending-within", event.target.defaultValue);
 		location.href = url;
+	})
+	
+	let sortBy = document.getElementById("sort-by");
+	sortBy.addEventListener("change", function(event) {
+		console.log(event.target.value);
+		if (event.target.value == 'name') {
+			var url = new URL(location.href);
+			url.searchParams.set("sort-by", event.target.value);
+			location.href = url;
+		} else {
+			var url = new URL(location.href);
+			url.searchParams.delete("sort-by");
+			location.href = url;
+		}
 	})
 	
 	function clearEnding() {
@@ -321,6 +350,19 @@
 		var url = new URL(location.href);
 		url.searchParams.delete("ending-within");
 		location.href = url;
+	}
+	
+	function subSearch() {
+		let e = document.getElementById("sub-search");
+ 		if (e.value != "") {
+			var url = new URL(location.href);
+			url.searchParams.set("sub-search", e.value);
+			location.href = url;
+		} else {
+			var url = new URL(location.href);
+			url.searchParams.delete("sub-search");
+			location.href = url;
+		}
 	}
   </script>
 </body>

@@ -321,8 +321,8 @@ public class BuyMe {
 			return filtered;
 		}
 		
-		public static ArrayList<Listing> searchByName(String query) throws SQLException {
-			ArrayList<Listing> listings = getAsList();
+		public static ArrayList<Listing> searchByName(ArrayList<Listing> listings, String query) throws SQLException {
+			if (listings == null) listings = getAsList();
 			ArrayList<Listing> searchResults = new ArrayList<Listing>();
 			String[] split = query.split(" ");
 			
