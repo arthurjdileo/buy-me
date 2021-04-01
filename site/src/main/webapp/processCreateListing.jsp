@@ -11,7 +11,11 @@
 	}
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
 	String product = request.getParameter("product");
-	int category = Integer.parseInt(request.getParameter("category"));
+	for (String s : request.getParameterValues("category")) {
+		System.out.println(s);
+	}
+	return;
+/* 	//int category = Integer.parseInt(request.getParameter("category"));
 	int subCategory = Integer.parseInt(request.getParameter("sub-category"));
 	String description = request.getParameter("description");
 	int numDays = Integer.parseInt(request.getParameter("num-days"));
@@ -48,5 +52,5 @@
 	BuyMe.SetAlerts.categoryProcess(l);
 	
 	// redirect to listings page
-	response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID);
+	response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID); */
 %>

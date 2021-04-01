@@ -871,6 +871,21 @@ public class BuyMe {
 			return CategoryTable;
 		}
 		
+		public static int insert(String category) throws SQLException {
+			loadDatabase();
+			String query = "INSERT INTO Category(name) VALUES (?);";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, category);
+			ps.executeUpdate();
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT id FROM Category WHERE name = " + category + ";");
+			if (rs.next()) {
+				return rs.getInt("id");
+			} else {
+				return -1;
+			}
+		}
+		
 		public static Category getByName(String name) throws SQLException {
 			ArrayList<Category> categories = getAsList();
 			
@@ -927,6 +942,22 @@ public class BuyMe {
 				}
 			}
 			return filtered;
+		}
+		
+		public static int insert(String sub_category, int category) throws SQLException {
+			loadDatabase();
+			String query = "INSERT INTO SubCategory(cat_id, name) VALUES (?, ?);";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setInt(1, category);
+			ps.setString(2, sub_category);
+			ps.executeUpdate();
+			Statement st = conn.createStatement();
+			ResultSet rs = st.executeQuery("SELECT id FROM SubCategory WHERE name = " + sub_category + " AND cat_id = " + category + ";");
+			if (rs.next()) {
+				return rs.getInt("id");
+			} else {
+				return -1;
+			}
 		}
 		
 		public static SubCategory getByID(int id) throws SQLException {

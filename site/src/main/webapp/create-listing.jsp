@@ -37,6 +37,9 @@
   <link rel="stylesheet" href="./css/home.css">
   <link rel="stylesheet" href="./css/listing.css">
   <link rel="stylesheet" href="./css/profile.css">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
   <style media="screen">
     h2 {
       margin-left: 1rem;
@@ -100,16 +103,29 @@
               </div>
               <div class="input-group">
                 <label for="category" class="input-label">category* </label>
-                <select id="category" name="category" required>
+                <select onchange="showCustom(this);" id="category" name="category" required>
                   <% for (Category c : categories) { %>
                   <% if (edit == 1 && c.id == l.cat_id) { %>
                   <option value="<%= c.id %>" selected><%= c.name %></option>
                   <% } %>
                   <option value="<%= c.id %>"><%= c.name %></option>
                   <% } %>
+                  <option value="other">Other</option>
                 </select>
               </div>
-              <div class="input-group">
+              <div id="customCategory" style="display: none;">
+	              <div class="input-group">
+		              <label for="category" class="input-label">Custom category* </label>
+		              <input name="category" type="text"></input>
+	              </div>
+              </div>
+              <div id="customSubCategory" style="display: none;">
+        	      <div class="input-group">
+		              <label for="category" class="input-label">Custom sub-category* </label>
+		              <input name="sub-category" type="text"></input>
+	              </div>
+	          </div>
+              <div class="input-group" id="sub-categories">
                 <label for="sub-category" class="input-label">sub-category* </label>
                 <select id="subcategory" name="sub-category" required>
                   <% for (SubCategory c : subCategories) { %>
@@ -167,7 +183,7 @@
               </div>
 
               <div class="input-group">
-                <label for="bid-increment" class="input-label">bid increment* </label>
+                <label for="bid-increment" class="input-label">min. bid increment* </label>
                 <% if (edit == 1) { %>
                 <input type="number" class="input-field" id="bid-increment" value="<%= l.bid_increment %>" name="bid-increment" min="0.01" step="0.01">
                 <% } else { %>
@@ -203,6 +219,24 @@
   <footer>
     &copy; 2020
   </footer>
+  
+  <script type="text/javascript">
+  
+  	function showCustom(e) {
+  		if (e.value == 'other') {
+  			console.log("custom");
+  			document.getElementById("customCategory").style.display = "flex";
+  			document.getElementById("customSubCategory").style.display = "flex";
+  			document.getElementById("sub-categories").style.display = "none";
+  		} else {
+  			console.log("not custom")
+  			document.getElementById("customCategory").style.display = "none";
+  			document.getElementById("customSubCategory").style.display = "none";
+  			document.getElementById("sub-categories").style.display = "flex";
+  		}
+  	}
+  
+  </script>
 
 </body>
 
