@@ -186,7 +186,7 @@
   
   <script>
     <% for (Listing l : listings) {%>
-	countDown(new Date ('<%= l.end_time %> UTC').getTime(),"<%= l.listing_uuid %>");
+	countDown(new Date ('<%= l.end_time %> EST').getTime(),"<%= l.listing_uuid %>");
 	<%}%>
   </script>
 </body>

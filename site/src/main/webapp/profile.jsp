@@ -289,7 +289,7 @@
   <script>
     <% for (Alert a : userAlertsCategory) { %>
     <% Listing l = BuyMe.Listings.get(a.msg); %>
-	countDown(new Date ('<%= l.end_time %> UTC').getTime(),"<%= l.listing_uuid %>");
+	countDown(new Date ('<%= l.end_time %> EST').getTime(),"<%= l.listing_uuid %>");
 	<%}%>
   </script>
 

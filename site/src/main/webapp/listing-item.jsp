@@ -334,7 +334,7 @@
   <script src="./js/initialize-slider.js"></script>
   
   <script>
-  countDown(new Date ('<%= l.end_time %> UTC').getTime(), "demo");
+  countDown(new Date ('<%= l.end_time %> EST').getTime(), "demo");
   </script>
 
   <script type="text/javascript">
@@ -387,7 +387,7 @@
     
     <% for (Listing ul : BuyMe.Listings.getByUser(l.seller_uuid)) {%>
     	<% if (!ul.listing_uuid.equals(l.listing_uuid)) { %>
-    	countDown(new Date ('<%= ul.end_time %> UTC').getTime(),"<%= ul.listing_uuid %>");
+    	countDown(new Date ('<%= ul.end_time %> EST').getTime(),"<%= ul.listing_uuid %>");
     	<%}%>
     <%}%>
   </script>

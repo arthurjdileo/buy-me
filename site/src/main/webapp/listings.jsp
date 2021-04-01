@@ -21,6 +21,29 @@
 		}
 		return filtered;
 	}
+
+  	public ArrayList<Listing> filterByEnding(ArrayList<Listing> listings, String ending) {
+  		ArrayList<Listing> filtered = new ArrayList<Listing>();
+		java.sql.Timestamp t = new Timestamp(System.currentTimeMillis());
+		Calendar c = Calendar.getInstance();
+		c.setTime(t);
+		if (ending.equals("1-day")) {
+			c.add(Calendar.DAY_OF_WEEK, 1);
+		} else if (ending.equals("1-week")) {
+			c.add(Calendar.DAY_OF_WEEK, 7);
+		} else {
+			c.add(Calendar.DAY_OF_WEEK, 30);
+		}
+		t.setTime(c.getTime().getTime());
+		
+		for (Listing l : listings) {
+			int comp = t.compareTo(l.end_time);
+			if (comp >= 0) {
+				filtered.add(l);
+			}
+		}
+		return filtered;
+	}
 %>
 
 <%
@@ -52,12 +75,16 @@
 	
 	String priceMin = request.getParameter("price-min");
 	String priceMax = request.getParameter("price-max");
+	String endingWithin = request.getParameter("ending-within");
 	if (priceMin != null) {
 		listings = filterByPrice(listings, Double.parseDouble(priceMin), true);
 	}
 	if (priceMax != null) {
 		listings = filterByPrice(listings, Double.parseDouble(priceMax), false);
 	}
+ 	if (endingWithin != null) {
+		listings = filterByEnding(listings, endingWithin);
+	} 
 	
 %>
 
@@ -158,7 +185,7 @@
         </div>
         <div class="side-column">
           <div class="filter-card">
-            <h2>Filter by price</h2>
+            <h2>Filter By Price</h2>
             <form action="listings.jsp" class="block-form">
               <div id="slider"></div>
               <div class="input-group range-container">
@@ -173,7 +200,7 @@
               <input type="submit" value="Filter" class="btn btn-sm btn-pill blue" id="filter-submit-btn">
             </form>
           </div>
-          <div class="filter-card">
+<!--           <div class="filter-card">
             <h2>Auction Type</h2>
             <form action="" class="block-form">
               <div class="input-group">
@@ -189,22 +216,23 @@
                 <label for="buy-now">Buy now</label>
               </div>
             </form>
-          </div>
+          </div> -->
           <div class="filter-card">
             <h2>Ending Within</h2>
-            <form action="" class="block-form">
+            <form action="" id="ending" class="block-form">
               <div class="input-group">
-                <input type="checkbox" id="1-day" name="1-day" value="1-day">
+                <input type="radio" id="1-day" name="ending-within" <%= endingWithin != null && endingWithin.equals("1-day") ? "checked" : null %> value="1-day">
                 <label for="1-day">1 Day</label>
               </div>
               <div class="input-group">
-                <input type="checkbox" id="1-week" name="1-week" value="1-week">
+                <input type="radio" id="1-week" name="ending-within" <%= endingWithin != null && endingWithin.equals("1-week") ? "checked" : null %> value="1-week">
                 <label for="1-week">1 Week</label>
               </div>
               <div class="input-group">
-                <input type="checkbox" id="1-month" name="1-month" value="1-month">
+                <input type="radio" id="1-month" name="ending-within" <%= endingWithin != null && endingWithin.equals("1-month") ? "checked" : null %> value="1-month">
                 <label for="1-month">1 Month</label>
               </div>
+              <input value="Clear" class="btn btn-sm btn-pill blue" onclick="clearEnding();" style="width: 100px; margin: 0 auto; text-align: center;" >
             </form>
           </div>
         </div>
@@ -273,8 +301,27 @@
  		slider.noUiSlider.set([null, this.value]);
  	});
     <% for (Listing l : listings) {%>
-	countDown(new Date ('<%= l.end_time %> UTC').getTime(),"<%= l.listing_uuid %>");
+	countDown(new Date ('<%= l.end_time %> EST').getTime(),"<%= l.listing_uuid %>");
 	<%}%>
+	
+	let form = document.querySelector("#ending");
+	form.addEventListener("change", function(event) {
+		console.log(event.target.defaultValue);
+		console.log(location.href);
+		var url = new URL(location.href);
+		url.searchParams.set("ending-within", event.target.defaultValue);
+		location.href = url;
+	})
+	
+	function clearEnding() {
+		let e = document.getElementsByName("ending-within");
+		for (let i = 0; i < e.length; i++) {
+			e[i].checked = false;
+		}
+		var url = new URL(location.href);
+		url.searchParams.delete("ending-within");
+		location.href = url;
+	}
   </script>
 </body>
 
