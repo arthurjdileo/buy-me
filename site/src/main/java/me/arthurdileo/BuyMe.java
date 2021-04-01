@@ -650,8 +650,8 @@ public class BuyMe {
 		static HashMap<String, Question> QuestionsTable;
 		
 		// get question by user
-		public static Question get(String account_uuid) throws SQLException {
-			return getAll().get(account_uuid);
+		public static Question get(String question_uuid) throws SQLException {
+			return getAll().get(question_uuid);
 		}
 		
 		// transactions as list
@@ -699,13 +699,13 @@ public class BuyMe {
 		}
 		
 		// answer question
-		public static void answer(Question q, String answer, String admin_uuid) throws SQLException {
+		public static void answer(String question_uuid, String answer, String admin_uuid) throws SQLException {
 			loadDatabase();
 			String query = "UPDATE Questions SET answer = ?, admin_uuid = ? WHERE question_uuid = ?;";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, answer);
 			ps.setString(2, admin_uuid);
-			ps.setString(3, q.question_uuid);
+			ps.setString(3, question_uuid);
 			ps.executeUpdate();
 			QuestionsTable = null;
 		}
@@ -805,11 +805,31 @@ public class BuyMe {
 			return AdminsTable;
 		}
 		
+		//set role
+		public static void setRole(String account_uuid, String role) throws SQLException {
+			loadDatabase();
+			String query = "INSERT INTO Admins(acc_uuid, role) VALUES (?, ?);";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, account_uuid);
+			ps.setString(2, role);
+			ps.executeUpdate();
+			AdminsTable = null;
+		}
+		
 		// check if user is admin
 		public static boolean isAdmin(String account_uuid) throws SQLException {
-			loadDatabase();
 			for (Admin a : getAsList()) {
-				if (a.acc_uuid.equals(account_uuid)) {
+				if (a.acc_uuid.equals(account_uuid) && a.role.equalsIgnoreCase("Admin")) {
+					return true;
+				}
+			}
+			return false;
+		}
+		
+		// check if user is admin
+		public static boolean isMod(String account_uuid) throws SQLException {
+			for (Admin a : getAsList()) {
+				if (a.acc_uuid.equals(account_uuid) && a.role.equalsIgnoreCase("Moderator")) {
 					return true;
 				}
 			}

@@ -46,7 +46,7 @@
         <picture class="user-profile-img-container">
           <img src="img/user.png" alt="" class="user-profile-img">
           <p class="user-profile-name"><%= u.toString() %></p>
-          <% if (BuyMe.Admins.isAdmin(u.account_uuid)) { %>
+          <% if (BuyMe.Admins.isAdmin(u.account_uuid) || BuyMe.Admins.isMod(u.account_uuid)) { %>
           <p class="user-profile-name">[<%= BuyMe.Admins.getRole(u.account_uuid) %>]</p>
           <% } %>
           <p class="user-profile-email"><%= u.email %></p>

@@ -10,12 +10,14 @@
 		return;
 	}
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
-	if (!BuyMe.Admins.isAdmin(u.account_uuid)) {
+	if (!BuyMe.Admins.isAdmin(u.account_uuid) && !BuyMe.Admins.isMod(u.account_uuid)) {
 		response.sendRedirect("index.jsp");
 		return;
 	}
 	
 	ArrayList<Question> questions = BuyMe.Questions.getUnanswered();
+	ArrayList<User> users = BuyMe.Users.getAsList();
+	ArrayList<Listing> listings = BuyMe.Listings.getAsList();
 %>
 
 <!DOCTYPE html>
@@ -47,10 +49,12 @@
           <p class="user-profile-email"><%= u.email %></p>
         </picture>
         <button role="tab" class="listing-nav" id="create-account" aria-selected="true"><img src="./img/menu.svg" alt="" class="listing-nav-icon">create account</button>
+        <% if (BuyMe.Admins.isAdmin(u.account_uuid)) { %>
         <button role="tab" class="listing-nav" id="generate-sales-report" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">total eanings</button>
         <button role="tab" class="listing-nav" id="earnings" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">earnings per</button>
         <button role="tab" class="listing-nav" id="best-selling-items" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">best selling items</button>
         <button role="tab" class="listing-nav" id="best-buyers" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">best buyers</button>
+        <% } %>
         <button role="tab" class="listing-nav" id="q-a" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">customer service questions</button>
         <button role="tab" class="listing-nav" id="user-management" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">user management</button>
         <button role="tab" class="listing-nav" id="listing-management" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">listing management</button>
@@ -80,6 +84,13 @@
                 <input type="password" class="input-field" name="password" id="password">
                 <input hidden name="from-admin" value="true"></input>
               </div>
+              <% if (BuyMe.Admins.isAdmin(u.account_uuid)) { %>
+              <div class="input-group">
+              	<label for="isMod" class="input-label">Moderator?</label>
+              	<input hidden name="isMod" value="false" id="isMod">
+              	<input type="checkbox" value="true" class="input-field" name="isMod" id="isMod">
+              </div>
+              <% } %>
               <div class="input-group flex-end">
                 <input type="submit" value="create" class="btn btn-sm green btn-confirm">
               </div>
@@ -251,13 +262,16 @@
               <tbody class="listing-table__body">
                 <% for (Question q : questions) { %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td question-cell" data-q-id="1"><%= q.question %></td>
+                  <td class="listing-table__td question-cell" data-q-id="<%= q.question_uuid %>"><%= q.question %></td>
                   <td class="listing-table__td"><span class="customer-question-date"><%= q.created %></span></td>
                   <td class="listing-table__td">
                     <button class="btn btn-sm blue cardbutton">Answer question</button>
                   </td>
                   <td class="listing-table__td">
-                    <button class="btn btn-sm danger" onclick="dismissQuestion('<%= q.question_uuid %>');">Dismiss question</button>
+                    <form action="dismissQuestion.jsp">
+                        <input hidden name="question_uuid" value="<%= q.question_uuid %>"></input>
+                    	<button class="btn btn-sm danger">Dismiss question</button>
+                    </form>
                   </td>
                 </tr>
                 <% } %>
@@ -266,7 +280,6 @@
           </section>
         </div>
         <!--end panel-->
-
         <div class="" role="tabpanel" aria-labelledby="user-management" hidden>
           <h2>user management panel</h2>
           <section class="listing-panel">
@@ -275,25 +288,36 @@
                 <th class="listing-table__th">first name</th>
                 <th class="listing-table__th">last name</th>
                 <th class="listing-table__th">email</th>
+                <th class="listing-table__th">Admin Role</th>
                 <th class="listing-table__th">edit </th>
                 <th class="listing-table__th">delete </th>
               </thead>
               <tbody class="listing-table__body">
+ 				<% for (User user : users) { %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td">john</td>
-                  <td class="listing-table__td">johnson</td>
-                  <td class="listing-table__td">john@mail.com</td>
-                  <td class="listing-table__td ">
-                    <button type="button" name="button" class="btn btn-sm bg-caution">
+                  <td class="listing-table__td"><%= user.firstName %></td>
+                  <td class="listing-table__td"><%= user.lastName %></td>
+                  <td class="listing-table__td"><%= user.email %></td>
+                  <td class="listing-table__td"><%= BuyMe.Admins.isAdmin(user.account_uuid) || BuyMe.Admins.isMod(user.account_uuid) ? BuyMe.Admins.getRole(user. account_uuid) : "N/A" %></td>
+                  <td class="listing-table__td">
+                    <% if ((BuyMe.Admins.isAdmin(u.account_uuid) && !BuyMe.Admins.isAdmin(user.account_uuid)) || (BuyMe.Admins.isMod(u.account_uuid) && !BuyMe.Admins.isAdmin(user.account_uuid) && !BuyMe.Admins.isMod(user.account_uuid))) { %>
+                    <form action="edit-user.jsp">
+                    <input hidden name="acc_uuid" value="<%= user.account_uuid %>"></input>
+                    <button type="submit" class="btn btn-sm bg-caution">
                       Edit
                     </button>
+                    </form>
+                    <% } %>
                   </td>
-                  <td>
+                  <td class="listing-table__td">
+                    <% if ((BuyMe.Admins.isAdmin(u.account_uuid) && !BuyMe.Admins.isAdmin(user.account_uuid)) || (BuyMe.Admins.isMod(u.account_uuid) && !BuyMe.Admins.isAdmin(user.account_uuid) && !BuyMe.Admins.isMod(user.account_uuid))) { %>
                     <button type="button" name="button" class="btn btn-sm bg-danger">
                       Delete
                     </button>
+                    <% } %>
                   </td>
                 </tr>
+                <% } %>
               </tbody>
             </table>
           </section>
@@ -312,35 +336,30 @@
                 <th class="listing-table__th">delete </th>
               </thead>
               <tbody class="listing-table__body">
+                <% for (Listing l : listings) { %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td">Card Boxes</td>
-                  <td class="listing-table__td sell-price-column">0.55</td>
+                  <td class="listing-table__td"><%= l.item_name %></td>
+                  <td class="listing-table__td sell-price-column">$<%= BuyMe.Listings.getCurrentPrice(l) %></td>
                   <td class="listing-table__td ">
-                    <button type="button" name="button" class="btn btn-sm bg-caution">
+                    <form action="create-listing.jsp?edit=1">
+                    <input hidden name="listingUUID" value="<%= l.listing_uuid %>"></input>
+                    <input hidden name="edit" value="1"></input>
+                    <button type="submit" class="btn btn-sm bg-caution">
                       Edit
                     </button>
+                    </form>
                   </td>
-                  <td>
-                    <button type="button" name="button" class="btn btn-sm bg-danger">
+                  <td class="listing-table__td">
+                    <form action="deleteListing.jsp">
+                    <input hidden name="listingUUID" value="<%= l.listing_uuid %>"></input>
+                    <input hidden name="from-admin" value="true"></input>
+                    <button type="submit" class="btn btn-sm bg-danger">
                       Delete
                     </button>
+                    </form>
                   </td>
                 </tr>
-
-                <tr class="listing-table__tr">
-                  <td class="listing-table__td">Pencil</td>
-                  <td class="listing-table__td sell-price-column">10.00</td>
-                  <td class="listing-table__td ">
-                    <button type="button" name="button" class="btn btn-sm bg-caution">
-                      Edit
-                    </button>
-                  </td>
-                  <td>
-                    <button type="button" name="button" class="btn btn-sm bg-danger">
-                      Delete
-                    </button>
-                  </td>
-                </tr>
+                <% } %>
               </tbody>
             </table>
           </section>
@@ -375,24 +394,20 @@
     const cardButtons = document.querySelectorAll('.cardbutton');
     const modalInner = document.querySelector('.modal-inner');
     const modalOuter = document.querySelector('.modal-outer');
-    
-    function dismissQuestion(question_uuid) {
-    	
-    }
 
     function handleQuestionAnswer(event) {
       const button = event.currentTarget;
       // get the question and id
       const questionId = button.parentElement.parentElement.children[0].getAttribute('data-q-id');
       const question = button.parentElement.parentElement.children[0].textContent;
+      console.log(questionId);
 
       modalInner.innerHTML = `
-      <form action="" class="card modal-form">
+      <form action="answerQuestion.jsp" class="card modal-form">
         <h2>Answer question: </h2>
-          <p>${question}</p>
-          <label for="answer">Your answer:</label>
-          <textarea name="answer" id="answer" cols="20" class="answer-area"></textarea>
-          <input type="hidden"  value=${questionId} name="question-id"/>
+          <p>` + question + `</p>
+          <textarea name="answer" id="answer" placeholder="Answer here..." cols="20" class="answer-area"></textarea>
+          <input hidden name="question_uuid" value="` +  questionId + `"></input>
         <input type="submit" value="Answer question" class='btn btn-sm btn-confirm'>
       </form>
       `;

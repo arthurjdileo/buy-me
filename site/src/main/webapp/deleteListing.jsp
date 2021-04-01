@@ -11,13 +11,20 @@
 	}
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
 	
+	String fromAdmin = request.getParameter("from-admin");
+	
 	String listingUUID = request.getParameter("listingUUID");
 	Listing l = BuyMe.Listings.get(listingUUID);
-	if (!l.seller_uuid.equals(u.account_uuid)) {
+	if (!l.seller_uuid.equals(u.account_uuid) && !BuyMe.Admins.isAdmin(u.account_uuid) && !BuyMe.Admins.isMod(u.account_uuid)) {
 		response.sendRedirect("index.jsp");
 		return;
 	}
 	
 	BuyMe.Listings.remove(listingUUID);
-	response.sendRedirect("profile.jsp");
+	if (fromAdmin != null && fromAdmin.equalsIgnoreCase("true")) {
+		response.sendRedirect("admin.jsp");
+	} else {
+		response.sendRedirect("profile.jsp");
+	}
+	return;
 %>

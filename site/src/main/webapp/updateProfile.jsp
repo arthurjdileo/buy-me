@@ -9,7 +9,12 @@
 		response.sendRedirect("login.jsp");
 		return;
 	}
+	String acc_uuid = request.getParameter("acc_uuid");
+	String fromAdmin = request.getParameter("from-admin");
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
+	if (fromAdmin != null) {
+		u = BuyMe.Users.get(acc_uuid);
+	}
 
 	String firstName = request.getParameter("first-name");
 	String lastName = request.getParameter("last-name");
@@ -17,15 +22,21 @@
 	String pwd = request.getParameter("password");
 	String confirmPw = request.getParameter("change-password");
 	ArrayList<String> errors = new ArrayList<String>();
-	session.setAttribute("errorUpdateProfile", errors);
+	if (fromAdmin != null) {
+		session.setAttribute("errorUpdateProfileAdmin", errors);
+	} else {
+		session.setAttribute("errorUpdateProfile", errors);
+	}
 
 	if (!pwd.equals(confirmPw)) {
 		errors.add("Passwords are not matching");
-		response.sendRedirect("profile.jsp");
+		if (fromAdmin != null) response.sendRedirect("edit-user.jsp?acc_uuid=" + acc_uuid);
+		else response.sendRedirect("profile.jsp");
 		return;
 	} else if (!pwd.equals("") && (pwd.length() < 8 || pwd == null)) {
 		errors.add("Password must be at least 8 characters.");
-		response.sendRedirect("profile.jsp");
+		if (fromAdmin != null) response.sendRedirect("edit-user.jsp?acc_uuid=" + acc_uuid);
+		else response.sendRedirect("profile.jsp");
 		return;
 	}
 	if (firstName.equals("")) {
@@ -44,15 +55,14 @@
 	String hashedPw = BuyMe.Sessions.hashPassword(pwd);
 	User updated = new User(email, hashedPw, u.account_uuid, firstName, lastName, u.credits, u.lastIP, u.pwReset, u.isActive);
 	BuyMe.Users.update(updated);
-	response.sendRedirect("profile.jsp");
+	if (fromAdmin != null) {
+		String isMod = request.getParameter("isMod");
+		if (isMod != null && isMod.equalsIgnoreCase("true")) {
+			BuyMe.Admins.setRole(acc_uuid, "Moderator");
+		}
+		response.sendRedirect("admin.jsp");
+	} else {
+		response.sendRedirect("profile.jsp");
+	}
+	return;
 %>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-
-</body>
-</html>

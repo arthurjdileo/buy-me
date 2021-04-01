@@ -23,8 +23,6 @@
 				response.sendRedirect("index.jsp");
 				return;
 			} else {
-				System.out.println(u.password);
-				System.out.println(hashedPw);
 				errors.add("Incorrect password for " + u.email);
 				response.sendRedirect("login.jsp");
 				return;

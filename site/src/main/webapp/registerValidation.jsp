@@ -12,10 +12,8 @@ String fromAdmin = request.getParameter("from-admin");
 ArrayList<String> errors = new ArrayList<String>();
 if (fromAdmin != null) {
 	session.setAttribute("errorsRegAdmin", errors);
-	System.out.println("hit1");
 } else {
 	session.setAttribute("errorsReg", errors);
-	System.out.println("hit2");
 }
 
 if (pwd.length() < 8 || pwd == null) {
@@ -59,6 +57,14 @@ if (fromAdmin == null) {
 	Session s = new Session(sessionUUID, accountUUID);
 	BuyMe.Sessions.insert(s);
 }
+
+if (fromAdmin != null) {
+	String isMod = request.getParameter("isMod");
+	if (isMod != null && isMod.equalsIgnoreCase("true")) {
+		BuyMe.Admins.setRole(accountUUID, "Moderator");
+	}
+}
+
 if (fromAdmin != null) response.sendRedirect("admin.jsp");
 else response.sendRedirect("index.jsp");
 return;

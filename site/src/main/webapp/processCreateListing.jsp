@@ -31,7 +31,7 @@
 	String listingUUID;
 	if (request.getParameter("edit") != null && Integer.parseInt(request.getParameter("edit")) == 1) {
 		Listing l = BuyMe.Listings.get(request.getParameter("listingUUID"));
-		if (!l.seller_uuid.equals(u.account_uuid)) {
+		if (!l.seller_uuid.equals(u.account_uuid) && !BuyMe.Admins.isAdmin(u.account_uuid) && !BuyMe.Admins.isMod(u.account_uuid)) {
 			response.sendRedirect("index.jsp");
 			return;
 		}
