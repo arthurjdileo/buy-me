@@ -21,6 +21,7 @@ public class Question {
 	public String answer;
 	public java.sql.Timestamp created;
 	public java.sql.Timestamp updated;
+	public java.sql.Timestamp deleted;
 	
 	public Question(String question_uuid, String client_uuid, String question) {
 		this.question_uuid = question_uuid;
@@ -34,6 +35,7 @@ public class Question {
 		this.answer = rs.getString("answer");
 		this.created = rs.getTimestamp("created");
 		this.updated = rs.getTimestamp("updated");
+		this.deleted = rs.getTimestamp("deleted");
 	}
 	
 }

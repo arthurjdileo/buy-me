@@ -19,6 +19,7 @@ if (loginCookie != null) {
 	response.addCookie(loginCookie);
 	BuyMe.Sessions.remove(loginCookie.getValue());
 }
+session.invalidate();
 response.sendRedirect("login.jsp");
 return;
 %>

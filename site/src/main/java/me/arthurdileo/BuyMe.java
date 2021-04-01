@@ -402,8 +402,19 @@ public class BuyMe {
 					s = s.toLowerCase();
 					if (seller.firstName.toLowerCase().contains(s) || seller.lastName.toLowerCase().contains(s)) {
 						for (Listing u : getByUser(seller.account_uuid)) {
-							searchResults.add(u);
+							if (!searchResults.contains(u)) searchResults.add(u);
 						}
+					}
+				}
+			}
+			
+			for (Bid b : BuyMe.Bids.getAsList()) {
+				User bidder = BuyMe.Users.get(b.buyer_uuid);
+				for (String s : split) {
+					s = s.toLowerCase();
+					if (bidder.firstName.toLowerCase().contains(s) || bidder.lastName.toLowerCase().contains(s)) {
+						Listing l = BuyMe.Listings.get(b.listing_uuid);
+						if (!searchResults.contains(l)) searchResults.add(l);
 					}
 				}
 			}
@@ -657,10 +668,22 @@ public class BuyMe {
 				ResultSet rs = st.executeQuery("select * from Questions;");
 				while (rs.next()) {
 					Question q = new Question(rs);
-					QuestionsTable.put(q.client_uuid, q);
+					QuestionsTable.put(q.question_uuid, q);
 				}
 			}
 			return QuestionsTable;
+		}
+		
+		public static ArrayList<Question> getUnanswered() throws SQLException {
+			ArrayList<Question> questions = getAsList();
+			ArrayList<Question> unanswered = new ArrayList<Question>();
+			
+			for (Question q : questions) {
+				if (q.answer == null && q.deleted == null) {
+					unanswered.add(q);
+				}
+			}
+			return unanswered;
 		}
 		
 		// create question
@@ -687,13 +710,24 @@ public class BuyMe {
 			QuestionsTable = null;
 		}
 		
+		//reject
+		public static void reject(Question q, String admin_uuid) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE Questions SET deleted = NOW(), admin_uuid = ? WHERE question_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, admin_uuid);
+			ps.setString(2, q.question_uuid);
+			ps.executeUpdate();
+			QuestionsTable = null;
+		}
+		
 		// get users questions
 		public static ArrayList<Question> getByUser(String acc_uuid) throws SQLException {
 			ArrayList<Question> questions = getAsList();
 			ArrayList<Question> userQ = new ArrayList<Question>();
 			
 			for (Question q : questions) {
-				if (q.client_uuid.equals(acc_uuid)) {
+				if (q.client_uuid.equals(acc_uuid) && q.deleted == null) {
 					userQ.add(q);
 				}
 			}

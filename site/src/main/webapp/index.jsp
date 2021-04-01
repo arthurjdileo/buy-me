@@ -122,7 +122,7 @@
 	<div id="exampleSlider">
       <section class="MS-content content">
           <% for (Listing l : listings) { %>
-          <article class="product-container card item" style="max-width: 360px;">
+          <article class="product-container card item" style="max-width: 360px; min-height: 426px;">
             <a href="<%= "listing-item.jsp?listingUUID=" + l.listing_uuid %>" class="listing-item-link">
               <img src="<%= l.image %>" width="300" height="150" alt="" class="product-img">
               <h3 class="similar-product-title"><%= l.item_name %></h3>
@@ -132,7 +132,7 @@
                 </li>
                 <li>Price <span class="similar-product-price">$<%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
                 <li>Time <span class="product-time" id="<%= l.listing_uuid %>">00:00</span></li>
-                <!--<li>Currency <span class="product-currency">USD</span></li>-->
+                <li>Sold By <span class="product-currency"><%= BuyMe.Users.get(l.seller_uuid).firstName %></span></li>
               </ul>
             </a>
             <div class="bid-options">

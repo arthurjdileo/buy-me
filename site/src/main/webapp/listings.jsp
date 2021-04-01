@@ -261,11 +261,11 @@
               <h3 class="product-title"><%= l.item_name %></h3>
               <ul class="product-details">
                 <li>
-                  <p><%= l.description %></p>
+                  <p class="similar-desc"><%= l.description %></p>
                 </li>
                 <li>Price <span class="product-price">$<%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
                 <li>Time <span class="product-time" id="<%= l.listing_uuid %>">00:00</span></li>
-                <!--<li>Currency <span class="product-currency">USD</span></li>-->
+                <li>Sold By <span class="product-currency"><%= BuyMe.Users.get(l.seller_uuid).firstName %></span></li>
               </ul>
             </a>
             <div class="bid-options">

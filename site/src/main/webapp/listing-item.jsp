@@ -293,7 +293,7 @@
                 </li>
                 <li>Price <span class="similar-product-price">$<%= BuyMe.Listings.getCurrentPrice(ul) %></span></li>
                 <li>Time <span class="product-time" id="<%= ul.listing_uuid %>">00:00</span></li>
-                <!--<li>Currency <span class="product-currency">USD</span></li>-->
+                <li>Sold By <span class="product-currency"><%= BuyMe.Users.get(ul.seller_uuid).firstName %></span></li>
               </ul>
             </a>
             <div class="bid-options">

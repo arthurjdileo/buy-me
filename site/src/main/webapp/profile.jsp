@@ -45,7 +45,7 @@
       <div class="listing-nav-container" role="tablist" aria-label="profile list">
         <picture class="user-profile-img-container">
           <img src="img/user.png" alt="" class="user-profile-img">
-          <p class="user-profile-name"><%= u.firstName + " " + u.lastName %></p>
+          <p class="user-profile-name"><%= u.toString() %></p>
           <% if (BuyMe.Admins.isAdmin(u.account_uuid)) { %>
           <p class="user-profile-name">[<%= BuyMe.Admins.getRole(u.account_uuid) %>]</p>
           <% } %>
