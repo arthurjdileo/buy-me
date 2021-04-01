@@ -3,6 +3,28 @@
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
 
+<%!
+	public ArrayList<FAQ> filterFAQ(ArrayList<FAQ> faqs, String filter) {
+		ArrayList<FAQ> filtered = new ArrayList<FAQ>();
+		for (FAQ f: faqs) {
+			if (f.question.toLowerCase().contains(filter.toLowerCase())) {
+				filtered.add(f);
+			}
+		}
+		return filtered;
+	}
+
+	public ArrayList<Question> filterQ(ArrayList<Question> userQ, String filter) {
+		ArrayList<Question> filtered = new ArrayList<Question>();
+		for (Question q: userQ) {
+			if (q.question.toLowerCase().contains(filter.toLowerCase())) {
+				filtered.add(q);
+			}
+		}
+		return filtered;
+	}
+%>
+
 <%
 	Cookie[] cookies = request.getCookies();
 	if (!BuyMe.Sessions.safetyCheck(cookies)) {
@@ -13,6 +35,16 @@
 	
 	ArrayList<FAQ> faqs = BuyMe.FAQs.getAsList();
 	ArrayList<Question> userQ = BuyMe.Questions.getByUser(u.account_uuid);
+	ArrayList<FAQ> filteredFAQ = faqs;
+	ArrayList<Question> filteredQ = userQ;
+	String faqFilter = request.getParameter("faq-filter");
+	String qFilter = request.getParameter("q-filter");
+	if (faqFilter != null) {
+		filteredFAQ = filterFAQ(faqs, faqFilter);
+	}
+	if (qFilter != null) {
+		filteredQ = filterQ(userQ, qFilter);
+	}
 %>
 
 <!DOCTYPE html>
@@ -56,18 +88,18 @@
     <section class="faq-container">
       <article class="faq-sub-container">
         <h2 class="title-center">Frequently Asked Questions</h2>
-        <form action="" class="search-form keyword-form">
+        <form action="#" class="search-form keyword-form">
           <div class="input-container">
-            <label for="search-by-keyword">Search by keyword </label>
+            <label for="search-by-keyword">Search By Keyword </label>
             <div class="search-container">
-              <input type="text" placeholder="e.g. payments" class="search-input by-keyword">
+              <input type="text" value="<%= faqFilter != null ? faqFilter : "" %>" name="faq-filter" placeholder="e.g. payments" class="search-input by-keyword">
               <input type="submit" value="Search" class="search-btn">
             </div>
           </div>
         </form>
 
         <div class="accordion-container">
-          <% for (FAQ f : faqs) { %>
+          <% for (FAQ f : filteredFAQ) { %>
           <button class="accordion"><%= f.question %></button>
           <div class="panel">
             <p><%= f.answer %></p>
@@ -78,18 +110,18 @@
 
       <article class="faq-sub-container">
         <h2 class="title-center">My Questions Answered</h2>
-        <form action="" class="search-form keyword-form">
+        <form action="#" class="search-form keyword-form">
           <div class="input-container">
-            <label for="search-by-keyword">Search by keyword </label>
+            <label for="search-by-keyword">Search By Keyword </label>
             <div class="search-container">
-              <input type="text" placeholder="e.g. payments" class="search-input by-keyword">
+              <input type="text" value="<%= qFilter != null ? qFilter : "" %>" name="q-filter" placeholder="e.g. payments" class="search-input by-keyword">
               <input type="submit" value="Search" class="search-btn">
             </div>
           </div>
         </form>
 
         <div class="accordion-container">
-          <% for (Question q : userQ) { %>
+         <% for (Question q : filteredQ) { %>
           <button class="accordion"><%= q.question %></button>
           <div class="panel">
             <p><%= q.answer == null ? "This question is still being answered..." : q.answer %></p>

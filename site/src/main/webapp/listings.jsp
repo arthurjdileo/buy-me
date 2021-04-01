@@ -3,6 +3,26 @@
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
 
+<%!
+	public ArrayList<Listing> filterByPrice(ArrayList<Listing> listings, double price, boolean min) throws SQLException {
+		ArrayList<Listing> filtered = new ArrayList<Listing>();
+		
+		for (Listing l : listings) {
+			double curr = BuyMe.Listings.getCurrentPrice(l);
+			if (min) {
+				if (curr > price) {
+					filtered.add(l);
+				}
+			} else {
+				if (curr < price) {
+					filtered.add(l);
+				}
+			}
+		}
+		return filtered;
+	}
+%>
+
 <%
 	Cookie[] cookies = request.getCookies();
 	if (!BuyMe.Sessions.safetyCheck(cookies)) {
@@ -14,6 +34,10 @@
 	
 	String query = request.getParameter("search-query");
 	String filter = request.getParameter("search-filters");
+	if (query == null || filter == null) {
+		response.sendRedirect("index.jsp");
+		return;
+	}
 	ArrayList<Listing> listings;
 
 	if (filter.equalsIgnoreCase("item")) {
@@ -25,6 +49,16 @@
 	} else {
 		listings = new ArrayList<Listing>();
 	}
+	
+	String priceMin = request.getParameter("price-min");
+	String priceMax = request.getParameter("price-max");
+	if (priceMin != null) {
+		listings = filterByPrice(listings, Double.parseDouble(priceMin), true);
+	}
+	if (priceMax != null) {
+		listings = filterByPrice(listings, Double.parseDouble(priceMax), false);
+	}
+	
 %>
 
 <!DOCTYPE html>
@@ -125,20 +159,22 @@
         <div class="side-column">
           <div class="filter-card">
             <h2>Filter by price</h2>
-            <form action="" class="block-form">
+            <form action="listings.jsp" class="block-form">
               <div id="slider"></div>
               <div class="input-group range-container">
                 <label for="">Price: </label>
                 <div class="range-input-group">
-                  <p readonly id="price-min" class="price-input">
-                  <p readonly id="price-max" class="price-input">
+                  <input hidden name="search-query" value="<%= query %>"></input>
+                  <input hidden name="search-filters" value="<%= filter %>"></input>
+                  $<input name="price-min" id="price-min" style="border:none; width:5em" value="100"></input>
+                  $<input name="price-max" id="price-max" style="border:none; width:5em;" value="100"></input>
                 </div>
               </div>
               <input type="submit" value="Filter" class="btn btn-sm btn-pill blue" id="filter-submit-btn">
             </form>
           </div>
           <div class="filter-card">
-            <h2>Auction type</h2>
+            <h2>Auction Type</h2>
             <form action="" class="block-form">
               <div class="input-group">
                 <input type="checkbox" id="live-auction" name="live-auction" value="live-auction">
@@ -155,7 +191,7 @@
             </form>
           </div>
           <div class="filter-card">
-            <h2>Ending within</h2>
+            <h2>Ending Within</h2>
             <form action="" class="block-form">
               <div class="input-group">
                 <input type="checkbox" id="1-day" name="1-day" value="1-day">
@@ -207,30 +243,38 @@
   <script src="./js/nouislider.min.js"></script>
 
   <script type="text/javascript">
-    const slider = document.getElementById('slider');
-    console.log(slider)
-    noUiSlider.create(slider, {
-      start: [20, 500],
-      connect: true,
-      range: {
-        'min': 0,
-        'max': 10000
-      }
-
-    });
+	const slider = document.getElementById('slider');
+	noUiSlider.create(slider, {
+	  start: [<%= priceMin != null ? priceMin : 20 %>, <%= priceMax != null ? priceMax : 500 %>],
+	  connect: true,
+	  range: {
+	    'min': 0,
+	    'max': 50000
+	  }
 	
+	});
+	
+	
+	var priceValues = [
+	  document.getElementById('price-min'),
+	  document.getElementById('price-max')
+	];
+	
+ 	slider.noUiSlider.on('update', function(values, handle) {
+	  //priceValues[handle].innerHTML = `$ ${Math.round(values[handle])}`;
+	  priceValues[handle].value = Math.round(values[handle]);
+	  //priceValues[handle].value = `$ ${Math.round(values[handle])}`;
+	});
+ 	
+ 	priceValues[0].addEventListener('change', function() {
+ 		slider.noUiSlider.set([this.value, null]);
+ 	});
+ 	priceValues[1].addEventListener('change', function() {
+ 		slider.noUiSlider.set([null, this.value]);
+ 	});
     <% for (Listing l : listings) {%>
-    	countDown(new Date ('<%= l.end_time %> UTC').getTime(),"<%= l.listing_uuid %>");
-    <%}%>
-
-    var priceValues = [
-      document.getElementById('price-min'),
-      document.getElementById('price-max')
-    ];
-
-    slider.noUiSlider.on('update', function(values, handle) {
-      priceValues[handle].innerHTML = `$ ${Math.round(values[handle])}`;
-    });
+	countDown(new Date ('<%= l.end_time %> UTC').getTime(),"<%= l.listing_uuid %>");
+	<%}%>
   </script>
 </body>
 
