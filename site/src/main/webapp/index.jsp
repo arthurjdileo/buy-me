@@ -49,7 +49,7 @@
       <a href="create-listing.jsp" class="btn" id="sell-your-item-btn">Sell Your Item</a>
     </div>
     <h2 class="title-center mb-medium user-greeting">Welcome <span class="user-name"><%= u.firstName %>!</span></h2>
-    <h2 class="listing-title"><a href="#">Categories</a></h2>
+    <h2 class="listing-title"><a href="#">Featured Categories</a></h2>
 
     <div id="categoriesSlider" class="slider">
       <!-- Give wrapper ID to target with jQuery & CSS -->

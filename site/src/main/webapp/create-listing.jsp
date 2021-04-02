@@ -116,13 +116,13 @@
               <div id="customCategory" style="display: none;">
 	              <div class="input-group">
 		              <label for="category" class="input-label">Custom category* </label>
-		              <input name="category" type="text"></input>
+		              <input name="category-custom" type="text"></input>
 	              </div>
               </div>
               <div id="customSubCategory" style="display: none;">
         	      <div class="input-group">
 		              <label for="category" class="input-label">Custom sub-category* </label>
-		              <input name="sub-category" type="text"></input>
+		              <input name="sub-category-custom" type="text"></input>
 	              </div>
 	          </div>
               <div class="input-group" id="sub-categories">

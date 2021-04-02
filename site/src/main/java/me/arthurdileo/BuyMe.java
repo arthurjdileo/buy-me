@@ -878,7 +878,8 @@ public class BuyMe {
 			ps.setString(1, category);
 			ps.executeUpdate();
 			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT id FROM Category WHERE name = " + category + ";");
+			ResultSet rs = st.executeQuery("SELECT id FROM Category WHERE name = '" + category + "';");
+			CategoryTable = null;
 			if (rs.next()) {
 				return rs.getInt("id");
 			} else {
@@ -952,7 +953,8 @@ public class BuyMe {
 			ps.setString(2, sub_category);
 			ps.executeUpdate();
 			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery("SELECT id FROM SubCategory WHERE name = " + sub_category + " AND cat_id = " + category + ";");
+			ResultSet rs = st.executeQuery("SELECT id FROM SubCategory WHERE name = '" + sub_category + "' AND cat_id = " + category + ";");
+			SubCategoriesTable = null;
 			if (rs.next()) {
 				return rs.getInt("id");
 			} else {

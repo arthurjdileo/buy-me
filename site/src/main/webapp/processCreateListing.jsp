@@ -11,12 +11,17 @@
 	}
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
 	String product = request.getParameter("product");
-	for (String s : request.getParameterValues("category")) {
-		System.out.println(s);
+	int category = request.getParameter("category") != null && !request.getParameter("category").equals("other") ? Integer.parseInt(request.getParameter("category")) : -1;
+	int subCategory = request.getParameter("sub-category") != null ? Integer.parseInt(request.getParameter("sub-category")) : -1;
+	String categoryCustom = request.getParameter("category-custom");
+	String subCategoryCustom = request.getParameter("sub-category-custom");
+	if (categoryCustom == "") categoryCustom = null;
+	if (categoryCustom != null) {
+		category = BuyMe.Categories.insert(categoryCustom);
+		subCategory = BuyMe.SubCategories.insert(subCategoryCustom, category);
 	}
-	return;
-/* 	//int category = Integer.parseInt(request.getParameter("category"));
-	int subCategory = Integer.parseInt(request.getParameter("sub-category"));
+	
+
 	String description = request.getParameter("description");
 	int numDays = Integer.parseInt(request.getParameter("num-days"));
 	String imgURL = request.getParameter("image-link");
@@ -49,8 +54,8 @@
 			endDate, bidIncrement, 1);
 
 	BuyMe.Listings.insert(l);
-	BuyMe.SetAlerts.categoryProcess(l);
+	if (categoryCustom == null) BuyMe.SetAlerts.categoryProcess(l);
 	
 	// redirect to listings page
-	response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID); */
+	response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID);
 %>
