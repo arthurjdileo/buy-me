@@ -432,6 +432,8 @@ public class BuyMe {
 		
 		public static boolean checkWin(Listing l) throws SQLException {
 			User winner = getWinnerReserve(l);
+			User winner2 = getWinnerExpire(l);
+			if (winner == null) winner = winner2;
 			if (winner != null) {
 				remove(l.listing_uuid);
 				Transaction t = new Transaction(winner.account_uuid, l.seller_uuid, l.listing_uuid, BuyMe.Bids.topBid(l).amount);
@@ -450,6 +452,14 @@ public class BuyMe {
 				// set alert
 			}
 			return false;
+		}
+		
+		public static User getWinnerExpire(Listing l) throws SQLException {
+			java.sql.Timestamp t = new Timestamp(System.currentTimeMillis());
+			if (l.end_time.compareTo(t) <= 0) {
+				return BuyMe.Users.get(Bids.topBid(l).buyer_uuid);
+			}
+			return null;
 		}
 		
 		// determine winner by reserve
@@ -483,13 +493,22 @@ public class BuyMe {
 			if (BidsTable == null) {
 				BidsTable = new HashMap<String, Bid>();
 				Statement st = conn.createStatement();
-				ResultSet rs = st.executeQuery("select * from Bid;");
+				ResultSet rs = st.executeQuery("select * from Bid WHERE deleted IS NULL;");
 				while (rs.next()) {
 					Bid b = new Bid(rs);
 					BidsTable.put(b.bid_uuid, b);
 				}
 			}
 			return BidsTable;
+		}
+		
+		public static void remove(String bid_uuid) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE Bid SET deleted = NOW() WHERE bid_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, bid_uuid);
+			ps.executeUpdate();
+			BidsTable = null;
 		}
 		
 		// create a new bid
@@ -1053,17 +1072,29 @@ public class BuyMe {
 						BuyMe.Users.updateCredits(BuyMe.Users.get(b.buyer_uuid), BuyMe.Users.get(b.buyer_uuid).credits-bidAmt);
 						SetAlert currentAlert = BuyMe.SetAlerts.exists(b.buyer_uuid, "bid", b.listing_uuid);
 						if (currentAlert != null) {
-							Alert a = new Alert(currentAlert.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'You won " + BuyMe.Listings.get(listing_uuid).item_name + "!></a>");
+							Alert a = new Alert(currentAlert.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'>You won " + BuyMe.Listings.get(listing_uuid).item_name + "!</a>");
 							BuyMe.Alerts.insert(a);
 						}
 						
 						ArrayList<SetAlert> listingAlerts = BuyMe.SetAlerts.getByListing(listing_uuid);
 						for (SetAlert sa : listingAlerts) {
 							if (sa.acc_uuid.equals(b.buyer_uuid)) continue;
-							BuyMe.Alerts.insert(new Alert(sa.alert_uuid, sa.acc_uuid, "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'You lost " + BuyMe.Listings.get(listing_uuid).item_name + "!></a>"));
+							BuyMe.Alerts.insert(new Alert(sa.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'>You lost " + BuyMe.Listings.get(listing_uuid).item_name + "!</a>"));
 						}
 					}
 					BuyMe.SetAlerts.bidProcess(listing_uuid, newBid);
+				} else if (bidAmt > b.upper_limit && !topBid.buyer_uuid.equals(b.buyer_uuid)) {
+					SetAlert currentAlert = BuyMe.SetAlerts.exists(b.buyer_uuid, "bid", listing_uuid);
+					if (currentAlert !=  null) {
+						Alert a = new Alert(currentAlert.alert_uuid, BuyMe.genUUID(), "You were outbidded on " + BuyMe.Listings.get(listing_uuid).item_name + " because your upper-limit was surpassed. Please update your settings to be included in this auction.");
+						BuyMe.Alerts.insert(a);
+					}
+				} else if (bidAmt > BuyMe.Users.get(b.buyer_uuid).credits && !topBid.buyer_uuid.equals(b.buyer_uuid)) {
+					SetAlert currentAlert = BuyMe.SetAlerts.exists(b.buyer_uuid, "bid", listing_uuid);
+					if (currentAlert !=  null) {
+						Alert a = new Alert(currentAlert.alert_uuid, BuyMe.genUUID(), "You do not have enough credits to bid on " + BuyMe.Listings.get(listing_uuid).item_name + ". Please add credits and update your auto bid settings.");
+						BuyMe.Alerts.insert(a);
+					}
 				}
 			}
 		}

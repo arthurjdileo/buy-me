@@ -318,7 +318,7 @@
  		slider.noUiSlider.set([null, this.value]);
  	});
     <% for (Listing l : listings) {%>
-	countDown(new Date ('<%= l.end_time %> EST').getTime(),"<%= l.listing_uuid %>");
+	countDown(new Date ('<%= l.end_time %>-04:00').getTime(),"<%= l.listing_uuid %>");
 	<%}%>
 	
 	let form = document.querySelector("#ending");

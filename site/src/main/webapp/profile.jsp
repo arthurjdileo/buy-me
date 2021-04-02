@@ -287,10 +287,10 @@
   <script src="./js/timeout.js"></script>
   
   <script>
-    <% for (Alert a : userAlertsCategory) { %>
+<%--     <% for (Alert a : userAlertsCategory) { %>
     <% Listing l = BuyMe.Listings.get(a.msg); %>
-	countDown(new Date ('<%= l.end_time %> EST').getTime(),"<%= l.listing_uuid %>");
-	<%}%>
+	countDown(new Date ('<%= l.end_time %>-04:00').getTime(),"<%= l.listing_uuid %>");
+	<%}%> --%>
   </script>
 
 </body>

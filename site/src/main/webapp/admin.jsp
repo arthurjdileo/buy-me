@@ -18,6 +18,7 @@
 	ArrayList<Question> questions = BuyMe.Questions.getUnanswered();
 	ArrayList<User> users = BuyMe.Users.getAsList();
 	ArrayList<Listing> listings = BuyMe.Listings.getAsList();
+	ArrayList<Transaction> transactions = BuyMe.TransactionHistory.getAsList();
 %>
 
 <!DOCTYPE html>
@@ -59,7 +60,7 @@
         <button role="tab" class="listing-nav" id="user-management" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">user management</button>
         <button role="tab" class="listing-nav" id="listing-management" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">listing management</button>
 
-        <a href="/signout.html" class="btn btn-sm blue in-block" id="signout-btn">signout</a>
+        <a href="logout.jsp" class="btn btn-sm blue listing-nav" id="signout-btn">Sign Out</a>
       </div> <!-- end side navigation-->
 
       <div class="panels-container">
@@ -121,27 +122,24 @@
                 <th class="listing-table__th"></th>
               </thead>
               <tbody class="listing-table__body">
+                <% double sum = 0; %>
+                <% for (Transaction t : transactions) { %>
+                <% Listing l = BuyMe.Listings.get(t.listing_uuid); %>
+                <% sum = sum + t.amount; %>
                 <tr class="listing-table__tr">
                   <td class="total-column"></td>
-                  <td class="listing-table__td">item 1</td>
-                  <td class="listing-table__td sell-price-column">100</td>
+                  <td class="listing-table__td"><%= l.item_name %></td>
+                  <td class="listing-table__td sell-price-column"><%= t.amount %></td>
                   <td class="listing-table__td">
-                    <button class="btn btn-sm blue">view listing</button>
+                    <button class="btn btn-sm blue" href="listing-item.jsp?sold=1&listingUUID=<%= l.listing_uuid %>>">view listing</button>
                   </td>
                 </tr>
-                <tr class="listing-table__tr">
-                  <td class="total-column"></td>
-                  <td class="listing-table__td">item 2</td>
-                  <td class="listing-table__td sell-price-column">500</td>
-                  <td class="listing-table__td">
-                    <button class="btn btn-sm blue">view listing</button>
-                  </td>
-                </tr>
+                <% } %>
                 <!-- last row should be like this one -->
                 <tr class="listing-table__tr">
                   <td class="total-column total-row">Total</td>
                   <td class="listing-table__td total-row"></td>
-                  <td class="listing-table__td total-row sell-price-column total-price-cell">600</td>
+                  <td class="listing-table__td total-row sell-price-column total-price-cell"><%= sum %></td>
                   <td class="listing-table__td total-row">
                   </td>
                 </tr>

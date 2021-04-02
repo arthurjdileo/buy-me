@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1" import="me.arthurdileo.*"%>
-<%@ page import="java.io.*,java.util.*,java.sql.*"%>
+<%@ page import="java.io.*,java.util.*,java.sql.*, java.util.concurrent.TimeUnit.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
 
 <%
@@ -14,11 +14,10 @@
 		response.sendRedirect("index.jsp");
 		return;
 	}
-
-	String questionUUID = request.getParameter("question_uuid");
-	String answer = request.getParameter("answer");
-	
-	BuyMe.Questions.answer(questionUUID, answer, u.account_uuid);
-	response.sendRedirect("admin.jsp");
+		
+	String bidUUID = request.getParameter("bidUUID");
+	String listingUUID = request.getParameter("listingUUID");
+	BuyMe.Bids.remove(bidUUID);
+	response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID);
 	return;
 %>

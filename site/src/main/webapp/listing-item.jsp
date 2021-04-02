@@ -34,6 +34,26 @@
 	AutomaticBid autoBid = BuyMe.AutomaticBids.exists(listingUUID, u.account_uuid);
 	SetAlert userAlert = BuyMe.SetAlerts.exists(u.account_uuid, "bid", l.listing_uuid);
 	if (userAlert != null && userAlert.is_active == 0) userAlert = null;
+	if (sold == 0) {
+		boolean win = BuyMe.Listings.checkWin(l);
+		if (win) {
+			Transaction t = BuyMe.TransactionHistory.get(l.listing_uuid);
+			User winner = BuyMe.Users.get(t.buyer_uuid);
+			SetAlert currentAlert = BuyMe.SetAlerts.exists(winner.account_uuid, "bid", l.listing_uuid);
+			if (currentAlert != null) {
+				Alert a = new Alert(currentAlert.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid + "'>You won " + l.item_name + "!</a>");
+				BuyMe.Alerts.insert(a);
+			}
+			
+			ArrayList<SetAlert> listingAlerts = BuyMe.SetAlerts.getByListing(l.listing_uuid);
+			for (SetAlert sa : listingAlerts) {
+				if (sa.acc_uuid.equals(winner.account_uuid)) continue;
+				BuyMe.Alerts.insert(new Alert(sa.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid + "'>You lost " + l.item_name + "!</a>"));
+			}
+			response.sendRedirect("listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid);
+			return;
+		}
+	}
 %>
 
 <!DOCTYPE html>
@@ -257,6 +277,9 @@
               <th>Date</th>
               <th>Time</th>
               <th>Unit price</th>
+              <% if (BuyMe.Admins.isAdmin(u.account_uuid) || BuyMe.Admins.isMod(u.account_uuid) || l.seller_uuid.equals(u.account_uuid)) { %>
+              <th>Delete</th>
+              <% } %>
             </thead>
             <tbody>
               <%  for (Bid b : BuyMe.Bids.sort(bids)) { %>
@@ -270,6 +293,17 @@
                 <td><%= BuyMe.Bids.format(b, "MMMM d, yyyy") %></td>
                 <td><%= BuyMe.Bids.format(b, "h:m a") %></td>
                 <td><%= b.amount %></td>
+                <% if (BuyMe.Admins.isAdmin(u.account_uuid) || BuyMe.Admins.isMod(u.account_uuid) || l.seller_uuid.equals(u.account_uuid)) { %>
+                <td>
+                	<form action="deleteBid.jsp">
+                    <input hidden name="listingUUID" value="<%= l.listing_uuid %>"></input>
+                    <input hidden name="bidUUID" value="<%= b.bid_uuid %>"></input>
+                    <button type="submit" class="btn btn-sm bg-danger">
+                      Delete
+                    </button>
+                    </form>
+                </td>
+                <% } %>
               </tr>
               <% } %>
             </tbody>
@@ -334,7 +368,7 @@
   <script src="./js/initialize-slider.js"></script>
   
   <script>
-  countDown(new Date ('<%= l.end_time %> EST').getTime(), "demo");
+  countDown(new Date ('<%= l.end_time %>-04:00').getTime(), "demo");
   </script>
 
   <script type="text/javascript">
@@ -387,7 +421,7 @@
     
     <% for (Listing ul : BuyMe.Listings.getByUser(l.seller_uuid)) {%>
     	<% if (!ul.listing_uuid.equals(l.listing_uuid)) { %>
-    	countDown(new Date ('<%= ul.end_time %> EST').getTime(),"<%= ul.listing_uuid %>");
+    	countDown(new Date ('<%= ul.end_time %>-04:00').getTime(),"<%= ul.listing_uuid %>");
     	<%}%>
     <%}%>
   </script>

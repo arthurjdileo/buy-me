@@ -118,7 +118,7 @@
     </div> <!-- end multislider-->
 
 
-    <h2 class="listing-title"><a href="listing.html">Recent Listings</a></h2>
+    <h2 class="listing-title"><a>Recent Listings</a></h2>
 	<div id="exampleSlider">
       <section class="MS-content content">
           <% for (Listing l : listings) { %>
@@ -186,7 +186,7 @@
   
   <script>
     <% for (Listing l : listings) {%>
-	countDown(new Date ('<%= l.end_time %> EST').getTime(),"<%= l.listing_uuid %>");
+	countDown(new Date ('<%= l.end_time %>-04:00').getTime(),"<%= l.listing_uuid %>");
 	<%}%>
   </script>
 </body>

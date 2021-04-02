@@ -23,6 +23,12 @@
 		return;
 	}
 	
+	if (upper_limit > u.credits) {
+		errors.add("You do not have enough credits to create an automatic bid!");
+		response.sendRedirect("listing-item.jsp?listingUUID=" + listing_uuid);
+		return;
+	}
+	
 	AutomaticBid b = new AutomaticBid(u.account_uuid, listing_uuid, upper_limit, increment);
 	BuyMe.AutomaticBids.insert(b);
 	SetAlert userAlert = BuyMe.SetAlerts.exists(u.account_uuid, "bid", listing_uuid);
