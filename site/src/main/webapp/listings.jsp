@@ -10,11 +10,11 @@
 		for (Listing l : listings) {
 			double curr = BuyMe.Listings.getCurrentPrice(l);
 			if (min) {
-				if (curr > price) {
+				if (curr >= price) {
 					filtered.add(l);
 				}
 			} else {
-				if (curr < price) {
+				if (curr <= price) {
 					filtered.add(l);
 				}
 			}
@@ -48,8 +48,12 @@
   	public ArrayList<Listing> sortByName(ArrayList<Listing> listings) {
   		ArrayList<Listing> filtered = listings;
   		Comparator<Listing> nameOrder = new Comparator<Listing>() {
+  			@Override
   			public int compare(Listing l1, Listing l2) {
-  				return l1.item_name.compareToIgnoreCase(l2.item_name);
+  				System.out.println(l1.item_name);
+  				System.out.println(l2.item_name);
+  				System.out.println(l1.item_name.compareTo(l2.item_name));
+  				return l1.item_name.compareTo(l2.item_name);
   			}
   		};
   		

@@ -17,7 +17,7 @@
 	double upper_limit = Double.parseDouble(request.getParameter("max-number"));
 	double increment = Double.parseDouble(request.getParameter("bid-number"));
 	
-	if (BuyMe.AutomaticBids.exists(listing_uuid, u.account_uuid) == null) {
+	if (BuyMe.AutomaticBids.exists(listing_uuid, u.account_uuid) != null) {
 		errors.add("You already have an automatic bid set.");
 		response.sendRedirect("listing-item.jsp?listingUUID=" + listing_uuid);
 		return;

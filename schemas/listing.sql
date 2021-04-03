@@ -5,7 +5,7 @@ CREATE TABLE Listing(
 	cat_id int(11) NOT NULL,
 	sub_id int(11) NOT NULL,
 	item_name varchar(250) NOT NULL,
-	description varchar(350) NOT NULL,
+	description varchar(1000) NOT NULL,
 	image varchar(250) NOT NULL,
 	created datetime DEFAULT NOW() NOT NULL,
 	updated datetime DEFAULT NOW() ON UPDATE NOW() NOT NULL,

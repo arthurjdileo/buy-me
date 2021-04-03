@@ -292,7 +292,11 @@ public class BuyMe {
 			ps.setInt(19, l.listing_days);
 			ps.setString(20, l.currency);
 			ps.setDouble(21, l.start_price);
-			ps.setDouble(22, l.reserve_price);
+			if (l.reserve_price == -1) {
+				ps.setNull(22, Types.NULL);
+			} else {
+				ps.setDouble(22, l.reserve_price);
+			}
 			ps.setDouble(23, l.bid_increment);
 			ps.setTimestamp(24, l.end_time);
 			ps.executeUpdate();
@@ -364,28 +368,25 @@ public class BuyMe {
 			ArrayList<Category> categories = BuyMe.Categories.getAsList();
 			ArrayList<SubCategory> subCategories = BuyMe.SubCategories.getAsList();
 			ArrayList<Listing> searchResults = new ArrayList<Listing>();
-			String[] split = query.split(" ");
 			
 			for (Category c : categories) {
-				for (String s : split) {
-					if (c.name.toLowerCase().contains(s.toLowerCase())) {
-						for (Listing l : getByCategory(c.id)) {
-							if (!searchResults.contains(l)) {
-								searchResults.add(l);
-							}
+				if (c.name.toLowerCase().equalsIgnoreCase(query)) {
+					for (Listing l : getByCategory(c.id)) {
+						if (!searchResults.contains(l)) {
+							searchResults.add(l);
 						}
 					}
+					return searchResults;
 				}
 			}
 			for (SubCategory c : subCategories) {
-				for (String s : split) {
-					if (c.name.toLowerCase().contains(s.toLowerCase())) {
-						for (Listing l : getBySubCategory(c.id)) {
-							if (!searchResults.contains(l)) {
-								searchResults.add(l);
-							}
+				if (c.name.toLowerCase().equalsIgnoreCase(query)) {
+					for (Listing l : getBySubCategory(c.id)) {
+						if (!searchResults.contains(l)) {
+							searchResults.add(l);
 						}
 					}
+					return searchResults;
 				}
 			}
 			return searchResults;
@@ -448,6 +449,7 @@ public class BuyMe {
 				for (SetAlert sa : listingAlerts) {
 					BuyMe.SetAlerts.remove(sa.alert_uuid);
 				}
+				BuyMe.AutomaticBids.clean(l.listing_uuid);
 				return true;
 				// set alert
 			}
@@ -652,16 +654,104 @@ public class BuyMe {
 			return buyerTrans;
 		}
 		
+		public static ArrayList<User> getBuyers() throws SQLException {
+			ArrayList<Transaction> transactions = getAsList();
+			ArrayList<User> buyers = new ArrayList<User>();
+			
+			for (Transaction t : transactions) {
+				User u = BuyMe.Users.get(t.buyer_uuid);
+				if (!buyers.contains(u)) {
+					buyers.add(u);
+				}
+			}
+			return buyers;
+		}
+		
+		public static double earningsByBuyer(String buyer_uuid) throws SQLException {
+			ArrayList<Transaction> buyerTrans = getByBuyer(buyer_uuid);
+			double sum = 0;
+			for (Transaction t : buyerTrans) {
+				sum = sum + t.amount;
+			}
+			return sum;
+		}
+		
 		public static ArrayList<Transaction> getBySeller(String seller_uuid) throws SQLException {
 			ArrayList<Transaction> transactions = getAsList();
 			ArrayList<Transaction> sellerTrans = new ArrayList<Transaction>();
 			
 			for (Transaction t : transactions) {
-				if (t.buyer_uuid.equals(seller_uuid)) {
+				if (t.seller_uuid.equals(seller_uuid)) {
 					sellerTrans.add(t);
 				}
 			}
 			return sellerTrans;
+		}
+		
+		public static ArrayList<User> getSellers() throws SQLException {
+			ArrayList<Transaction> transactions = getAsList();
+			ArrayList<User> sellers = new ArrayList<User>();
+			
+			for (Transaction t : transactions) {
+				User u = BuyMe.Users.get(t.seller_uuid);
+				if (!sellers.contains(u)) {
+					sellers.add(u);
+				}
+			}
+			return sellers;
+		}
+		
+		public static double earningsBySeller(String seller_uuid) throws SQLException {
+			ArrayList<Transaction> sellerTrans = getBySeller(seller_uuid);
+			double sum = 0;
+			for (Transaction t : sellerTrans) {
+				sum = sum + t.amount;
+			}
+			return sum;
+		}
+		
+		public static ArrayList<Transaction> getByCategory(int category_id) throws SQLException {
+			ArrayList<Transaction> transactions = getAsList();
+			ArrayList<Transaction> categoryTrans = new ArrayList<Transaction>();
+			
+			for (Transaction t : transactions) {
+				Listing l = BuyMe.Listings.get(t.listing_uuid);
+				if (l.cat_id == category_id) {
+					categoryTrans.add(t);
+				}
+			}
+			return categoryTrans;
+		}
+		
+		public static double earningsByCategory(int category_id) throws SQLException {
+			ArrayList<Transaction> categoryTrans = getByCategory(category_id);
+			double sum = 0;
+			for (Transaction t : categoryTrans) {
+				sum = sum + t.amount;
+			}
+			return sum;
+		}
+		
+		public static ArrayList<Transaction> getBySubCategory(int sub_cat_id) throws SQLException {
+			ArrayList<Transaction> transactions = getAsList();
+			ArrayList<Transaction> categoryTrans = new ArrayList<Transaction>();
+			
+			for (Transaction t : transactions) {
+				Listing l = BuyMe.Listings.get(t.listing_uuid);
+				if (l.sub_id == sub_cat_id) {
+					categoryTrans.add(t);
+				}
+			}
+			return categoryTrans;
+		}
+		
+		public static double earningsBySubCategory(int sub_cat_id) throws SQLException {
+			ArrayList<Transaction> categoryTrans = getBySubCategory(sub_cat_id);
+			double sum = 0;
+			for (Transaction t : categoryTrans) {
+				sum = sum + t.amount;
+			}
+			return sum;
 		}
 	}
 	
@@ -1024,6 +1114,15 @@ public class BuyMe {
 			ps.setString(2, b.listing_uuid);
 			ps.setDouble(3, b.upper_limit);
 			ps.setDouble(4, b.increment);
+			ps.executeUpdate();
+			AutomaticBidTable = null;
+		}
+		
+		public static void clean(String listing_uuid) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE AutomaticBid SET deleted = NOW() WHERE listing_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, listing_uuid);
 			ps.executeUpdate();
 			AutomaticBidTable = null;
 		}

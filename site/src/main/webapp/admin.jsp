@@ -17,8 +17,12 @@
 	
 	ArrayList<Question> questions = BuyMe.Questions.getUnanswered();
 	ArrayList<User> users = BuyMe.Users.getAsList();
+	ArrayList<User> sellers = BuyMe.TransactionHistory.getSellers();
+	ArrayList<User> buyers = BuyMe.TransactionHistory.getBuyers();
 	ArrayList<Listing> listings = BuyMe.Listings.getAsList();
 	ArrayList<Transaction> transactions = BuyMe.TransactionHistory.getAsList();
+	ArrayList<Category> categories = BuyMe.Categories.getAsList();
+	ArrayList<SubCategory> subcategories = BuyMe.SubCategories.getAsList();
 %>
 
 <!DOCTYPE html>
@@ -34,7 +38,9 @@
   <link rel="stylesheet" href="./css/listing.css">
   <link rel="stylesheet" href="./css/profile.css">
   <link rel="stylesheet" href="./css/admin.css">
-
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
   <title>BuyMe - Admin</title>
 </head>
 
@@ -112,7 +118,7 @@
         <div class="" role="tabpanel" aria-labelledby="generate-sales-report" hidden id="generate-sales-report">
           <h2>Total earnings report panel</h2>
           <section class="listing-panel generate-sales-panel">
-            <button class="btn btn-sm btn-confirm">generate total earnings</button>
+            <!-- <button class="btn btn-sm btn-confirm">generate total earnings</button> -->
 
             <table class="listing-table">
               <thead class="listing-table__head">
@@ -131,7 +137,7 @@
                   <td class="listing-table__td"><%= l.item_name %></td>
                   <td class="listing-table__td sell-price-column"><%= t.amount %></td>
                   <td class="listing-table__td">
-                    <button class="btn btn-sm blue" href="listing-item.jsp?sold=1&listingUUID=<%= l.listing_uuid %>>">view listing</button>
+                    <button class="btn btn-sm blue" onclick="window.location.href = 'listing-item.jsp?sold=1&listingUUID=<%= l.listing_uuid %>';">view listing</button>
                   </td>
                 </tr>
                 <% } %>
@@ -152,48 +158,89 @@
         <div class="" role="tabpanel" aria-labelledby="earnings" hidden>
           <h2>earnings per panel</h2>
           <section class="generate-earnings">
-            <form action="" class="in-form">
+<%--             <form action="admin.jsp" class="in-form">
               <input type="submit" class="btn btn-sm btn-confirm" value="Generate">
               <div class="input-group">
                 <label for="search-filters" class="select-label">by: </label>
-                <select id="search-filters" name="search-filters" class="">
+                <select id="search-filters" onchange="updateInput(this);" name="search-filters" class="">
                   <option value="category">Category</option>
+                  <option value="sub-category">Sub Category</option>
                   <option value="item">Item</option>
-                  <option value="user">User</option>
+                  <option value="buyer">Buyer</option>
+                  <option value="seller">Seller</option>
                 </select>
-                <input type="text">
+                <input type="text" id="earningInput" name="earningInput" style="display: none;"></input>
+                <select id="categories" name="category">
+                	<% for (Category c : categories) { %>
+                		<option value="<%= c.id %>"><%= c.name %></option>
+                	<% } %>
+                </select>
+                <select id="sub-categories" name="sub-category" style="display: none;">
+                	<% for (SubCategory sc : subcategories) { %>
+                		<option value="<%= sc.id %>"><%= sc.name %></option>
+                	<% } %>
+                </select>
 
               </div>
 
-            </form>
+            </form> --%>
           </section>
           <section class="listing-panel">
             <table class="listing-table">
               <thead class="listing-table__head">
-                <th class="listing-table__th">earnings per</th>
+                <th class="listing-table__th">Category</th>
                 <th class="listing-table__th">amount</th>
               </thead>
               <tbody class="listing-table__body">
+                <% for (Category c : categories) { %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td">item</td>
-                  <td class="listing-table__td sell-price-column">
-                    10
-                  </td>
+                  <td class="listing-table__td"><%= c.name %></td>
+                  <td class="listing-table__td sell-price-column"><%= BuyMe.TransactionHistory.earningsByCategory(c.id) %></td>
                 </tr>
+                <% } %>
+              </tbody>
+            </table>
+            <table class="listing-table">
+              <thead class="listing-table__head">
+                <th class="listing-table__th">Sub Category</th>
+                <th class="listing-table__th">amount</th>
+              </thead>
+              <tbody class="listing-table__body">
+                <% for (SubCategory sc : subcategories) { %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td">item type</td>
-                  <td class="listing-table__td sell-price-column">
-                    1
-                  </td>
+                  <td class="listing-table__td"><%= sc.name %></td>
+                  <td class="listing-table__td sell-price-column"><%= BuyMe.TransactionHistory.earningsBySubCategory(sc.id) %></td>
                 </tr>
+                <% } %>
+              </tbody>
+            </table>
+            <table class="listing-table">
+              <thead class="listing-table__head">
+                <th class="listing-table__th">Seller</th>
+                <th class="listing-table__th">amount</th>
+              </thead>
+              <tbody class="listing-table__body">
+                <% for (User seller : sellers) { %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td">end user</td>
-                  <td class="listing-table__td sell-price-column">0</td>
+                  <td class="listing-table__td"><%= seller.toString() %></td>
+                  <td class="listing-table__td sell-price-column"><%= BuyMe.TransactionHistory.earningsBySeller(seller.account_uuid) %></td>
                 </tr>
+                <% } %>
+              </tbody>
+            </table>
+            
+            <table class="listing-table">
+              <thead class="listing-table__head">
+                <th class="listing-table__th">Item</th>
+                <th class="listing-table__th">amount</th>
+              </thead>
+              <tbody class="listing-table__body">
+                <% for (Transaction t : transactions) { %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td">total</td>
-                  <td class="listing-table__td sell-price-column">$$$222</td>
+                  <td class="listing-table__td"><%= BuyMe.Listings.get(t.listing_uuid).item_name %></td>
+                  <td class="listing-table__td sell-price-column"><%= t.amount %></td>
                 </tr>
+                <% } %>
               </tbody>
             </table>
 
@@ -225,22 +272,20 @@
         <!--end panel-->
 
         <div class="" role="tabpanel" aria-labelledby="best-buyers" hidden>
-          <h2>Best selling items panel</h2>
+          <h2>Best Buyers</h2>
           <section class="listing-panel">
-            <table class="listing-table">
+            <table class="listing-table" id="best-buyer-table">
               <thead class="listing-table__head">
-                <th class="listing-table__th">ranking</th>
-                <th class="listing-table__th">email</th>
+                <th class="listing-table__th">Name</th>
+                <th class="listing-table__th">Total Amount Spent</th>
               </thead>
               <tbody class="listing-table__body">
+                <% for (User bu : buyers) { %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td">1</td>
-                  <td class="listing-table__td">john@mail.com</td>
+                  <td class="listing-table__td"><%= bu.toString() %></td>
+                  <td class="listing-table__td"><%= BuyMe.TransactionHistory.earningsByBuyer(bu.account_uuid) %></td>
                 </tr>
-                <tr class="listing-table__tr">
-                  <td class="listing-table__td">2</td>
-                  <td class="listing-table__td">jane@mail.org</td>
-                </tr>
+                <% } %>
               </tbody>
             </table>
           </section>
@@ -392,13 +437,68 @@
     const cardButtons = document.querySelectorAll('.cardbutton');
     const modalInner = document.querySelector('.modal-inner');
     const modalOuter = document.querySelector('.modal-outer');
+    function sortTable() {
+    	  var table, rows, switching, i, x, y, shouldSwitch;
+    	  table = document.getElementById("best-buyer-table");
+    	  switching = true;
+    	  /*Make a loop that will continue until
+    	  no switching has been done:*/
+    	  while (switching) {
+    	    //start by saying: no switching is done:
+    	    switching = false;
+    	    rows = table.rows;
+    	    /*Loop through all table rows (except the
+    	    first, which contains table headers):*/
+    	    for (i = 1; i < (rows.length - 1); i++) {
+    	      //start by saying there should be no switching:
+    	      shouldSwitch = false;
+    	      /*Get the two elements you want to compare,
+    	      one from current row and one from the next:*/
+    	      x = rows[i].getElementsByTagName("TD")[1];
+    	      console.log(Number(x.innerHTML));
+    	      y = rows[i + 1].getElementsByTagName("TD")[1];
+    	      console.log(Number(y.innerHTML));
+    	      //check if the two rows should switch place:
+    	      if (Number(x.innerHTML) < Number(y.innerHTML)) {
+    	        //if so, mark as a switch and break the loop:
+    	        shouldSwitch = true;
+    	        break;
+    	      }
+    	    }
+    	    if (shouldSwitch) {
+    	      /*If a switch has been marked, make the switch
+    	      and mark that a switch has been done:*/
+    	      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+    	      switching = true;
+    	    }
+    	  }
+    	}
+    sortTable();
+/*     let categories = document.getElementById("categories");
+	let subcategories = document.getElementById("sub-categories");
+	let earnings = document.getElementById("earningInput");
+    
+    function updateInput(event) {
+     	if (event.value == 'category') {
+    		categories.style.display = "inline-block";
+    		subcategories.style.display = "none";
+    		earnings.style.display = "none";
+    	} else if (event.value == 'sub-category') {
+    		categories.style.display = "none";
+    		subcategories.style.display = "inline-block";
+    		earnings.style.display = "none";
+    	} else {
+    		categories.style.display = "none";
+    		subcategories.style.display = "none";
+    		earnings.style.display = "inline-block";
+    	}
+    } */
 
     function handleQuestionAnswer(event) {
       const button = event.currentTarget;
       // get the question and id
       const questionId = button.parentElement.parentElement.children[0].getAttribute('data-q-id');
       const question = button.parentElement.parentElement.children[0].textContent;
-      console.log(questionId);
 
       modalInner.innerHTML = `
       <form action="answerQuestion.jsp" class="card modal-form">

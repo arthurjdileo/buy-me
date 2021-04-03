@@ -24,3 +24,11 @@ $('#similarSlider').multislider({
 	interval: 10000,
 	slideAll: false,
 });
+
+$('#otherSlider').multislider();
+
+ //<!-- Initialize with options, if needed -->
+$('#otherSlider').multislider({
+	interval: 10000,
+	slideAll: false,
+});

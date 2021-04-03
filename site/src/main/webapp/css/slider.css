@@ -47,7 +47,7 @@
 }
 
 /* multislider */
-#similarSlider {
+#similarSlider{
   position: relative;
   /* recommended */
 }
@@ -90,6 +90,54 @@
 }
 
 #similarSlider .MS-controls .MS-right {
+  right: 10px;
+  top: 50%;
+}
+
+/* multislider */
+#otherSlider{
+  position: relative;
+  /* recommended */
+}
+
+#otherSlider .MS-content {
+  white-space: nowrap;
+  /* required */
+  overflow: hidden;
+  /* required */
+  margin: 0 5%;
+  /* makes room for L/R arrows */
+}
+
+#otherSlider .MS-content .item {
+  display: inline-block;
+  /* required */
+  width: 20%;
+  /* required * Determines number of visible slides */
+  position: relative;
+  /* required */
+  vertical-align: top;
+  /* required */
+  overflow: hidden;
+  /* required */
+  height: 100%;
+  /* recommended */
+  white-space: normal;
+  /* recommended */
+}
+
+#otherSlider .MS-controls button {
+  position: absolute;
+  /* recommended */
+  top: 35px;
+}
+
+#otherSlider .MS-controls .MS-left {
+  top: 50%;
+  left: 10px;
+}
+
+#otherSlider .MS-controls .MS-right {
   right: 10px;
   top: 50%;
 }
