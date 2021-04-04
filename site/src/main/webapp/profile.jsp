@@ -56,7 +56,7 @@
         <button role="tab" class="listing-nav" id="listings" aria-selected="false"><img src="./img/menu.svg" type="image/svg-xml" alt="" class="listing-nav-icon">my listings</button>
         <button role="tab" class="listing-nav" id="alerts" aria-selected="false"><img src="./img/menu.svg" type="image/svg-xml" alt="" class="listing-nav-icon">my alerts</button>
         <button role="tab" class="listing-nav" id="won-auctions" aria-selected="false"><img src="./img/menu.svg" type="image/svg-xml" alt="" class="listing-nav-icon">won auctions</button>
-        <button role="tab" class="listing-nav"><a href="faq.jsp"><img src="./img/menu.svg" type="image/svg-xml" alt="" class="listing-nav-icon">FAQ's</a></button>
+        <button role="tab" class="listing-nav" onclick="window.location.href = 'faq.jsp'"><img src="./img/menu.svg" type="image/svg-xml" alt="" class="listing-nav-icon">FAQ's</button>
         <a href="logout.jsp" class="btn btn-sm blue listing-nav" id="signout-btn">Sign Out</a>
       </div>
 
