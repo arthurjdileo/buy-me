@@ -10,7 +10,7 @@
 		return;
 	}
 	User u = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
-	if(!BuyMe.Admins.isAdmin(u.account_uuid)) {
+	if(!BuyMe.Admins.isAdmin(u.account_uuid) && !BuyMe.Admins.isMod(u.account_uuid)) {
 		response.sendRedirect("index.jsp");
 		return;
 	}

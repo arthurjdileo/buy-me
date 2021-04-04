@@ -67,6 +67,9 @@ if (fromAdmin != null) {
 	if (isMod != null && isMod.equalsIgnoreCase("true")) {
 		BuyMe.Admins.setRole(accountUUID, "Moderator");
 	}
+	
+	Event e = new Event(u.account_uuid, "Created account: '" + email + "'");
+	BuyMe.Events.insert(e);
 }
 
 if (fromAdmin != null) response.sendRedirect("admin.jsp");

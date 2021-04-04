@@ -51,7 +51,7 @@ public class BuyMe {
 			if (UserTable == null) {
 				UserTable = new HashMap<String, User>();
 				Statement st = conn.createStatement();
-				ResultSet rs = st.executeQuery("SELECT * from Users");
+				ResultSet rs = st.executeQuery("SELECT * from Users WHERE is_active = 1;");
 				
 				while (rs.next()) {
 					User u = new User(rs);
@@ -86,6 +86,16 @@ public class BuyMe {
 			ps.setString(3, u.email);
 			ps.setString(4, u.password);
 			ps.setString(5, u.account_uuid);
+			ps.executeUpdate();
+			UserTable = null;
+		}
+		
+		//delete user
+		public static void delete(String acc_uuid) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE Users SET is_active = 0 WHERE acc_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, acc_uuid);
 			ps.executeUpdate();
 			UserTable = null;
 		}
@@ -1432,6 +1442,41 @@ public class BuyMe {
 				}
 			}
 			return saAlerts;
+		}
+	}
+	
+	public static class Events {
+		static ArrayList<Event> EventsTable;
+		
+		// events as list
+		public static ArrayList<Event> getAsList() throws SQLException {
+			return new ArrayList<Event>(getAll());
+		}
+				
+		// updates table from db
+		static ArrayList<Event> getAll() throws SQLException {
+			loadDatabase();
+			if (EventsTable == null) {
+				EventsTable = new ArrayList<Event>();
+				Statement st = conn.createStatement();
+				ResultSet rs = st.executeQuery("select * from Events;");
+				while (rs.next()) {
+					Event e = new Event(rs);
+					EventsTable.add(e);
+				}
+			}
+			return EventsTable;
+		}
+		
+		// create question
+		public static void insert(Event e) throws SQLException {
+			loadDatabase();
+			String query = "INSERT INTO Events(acc_uuid, msg) VALUES (?, ?);";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, e.acc_uuid);
+			ps.setString(2, e.msg);
+			ps.executeUpdate();
+			EventsTable = null;
 		}
 	}
 }

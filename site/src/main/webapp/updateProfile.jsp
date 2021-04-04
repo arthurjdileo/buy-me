@@ -61,6 +61,8 @@
 			BuyMe.Admins.setRole(acc_uuid, "Moderator");
 		}
 		response.sendRedirect("admin.jsp");
+		
+		Event e = new Event(u.account_uuid, "Edited user: '" + email + "'");
 	} else {
 		response.sendRedirect("profile.jsp");
 	}

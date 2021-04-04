@@ -22,6 +22,8 @@
 	
 	BuyMe.Listings.remove(listingUUID);
 	if (fromAdmin != null && fromAdmin.equalsIgnoreCase("true")) {
+		Event e = new Event(u.account_uuid, "Deleted Listing: '" + l.item_name + "'");
+		BuyMe.Events.insert(e);
 		response.sendRedirect("admin.jsp");
 	} else {
 		response.sendRedirect("profile.jsp");

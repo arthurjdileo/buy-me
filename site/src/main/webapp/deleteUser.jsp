@@ -15,13 +15,11 @@
 		return;
 	}
 
-	String questionUUID = request.getParameter("question_uuid");
-	Question q = BuyMe.Questions.get(questionUUID);
-	String answer = request.getParameter("answer");
+	String accountUUID = request.getParameter("accountUUID");
+	User us = BuyMe.Users.get(accountUUID);
 	
-	BuyMe.Questions.answer(questionUUID, answer, u.account_uuid);
-	
-	Event e = new Event(u.account_uuid, "Answered question: '" + q.question + "' with '" + answer + "'");
+	BuyMe.Users.delete(accountUUID);
+	Event e = new Event(u.account_uuid, "Deleted user: '" + us.email + "'");
 	BuyMe.Events.insert(e);
 	response.sendRedirect("admin.jsp");
 	return;

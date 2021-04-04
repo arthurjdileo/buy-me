@@ -56,6 +56,11 @@
 	BuyMe.Listings.insert(l);
 	if (categoryCustom == null) BuyMe.SetAlerts.categoryProcess(l);
 	
+	if (request.getParameter("edit") != null && Integer.parseInt(request.getParameter("edit")) == 1 && !u.account_uuid.equals(l.seller_uuid)) {
+		Event e = new Event(u.account_uuid, "Edited Listing: '" + l.item_name + "'");
+		BuyMe.Events.insert(e);
+	}
+	
 	// redirect to listings page
 	response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID);
 %>

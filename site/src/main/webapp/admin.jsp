@@ -16,6 +16,7 @@
 	}
 	
 	ArrayList<Question> questions = BuyMe.Questions.getUnanswered();
+	ArrayList<FAQ> faqs = BuyMe.FAQs.getAsList();
 	ArrayList<User> users = BuyMe.Users.getAsList();
 	ArrayList<User> sellers = BuyMe.TransactionHistory.getSellers();
 	ArrayList<User> buyers = BuyMe.TransactionHistory.getBuyers();
@@ -23,6 +24,7 @@
 	ArrayList<Transaction> transactions = BuyMe.TransactionHistory.getAsList();
 	ArrayList<Category> categories = BuyMe.Categories.getAsList();
 	ArrayList<SubCategory> subcategories = BuyMe.SubCategories.getAsList();
+	ArrayList<Event> events = BuyMe.Events.getAsList();
 %>
 
 <!DOCTYPE html>
@@ -63,8 +65,10 @@
         <button role="tab" class="listing-nav" id="best-buyers" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">best buyers</button>
         <% } %>
         <button role="tab" class="listing-nav" id="q-a" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">customer service questions</button>
+        <button role="tab" class="listing-nav" id="faqs" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">FAQ</button>
         <button role="tab" class="listing-nav" id="user-management" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">user management</button>
         <button role="tab" class="listing-nav" id="listing-management" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">listing management</button>
+        <button role="tab" class="listing-nav" id="events" aria-selected="false"><img src="./img/menu.svg" alt="" class="listing-nav-icon">Events</button>
 
         <a href="logout.jsp" class="btn btn-sm blue listing-nav" id="signout-btn">Sign Out</a>
       </div> <!-- end side navigation-->
@@ -343,6 +347,27 @@
           </section>
         </div>
         <!--end panel-->
+        <div class="" role="tabpanel" aria-labelledby="faqs" hidden>
+          <h2>Add FAQ</h2>
+          <button class="btn btn-sm blue cardbutton">Answer question</button>
+          <section class="listing-panel">
+            <table class="listing-table">
+              <thead class="listing-table__head">
+                <th class="listing-table__th">question</th>
+                <th class="listing-table__th">answer</th>
+              </thead>
+              <tbody class="listing-table__body">
+                <% for (FAQ f : faqs) { %>
+                <tr class="listing-table__tr">
+                  <td class="listing-table__td"><%= f.question %></td>
+                  <td class="listing-table__td"><%= f.answer %></td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </section>
+        </div>
+        <!--end panel-->
         <div class="" role="tabpanel" aria-labelledby="user-management" hidden>
           <h2>user management panel</h2>
           <section class="listing-panel">
@@ -374,9 +399,12 @@
                   </td>
                   <td class="listing-table__td">
                     <% if ((BuyMe.Admins.isAdmin(u.account_uuid) && !BuyMe.Admins.isAdmin(user.account_uuid)) || (BuyMe.Admins.isMod(u.account_uuid) && !BuyMe.Admins.isAdmin(user.account_uuid) && !BuyMe.Admins.isMod(user.account_uuid))) { %>
-                    <button type="button" name="button" class="btn btn-sm bg-danger">
+                    <form action="deleteUser.jsp">
+                    <input hidden name="accountUUID" value="<%= user.account_uuid %>"></input>
+                    <button type="submit" name="button" class="btn btn-sm bg-danger">
                       Delete
                     </button>
+                    </form>
                     <% } %>
                   </td>
                 </tr>
@@ -428,7 +456,30 @@
           </section>
         </div>
         <!--end panel-->
+        <div class="" role="tabpanel" aria-labelledby="events" hidden>
+          <h2>Events</h2>
 
+          <section class="listing-panel">
+            <table class="listing-table">
+              <thead class="listing-table__head">
+                <th class="listing-table__th">Admin</th>
+                <th class="listing-table__th">Date</th>
+                <th class="listing-table__th">Event </th>
+              </thead>
+              <tbody class="listing-table__body">
+                <% for (Event e : events) { %>
+                <% User admin = BuyMe.Users.get(e.acc_uuid); %>
+                <tr class="listing-table__tr">
+                  <td class="listing-table__td"><%= admin.toString() %></td>
+                  <td class="listing-table__td"><%= e.modified %></td>
+                  <td class="listing-table__td"><%= e.msg %></td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </section>
+        </div>
+<!--end panel-->
       </div>
       <!-- end panels container-->
 
@@ -513,7 +564,20 @@
     		earnings.style.display = "inline-block";
     	}
     } */
-
+	
+    function addNewFAQ(event) {
+    	const button = event.currentTarget;
+    	
+    	modalInner.innerHTML = `
+   	      <form action="" class="card modal-form">
+   	        <h2>Answer question: </h2>
+   	         <textarea name="question" id="question" placeholder="Question here..." cols="20" class="answer-area"></textarea>
+   	         <textarea name="answer" id="answer" placeholder="Answer here..." cols="20" class="answer-area"></textarea>
+   	        <input type="submit" value="Answer question" class='btn btn-sm btn-confirm'>
+   	      </form>
+   	      `;
+    }
+    
     function handleQuestionAnswer(event) {
       const button = event.currentTarget;
       // get the question and id

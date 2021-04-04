@@ -17,7 +17,10 @@
 		
 	String bidUUID = request.getParameter("bidUUID");
 	String listingUUID = request.getParameter("listingUUID");
+	Listing l = BuyMe.Listings.get(listingUUID);
 	BuyMe.Bids.remove(bidUUID);
+	Event e = new Event(u.account_uuid, "Deleted Listing: '" + l.item_name + "'");
+	BuyMe.Events.insert(e);
 	response.sendRedirect("listing-item.jsp?listingUUID=" + listingUUID);
 	return;
 %>
