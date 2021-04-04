@@ -8,12 +8,17 @@ String fname = request.getParameter("fname");
 String lname = request.getParameter("lname");
 String email = request.getParameter("email");
 String pwd = request.getParameter("password");
+String confirm = request.getParameter("confirm-password");
 String fromAdmin = request.getParameter("from-admin");
 ArrayList<String> errors = new ArrayList<String>();
 if (fromAdmin != null) {
 	session.setAttribute("errorsRegAdmin", errors);
 } else {
 	session.setAttribute("errorsReg", errors);
+}
+
+if (!pwd.equals(confirm)) {
+	errors.add("Your passwords do not match.");
 }
 
 if (pwd.length() < 8 || pwd == null) {
@@ -29,7 +34,6 @@ for (User u : users) {
 }
 
 if (errors.size() > 0) {
-	System.out.println("hit3");
 	System.out.println(errors);
 	if (fromAdmin != null) {
 		session.setAttribute("errorsRegAdmin", errors);

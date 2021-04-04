@@ -33,12 +33,12 @@
 
         <div class="input-group">
           <label for="name" class="input-label">first name </label>
-          <input type="text" class="input-field" name="fname" placeholder="Your first name" id="fname" required>
+          <input type="text" class="input-field" name="fname" placeholder="First Name" id="fname" required>
         </div>
         
         <div class="input-group">
           <label for="name" class="input-label">last name </label>
-          <input type="text" class="input-field" name="lname" placeholder="Your last name" id="lname" required>
+          <input type="text" class="input-field" name="lname" placeholder="Last Name" id="lname" required>
         </div>
 
         <div class="input-group">
@@ -48,7 +48,17 @@
 
         <div class="input-group">
           <label for="password" class="input-label">password </label>
-          <input type="password" class="input-field" name="password" placeholder="Your secret password" id="password" required>
+          <input type="password" id="pw" class="input-field" name="password" placeholder="Password" id="password" required>
+        </div>
+
+        <div class="input-group">
+          <label for="confirm-password" class="input-label">confirm password </label>
+          <input type="password" id="con-pw" class="input-field" name="confirm-password" placeholder="Confirm Password" id="confirm-password" required>
+        </div>
+
+        <div class="input-group">
+        <label for="show-password" class="input-label">show password </label>
+        <input type="checkbox" id="show-password" onclick="showPW()">
         </div>
         
         <%
@@ -82,6 +92,20 @@
     </div>
 
   </main>
+  
+  <script>
+  function showPW() {
+	  var x = document.getElementById("pw");
+	  var y = document.getElementById("con-pw");
+	  if (x.type === "password") {
+	    x.type = "text";
+	    y.type = "text";
+	  } else {
+	    x.type = "password";
+	    y.type = "password";
+	  }
+	}
+  </script>
 
   <footer>
     &copy; 2020
