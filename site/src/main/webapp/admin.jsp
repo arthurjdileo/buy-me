@@ -251,20 +251,40 @@
         <div class="" role="tabpanel" aria-labelledby="best-selling-items" hidden>
           <h2>Best selling items panel</h2>
           <section class="listing-panel">
-            <table class="listing-table">
+            <table class="listing-table" id="best-sold">
               <thead class="listing-table__head">
-                <th class="listing-table__th">Ranking</th>
+              <tr>
+                <th class="listing-table__th" colspan="2">Best Sold By Price</th></tr>
+                <tr>
                 <th class="listing-table__th">Item name</th>
+                <th class="listing-table__th">Price</th></tr>
               </thead>
               <tbody class="listing-table__body">
+                <% for (Transaction t : transactions) { %>
+                <% Listing l = BuyMe.Listings.get(t.listing_uuid); %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td">1</td>
-                  <td class="listing-table__td">Toaster</td>
+                  <td class="listing-table__td"><%= l.item_name %></td>
+                  <td class="listing-table__td"><%= t.amount %></td>
                 </tr>
+                <% } %>
+              </tbody>
+            </table>
+            <table class="listing-table" id="best-bid">
+              <thead class="listing-table__head">
+                <tr><th class="listing-table__th" colspan="2">Hottest Listings</th></tr>
+                <tr><th class="listing-table__th">Item name</th>
+                <th class="listing-table__th">Num. Bids</th></tr>
+              </thead>
+              <tbody class="listing-table__body">
+                <% for (Listing l : listings) { %>
+                <% ArrayList<Bid> bids = BuyMe.Bids.getBidsByListing(l.listing_uuid); %>
+                <% if (l.is_active == 1 && bids.size() > 0) { %>
                 <tr class="listing-table__tr">
-                  <td class="listing-table__td">2</td>
-                  <td class="listing-table__td">tomato</td>
+                  <td class="listing-table__td"><%= l.item_name %></td>
+                  <td class="listing-table__td"><%= bids.size() %></td>
                 </tr>
+                <% } %>
+                <% } %>
               </tbody>
             </table>
           </section>
@@ -437,9 +457,9 @@
     const cardButtons = document.querySelectorAll('.cardbutton');
     const modalInner = document.querySelector('.modal-inner');
     const modalOuter = document.querySelector('.modal-outer');
-    function sortTable() {
+    function sortTable(table_name, index) {
     	  var table, rows, switching, i, x, y, shouldSwitch;
-    	  table = document.getElementById("best-buyer-table");
+    	  table = document.getElementById(table_name);
     	  switching = true;
     	  /*Make a loop that will continue until
     	  no switching has been done:*/
@@ -454,10 +474,8 @@
     	      shouldSwitch = false;
     	      /*Get the two elements you want to compare,
     	      one from current row and one from the next:*/
-    	      x = rows[i].getElementsByTagName("TD")[1];
-    	      console.log(Number(x.innerHTML));
-    	      y = rows[i + 1].getElementsByTagName("TD")[1];
-    	      console.log(Number(y.innerHTML));
+    	      x = rows[i].getElementsByTagName("TD")[index];
+    	      y = rows[i + 1].getElementsByTagName("TD")[index];
     	      //check if the two rows should switch place:
     	      if (Number(x.innerHTML) < Number(y.innerHTML)) {
     	        //if so, mark as a switch and break the loop:
@@ -473,7 +491,9 @@
     	    }
     	  }
     	}
-    sortTable();
+    sortTable("best-buyer-table", 1);
+    sortTable("best-sold", 1);
+    sortTable("best-bid", 1);
 /*     let categories = document.getElementById("categories");
 	let subcategories = document.getElementById("sub-categories");
 	let earnings = document.getElementById("earningInput");
