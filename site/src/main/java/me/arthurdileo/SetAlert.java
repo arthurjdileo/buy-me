@@ -7,7 +7,7 @@ import java.sql.*;
  * alert_uuid
  * acc_uuid
  * created
- * alert_type (item, category, subcategory)
+ * alert_type (item, category, subcategory, bid)
  * alert (criteria)
  * is_active
  */

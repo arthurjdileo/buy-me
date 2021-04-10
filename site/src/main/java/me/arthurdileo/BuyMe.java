@@ -442,26 +442,44 @@ public class BuyMe {
 		}
 		
 		public static boolean checkWin(Listing l) throws SQLException {
+			boolean isSold = BuyMe.TransactionHistory.isSold(l.listing_uuid);
+			if (isSold) {
+				return true;
+			}
 			User winner = getWinnerReserve(l);
 			User winner2 = getWinnerExpire(l);
 			if (winner == null) winner = winner2;
 			if (winner != null) {
+				// disable listing
 				remove(l.listing_uuid);
+				// create transaction
 				Transaction t = new Transaction(winner.account_uuid, l.seller_uuid, l.listing_uuid, BuyMe.Bids.topBid(l).amount);
 				BuyMe.TransactionHistory.insert(t);
 				ArrayList<SetAlert> listingAlerts = BuyMe.SetAlerts.getByListing(l.listing_uuid);
+				
+				BuyMe.Users.updateCredits(BuyMe.Users.get(winner.account_uuid), BuyMe.Users.get(winner.account_uuid).credits-t.amount);
+				
 				for (SetAlert sa : listingAlerts) {
-					ArrayList<Alert> alerts = BuyMe.Alerts.getBySA(sa.alert_uuid);
-					for (Alert a : alerts) {
-						BuyMe.Alerts.ack(a.alert_uuid);
+					// if winner, alert they won
+					if (sa.acc_uuid.equals(winner.account_uuid)) {
+						Alert a = new Alert(sa.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid + "'>You won " + l.item_name + "!</a>");
+						BuyMe.Alerts.insert(a);
+					// if not buyer, but bidder, alert they lost
+					} else if (BuyMe.Bids.getBiddersByListing(l.listing_uuid).contains(BuyMe.Users.get(sa.alert_uuid))) {
+						Alert a = new Alert(sa.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid + "'>You lost " + l.item_name + "!</a>");
+						BuyMe.Alerts.insert(a);
+					// alert watchers item has been sold
+					} else {
+						Alert a = new Alert(sa.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid + "'>" + l.item_name + " has been sold!</a>");
+						BuyMe.Alerts.insert(a);
 					}
-				}
-				for (SetAlert sa : listingAlerts) {
+					
+					// remove sa after all alerts have been finalized
 					BuyMe.SetAlerts.remove(sa.alert_uuid);
 				}
+				
 				BuyMe.AutomaticBids.clean(l.listing_uuid);
 				return true;
-				// set alert
 			}
 			return false;
 		}
@@ -662,6 +680,14 @@ public class BuyMe {
 				}
 			}
 			return buyerTrans;
+		}
+		
+		public static boolean isSold(String listing_uuid) throws SQLException {
+			Transaction t = get(listing_uuid);
+			if (t == null) {
+				return false;
+			}
+			return true;
 		}
 		
 		public static ArrayList<User> getBuyers() throws SQLException {
@@ -1161,6 +1187,7 @@ public class BuyMe {
 		
 		public static void process(String listing_uuid) throws SQLException {
 			ArrayList<AutomaticBid> autoBids = getByListing(listing_uuid);
+			boolean bidPlaced = false;
 			
 			for (AutomaticBid b : autoBids) {
 				Bid topBid = BuyMe.Bids.topBid(BuyMe.Listings.get(b.listing_uuid));
@@ -1177,21 +1204,11 @@ public class BuyMe {
 					Bid newBid = new Bid(bidUUID, b.buyer_uuid, b.listing_uuid, bidAmt);
 					
 					BuyMe.Bids.insert(newBid);
-					if (BuyMe.Listings.checkWin(BuyMe.Listings.get(b.listing_uuid))) {
-						BuyMe.Users.updateCredits(BuyMe.Users.get(b.buyer_uuid), BuyMe.Users.get(b.buyer_uuid).credits-bidAmt);
-						SetAlert currentAlert = BuyMe.SetAlerts.exists(b.buyer_uuid, "bid", b.listing_uuid);
-						if (currentAlert != null) {
-							Alert a = new Alert(currentAlert.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'>You won " + BuyMe.Listings.get(listing_uuid).item_name + "!</a>");
-							BuyMe.Alerts.insert(a);
-						}
-						
-						ArrayList<SetAlert> listingAlerts = BuyMe.SetAlerts.getByListing(listing_uuid);
-						for (SetAlert sa : listingAlerts) {
-							if (sa.acc_uuid.equals(b.buyer_uuid)) continue;
-							BuyMe.Alerts.insert(new Alert(sa.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + b.listing_uuid + "'>You lost " + BuyMe.Listings.get(listing_uuid).item_name + "!</a>"));
-						}
-					}
 					BuyMe.SetAlerts.bidProcess(listing_uuid, newBid);
+					bidPlaced = true;
+					if (BuyMe.Listings.checkWin(BuyMe.Listings.get(b.listing_uuid))) {
+						return;
+					}
 				} else if (bidAmt > b.upper_limit && !topBid.buyer_uuid.equals(b.buyer_uuid)) {
 					SetAlert currentAlert = BuyMe.SetAlerts.exists(b.buyer_uuid, "bid", listing_uuid);
 					if (currentAlert !=  null) {
@@ -1206,6 +1223,7 @@ public class BuyMe {
 					}
 				}
 			}
+			if (bidPlaced) process(listing_uuid);
 		}
 	}
 	

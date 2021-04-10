@@ -28,9 +28,13 @@
 		response.sendRedirect("listing-item.jsp?listingUUID=" + listing_uuid);
 		return;
 	}
-	
+
+	Bid newBid = new Bid(BuyMe.genUUID(), u.account_uuid, listing_uuid, BuyMe.Listings.getCurrentPrice(BuyMe.Listings.get(listing_uuid)) + increment);
+	BuyMe.Bids.insert(newBid);
 	AutomaticBid b = new AutomaticBid(u.account_uuid, listing_uuid, upper_limit, increment);
 	BuyMe.AutomaticBids.insert(b);
+	BuyMe.SetAlerts.bidProcess(listing_uuid, newBid);
+	BuyMe.AutomaticBids.process(listing_uuid);
 	SetAlert userAlert = BuyMe.SetAlerts.exists(u.account_uuid, "bid", listing_uuid);
 	if (userAlert == null) {
 		SetAlert a = new SetAlert(BuyMe.genUUID(), u.account_uuid, "bid", listing_uuid);

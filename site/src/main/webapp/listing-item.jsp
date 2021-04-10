@@ -39,17 +39,7 @@
 		if (win) {
 			Transaction t = BuyMe.TransactionHistory.get(l.listing_uuid);
 			User winner = BuyMe.Users.get(t.buyer_uuid);
-			SetAlert currentAlert = BuyMe.SetAlerts.exists(winner.account_uuid, "bid", l.listing_uuid);
-			if (currentAlert != null) {
-				Alert a = new Alert(currentAlert.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid + "'>You won " + l.item_name + "!</a>");
-				BuyMe.Alerts.insert(a);
-			}
 			
-			ArrayList<SetAlert> listingAlerts = BuyMe.SetAlerts.getByListing(l.listing_uuid);
-			for (SetAlert sa : listingAlerts) {
-				if (sa.acc_uuid.equals(winner.account_uuid)) continue;
-				BuyMe.Alerts.insert(new Alert(sa.alert_uuid, BuyMe.genUUID(), "<a href='listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid + "'>You lost " + l.item_name + "!</a>"));
-			}
 			response.sendRedirect("listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid);
 			return;
 		}
