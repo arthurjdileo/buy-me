@@ -224,7 +224,7 @@
                         <li>
                           <p class="similar-desc" style="max-width: 315px;"><%= l.description %></p>
                         </li>
-                        <li>Price <span class="product-price"><%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
+                        <li>Price <span class="product-price">$<%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
                         <li>Time <span class="product-time" id="<%= l.listing_uuid %>">00:00</span></li>
                         <!--  <li>Currency <span class="product-currency">USD</span></li>-->
                       </ul>
@@ -287,10 +287,11 @@
   <script src="./js/timeout.js"></script>
   
   <script>
-<%--     <% for (Alert a : userAlertsCategory) { %>
+    <% for (Alert a : userAlertsCategory) { %>
+    <% System.out.println(a.msg); %> 
     <% Listing l = BuyMe.Listings.get(a.msg); %>
 	countDown(new Date ('<%= l.end_time %>-04:00').getTime(),"<%= l.listing_uuid %>");
-	<%}%> --%>
+	<%}%>
   </script>
 
 </body>

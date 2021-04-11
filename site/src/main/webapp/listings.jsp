@@ -50,15 +50,20 @@
   		Comparator<Listing> nameOrder = new Comparator<Listing>() {
   			@Override
   			public int compare(Listing l1, Listing l2) {
-  				System.out.println(l1.item_name);
-  				System.out.println(l2.item_name);
-  				System.out.println(l1.item_name.compareTo(l2.item_name));
-  				return l1.item_name.compareTo(l2.item_name);
+  				return l1.item_name.compareToIgnoreCase(l2.item_name);
   			}
   		};
   		
   		Collections.sort(filtered, nameOrder);
   		return filtered;
+  	}
+  	
+  	public ArrayList<Listing> filterByShow(ArrayList<Listing> listings, int cutoff) {
+  		if (cutoff > listings.size()) {
+  			cutoff = listings.size()-1;
+  		}
+  		List<Listing> f = listings.subList(0, cutoff);
+  		return new ArrayList<Listing>(f);
   	}
 %>
 
@@ -92,6 +97,7 @@
 	String priceMax = request.getParameter("price-max");
 	String endingWithin = request.getParameter("ending-within");
 	String sortBy = request.getParameter("sort-by");
+	String show = request.getParameter("show");
 	String subSearch = request.getParameter("sub-search");
 	if (priceMin != null) {
 		listings = filterByPrice(listings, Double.parseDouble(priceMin), true);
@@ -107,6 +113,9 @@
  	}
  	if (sortBy != null) {
  		listings = sortByName(listings);
+ 	}
+ 	if (show != null) {
+ 		listings = filterByShow(listings, Integer.parseInt(show));
  	}
 %>
 
@@ -190,10 +199,11 @@
 
             <form action="" class="inline-form">
               <label for="">Show</label>
-              <select class="" name="show">
-                <option value="6">6</option>
-                <option value="12">12</option>
-                <option value="24">24</option>
+              <select class="" name="show" id="showNum">
+               <option value="all" <%= show == null ? "selected" : "null" %>>All</option>
+                <option value=3 <%= show != null && show.equals("3") ? "selected" : "null" %>>3</option>
+                <option value=6 <%= show != null && show.equals("6") ? "selected" : "null" %>>6</option>
+                <option value=12 <%= show != null && show.equals("12") ? "selected" : "null" %>>12</option>
               </select>
             </form>
 
@@ -334,7 +344,6 @@
 	
 	let sortBy = document.getElementById("sort-by");
 	sortBy.addEventListener("change", function(event) {
-		console.log(event.target.value);
 		if (event.target.value == 'name') {
 			var url = new URL(location.href);
 			url.searchParams.set("sort-by", event.target.value);
@@ -342,6 +351,19 @@
 		} else {
 			var url = new URL(location.href);
 			url.searchParams.delete("sort-by");
+			location.href = url;
+		}
+	})
+	
+	let show = document.getElementById("showNum");
+	show.addEventListener("change", function(event) {
+		if (event.target.value != 'all') {
+			var url = new URL(location.href);
+			url.searchParams.set("show", event.target.value);
+			location.href = url;
+		} else {
+			var url = new URL(location.href);
+			url.searchParams.delete("show");
 			location.href = url;
 		}
 	})
