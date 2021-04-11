@@ -1,0 +1,9 @@
+Wilson NFL Leather Football
+
+The Wilson NFL “Duke” Leather Football is the official football utilized in all National Football League Games.
+Size: Official - PRO
+
+Price: $80
+Reserve: $125
+Increment: $5
+Days: 1

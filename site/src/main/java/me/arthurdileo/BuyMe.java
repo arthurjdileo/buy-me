@@ -445,9 +445,7 @@ public class BuyMe {
 			if (isSold) {
 				return true;
 			}
-			User winner = getWinnerReserve(l);
-			User winner2 = getWinnerExpire(l);
-			if (winner == null) winner = winner2;
+			User winner = getWinnerExpire(l);
 			if (winner != null) {
 				// disable listing
 				remove(l.listing_uuid);
@@ -499,16 +497,6 @@ public class BuyMe {
 			return null;
 		}
 		
-		// determine winner by reserve
-		public static User getWinnerReserve(Listing l) throws SQLException {
-			ArrayList<Bid> bids = Bids.getBidsByListing(l.listing_uuid);
-			for (Bid b : bids) {
-				if (b.amount >= l.reserve_price) {
-					return Users.get(b.buyer_uuid);
-				}
-			}
-			return null;
-		}
 	}
 	
 	public static class Bids {
