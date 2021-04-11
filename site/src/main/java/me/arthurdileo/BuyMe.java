@@ -451,12 +451,15 @@ public class BuyMe {
 			if (winner != null) {
 				// disable listing
 				remove(l.listing_uuid);
-				// create transaction
-				Transaction t = new Transaction(winner.account_uuid, l.seller_uuid, l.listing_uuid, BuyMe.Bids.topBid(l).amount);
-				BuyMe.TransactionHistory.insert(t);
-				ArrayList<SetAlert> listingAlerts = BuyMe.SetAlerts.getByListing(l.listing_uuid);
+				if (winner.account_uuid != null) {
+					// create transaction
+					Transaction t = new Transaction(winner.account_uuid, l.seller_uuid, l.listing_uuid, BuyMe.Bids.topBid(l).amount);
+					BuyMe.TransactionHistory.insert(t);
+					
+					BuyMe.Users.updateCredits(BuyMe.Users.get(winner.account_uuid), BuyMe.Users.get(winner.account_uuid).credits-t.amount);
+				}
 				
-				BuyMe.Users.updateCredits(BuyMe.Users.get(winner.account_uuid), BuyMe.Users.get(winner.account_uuid).credits-t.amount);
+				ArrayList<SetAlert> listingAlerts = BuyMe.SetAlerts.getByListing(l.listing_uuid);
 				
 				for (SetAlert sa : listingAlerts) {
 					// if winner, alert they won
@@ -486,7 +489,12 @@ public class BuyMe {
 		public static User getWinnerExpire(Listing l) throws SQLException {
 			java.sql.Timestamp t = new Timestamp(System.currentTimeMillis());
 			if (l.end_time.compareTo(t) <= 0) {
-				return BuyMe.Users.get(Bids.topBid(l).buyer_uuid);
+				Bid topBid = Bids.topBid(l);
+				if (topBid.amount >= l.reserve_price) {
+					return BuyMe.Users.get(topBid.buyer_uuid);
+				} else {
+					return new User(null, null, null, null, null, 0, null, 0);
+				}
 			}
 			return null;
 		}

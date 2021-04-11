@@ -33,6 +33,7 @@
 	Bid topBid = BuyMe.Bids.topBid(l);
 	AutomaticBid autoBid = BuyMe.AutomaticBids.exists(listingUUID, u.account_uuid);
 	SetAlert userAlert = BuyMe.SetAlerts.exists(u.account_uuid, "bid", l.listing_uuid);
+	Transaction trans = null;
 	if (userAlert != null && userAlert.is_active == 0) userAlert = null;
 	if (sold == 0) {
 		boolean win = BuyMe.Listings.checkWin(l);
@@ -43,6 +44,8 @@
 			response.sendRedirect("listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid);
 			return;
 		}
+	} else {
+		trans = BuyMe.TransactionHistory.get(l.listing_uuid);
 	}
 	
 	ArrayList<Listing> similarListings = BuyMe.Listings.getByCategory(l.cat_id);
@@ -182,7 +185,7 @@
             <h3 class="product-title"><%= l.item_name %></h3>
             <div class="item-data-row">
               <ul class="product-details main-details">
-                <li class="product-price product-detail-box"><%= sold == 0 ? "Current Price" : "Sold Price" %> <span class="product-price-amount"><span class="currency-symbol">$</span><%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
+                <li class="product-price product-detail-box"><%= sold == 0 ? "Current Price" : "Sold Price" %> <span class="product-price-amount"><span class="currency-symbol"></span><%= sold == 0 || trans != null ? "$" +  BuyMe.Listings.getCurrentPrice(l) : "N/A" %></span></li>
                 <li class="product-price product-detail-box">Item Condition<span class="product-price-amount"><%= l.item_condition %></span></li>
                 <li class="product-detail-box"><%= l.description %></li>
                 <% if (sold == 0 && !l.seller_uuid.equals(u.account_uuid)) { %>
@@ -213,10 +216,12 @@
                 <h3 class="">This Auction Ends in:</h3>
                 <% if (sold == 0) { %>
                 <h4 class="timeout-big"><span class="product-time" id="demo">00:00</span></h4>
-                <% } else if (sold == 1 && BuyMe.TransactionHistory.get(l.listing_uuid).buyer_uuid.equals(u.account_uuid)) { %>
+                <% } else if (sold == 1 && trans != null && trans.buyer_uuid.equals(u.account_uuid)) { %>
                 <h4 class="timeout-big"><span class="product-time">YOU WON!</span></h4>
+                <% } else if (sold == 1 && trans == null) { %>
+                <h4 class="timeout-big"><span class="product-time">LISTING CLOSED</span></h4>
                 <% } else {%>
-                <h4 class="timeout-big"><span class="product-time">SOLD TO <%= BuyMe.Users.get(BuyMe.TransactionHistory.get(l.listing_uuid).buyer_uuid) %>!</span></h4>
+                <h4 class="timeout-big"><span class="product-time">SOLD TO <%= BuyMe.Users.get(trans.buyer_uuid) %>!</span></h4>
                 <% } %>
                 <ul class="product-details">
                   <li><span><%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() %></span> <%= BuyMe.Bids.getBiddersByListing(l.listing_uuid).size() > 1 ? "Bidders" : "Bidder" %></li>
