@@ -9,7 +9,6 @@ CREATE TABLE Users(
 	l_name varchar(75) NOT NULL,
 	credits decimal(10,2) DEFAULT 0 NOT NULL,
 	lastIP varchar(20) NOT NULL,
-	pw_reset int DEFAULT 0 NOT NULL,
 	is_active int DEFAULT 1 NOT NULL,
 	PRIMARY KEY (id)
 );

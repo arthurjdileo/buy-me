@@ -14,6 +14,7 @@ import java.sql.*;
  * created
  * updated
  * listing_days
+ * item_condition
  * currency
  * start_price
  * reserve_price
@@ -33,6 +34,7 @@ public class Listing implements Comparable<Listing>{
 	public java.sql.Timestamp created;
 	public java.sql.Timestamp updated;
 	public int listing_days;
+	public String item_condition;
 	public String currency;
 	public double start_price;
 	public double reserve_price;
@@ -41,7 +43,7 @@ public class Listing implements Comparable<Listing>{
 	public int is_active;
 	
 	public Listing(String listing_uuid, String seller_uuid, int cat_id, int sub_id,
-			String description, String item_name, String image, int listing_days,
+			String description, String item_name, String image, int listing_days, String item_condition,
 			String currency, double start_price, double reserve_price,
             java.sql.Timestamp end_time, double bid_increment, int is_active) {
 		this.listing_uuid = listing_uuid;
@@ -52,6 +54,7 @@ public class Listing implements Comparable<Listing>{
 		this.description = description;
 		this.image = image;
 		this.listing_days = listing_days;
+		this.item_condition = item_condition;
 		this.currency = currency;
 		this.start_price = start_price;
 		this.reserve_price = reserve_price;
@@ -63,7 +66,7 @@ public class Listing implements Comparable<Listing>{
 	public Listing(ResultSet rs) throws SQLException {
 		this(rs.getString("listing_uuid"), rs.getString("seller_uuid"), rs.getInt("cat_id"), 
 				rs.getInt("sub_id"), rs.getString("description"), rs.getString("item_name"),
-				rs.getString("image"), rs.getInt("listing_days"), rs.getString("currency"),
+				rs.getString("image"), rs.getInt("listing_days"), rs.getString("item_condition"), rs.getString("currency"),
 				rs.getFloat("start_price"), rs.getFloat("reserve_price"), rs.getTimestamp("end_time"), 
 				rs.getFloat("bid_increment"), rs.getInt("is_active"));
 		this.created = rs.getTimestamp("created");

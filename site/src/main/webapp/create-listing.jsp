@@ -2,6 +2,7 @@
     pageEncoding="ISO-8859-1" import="me.arthurdileo.*"%>
 <%@ page import="java.io.*,java.util.*,java.sql.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
+<%@ page import="javax.servlet.annotation.MultipartConfig" %>
 
 <%
 	Cookie[] cookies = request.getCookies();
@@ -92,7 +93,7 @@
         <div class="" role="tabpanel" aria-labelledby="description">
           <h2>Create listing </h2>
           <section class="listing-panel">
-            <form action="processCreateListing.jsp" class="create-listing-form">
+            <form action="processCreateListing.jsp" method="post" class="create-listing-form" enctype="multipart/form-data">
               <div class="input-group">
                 <label for="name" class="input-label">product name* </label>
                 <% if (edit == 1) { %>
@@ -146,6 +147,25 @@
                 </label>
               </div>
               
+              <div class="input-group" id="item-conditions">
+                <label for="item-condition" class="input-label">Item Condition* </label>
+                <select id="itemcondition" name="item-condition" required>
+                  <% if (edit == 1) { %>
+                  		<% if (l.item_condition.equals("New")) { %>
+                  		<option value="New" selected>New</option>
+                  		<option value="Pre-Owned">Pre-Owned</option>
+                  		<% } else { %>
+                		<option value="New">New</option>
+                  		<option value="Pre-Owned" selected>Pre-Owned</option>
+                  		<% } %>
+                  <% } else { %>
+                  		<option value="New">New</option>
+                  		<option value="Pre-Owned">Pre-Owned</option>
+                  <% } %>
+                  
+                </select>
+              </div>
+              
               <div class="input-group">
                 <label for="num-days" class="input-label">number of days* </label>
                 <% if (edit == 1) { %>
@@ -155,13 +175,26 @@
                 <% } %>
               </div>
 
-              <div class="input-group">
+              <%-- <div class="input-group">
                 <label for="price" class="input-label">image link* </label>
                 <% if (edit == 1) { %>
                 <input type="url" class="input-field" id="image-link" value="<%= l.image %>" name="image-link" required>
                 <% } else { %>
                 <input type="url" class="input-field" id="image-link" name="image-link" required>
                 <% } %>
+              </div> --%>
+              <div class="input-group">
+                <div class="img-placeholder">
+
+                  <label for="uploadi-image" class="input-label" id="image-upload-label">Upload an image
+                  </label>
+                  <% if (edit == 1) { %>
+                  <input type="file" class="input-field" id="img" accept="image/*" id="upload-image" name="listing-image" style="display: none;">
+                  <label for="img"><%= l.item_name %> Uploaded.</label>
+                  <% } else { %>
+                  <input type="file" class="input-field" accept="image/*" id="upload-image" name="listing-image">
+                  <% } %>
+                </div>
               </div>
 
               <div class="input-group">
@@ -174,11 +207,11 @@
               </div>
 
               <div class="input-group">
-                <label for="reserve-price" class="input-label">reserve price </label>
+                <label for="reserve-price" class="input-label">reserve price* </label>
                 <% if (edit == 1) { %>
-                <input type="number" class="input-field" id="reserve-price" value="<%= l.reserve_price %>" name="reserve-price" min="0.01" step="0.01">
+                <input type="number" class="input-field" id="reserve-price" value="<%= l.reserve_price %>" name="reserve-price" min="0.01" step="0.01" required>
                 <% } else { %>
-                <input type="number" class="input-field" id="reserve-price" name="reserve-price" min="0.01" step="0.01">
+                <input type="number" class="input-field" id="reserve-price" name="reserve-price" min="0.01" step="0.01" required>
                 <% } %>
               </div>
 

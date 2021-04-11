@@ -10,9 +10,10 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.io.IOException;
 import java.math.BigInteger;  
-import java.nio.charset.StandardCharsets; 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;  
 import java.security.NoSuchAlgorithmException;  
+import org.apache.commons.io.*;
 
 public class BuyMe {
 	
@@ -29,6 +30,10 @@ public class BuyMe {
 	
 	public static String genUUID() {
 		return UUID.randomUUID().toString();
+	}
+	
+	public static String getExt(String filePath) {
+		return FilenameUtils.getExtension(filePath);
 	}
 	
 	// contains users hashmap
@@ -275,7 +280,7 @@ public class BuyMe {
 		// insert listing into db
 		public static void insert(Listing l) throws SQLException {
 			loadDatabase();
-			String query = "INSERT INTO Listing(listing_uuid, seller_uuid, cat_id, sub_id, item_name, description, image, listing_days, currency, start_price, reserve_price, bid_increment, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE cat_id = ?, sub_id = ?, item_name = ?, description = ?, image = ?, listing_days = ?, currency = ?, start_price = ?, reserve_price = ?, bid_increment = ?, end_time = ?;";
+			String query = "INSERT INTO Listing(listing_uuid, seller_uuid, cat_id, sub_id, item_name, description, image, listing_days, item_condition, currency, start_price, reserve_price, bid_increment, end_time) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE cat_id = ?, sub_id = ?, item_name = ?, description = ?, image = ?, listing_days = ?, item_condition = ?, currency = ?, start_price = ?, reserve_price = ?, bid_increment = ?, end_time = ?;";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, l.listing_uuid);
 			ps.setString(2, l.seller_uuid);
@@ -285,30 +290,24 @@ public class BuyMe {
 			ps.setString(6, l.description);
 			ps.setString(7, l.image);
 			ps.setInt(8, l.listing_days);
-			ps.setString(9, l.currency);
-			ps.setDouble(10, l.start_price);
-			if (l.reserve_price == -1) {
-				ps.setNull(11, Types.NULL);
-			} else {
-				ps.setDouble(11, l.reserve_price);
-			}
-			ps.setDouble(12, l.bid_increment);
-			ps.setTimestamp(13, l.end_time);
-			ps.setInt(14, l.cat_id);
-			ps.setInt(15, l.sub_id);
-			ps.setString(16, l.item_name);
-			ps.setString(17, l.description);
-			ps.setString(18, l.image);
-			ps.setInt(19, l.listing_days);
-			ps.setString(20, l.currency);
-			ps.setDouble(21, l.start_price);
-			if (l.reserve_price == -1) {
-				ps.setNull(22, Types.NULL);
-			} else {
-				ps.setDouble(22, l.reserve_price);
-			}
-			ps.setDouble(23, l.bid_increment);
-			ps.setTimestamp(24, l.end_time);
+			ps.setString(9, l.item_condition);
+			ps.setString(10, l.currency);
+			ps.setDouble(11, l.start_price);
+			ps.setDouble(12, l.reserve_price);
+			ps.setDouble(13, l.bid_increment);
+			ps.setTimestamp(14, l.end_time);
+			ps.setInt(15, l.cat_id);
+			ps.setInt(16, l.sub_id);
+			ps.setString(17, l.item_name);
+			ps.setString(18, l.description);
+			ps.setString(19, l.image);
+			ps.setInt(20, l.listing_days);
+			ps.setString(21, l.item_condition);
+			ps.setString(22, l.currency);
+			ps.setDouble(23, l.start_price);
+			ps.setDouble(24, l.reserve_price);
+			ps.setDouble(25, l.bid_increment);
+			ps.setTimestamp(26, l.end_time);
 			ps.executeUpdate();
 			ListingsTable = null;
 		}
@@ -909,7 +908,7 @@ public class BuyMe {
 		}
 		
 		// create question
-		public static void insert(Question q) throws SQLException {
+		public static void insert(FAQ q) throws SQLException {
 			loadDatabase();
 			String query = "INSERT INTO FAQ(question_uuid, admin_uuid, question, answer) VALUES (?, ?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
@@ -1150,6 +1149,18 @@ public class BuyMe {
 			ps.setString(2, b.listing_uuid);
 			ps.setDouble(3, b.upper_limit);
 			ps.setDouble(4, b.increment);
+			ps.executeUpdate();
+			AutomaticBidTable = null;
+		}
+		
+		public static void update(AutomaticBid b) throws SQLException {
+			loadDatabase();
+			String query = "UPDATE AutomaticBid SET upper_limit = ?, increment = ? WHERE buyer_uuid = ? AND listing_uuid = ?;";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setDouble(1, b.upper_limit);
+			ps.setDouble(2, b.increment);
+			ps.setString(3, b.buyer_uuid);
+			ps.setString(4, b.listing_uuid);
 			ps.executeUpdate();
 			AutomaticBidTable = null;
 		}

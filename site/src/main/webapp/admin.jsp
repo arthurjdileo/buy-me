@@ -349,7 +349,7 @@
         <!--end panel-->
         <div class="" role="tabpanel" aria-labelledby="faqs" hidden>
           <h2>Add FAQ</h2>
-          <button class="btn btn-sm blue cardbutton">Answer question</button>
+          <button class="btn btn-sm blue cardbuttonfaq">Create FAQ</button>
           <section class="listing-panel">
             <table class="listing-table">
               <thead class="listing-table__head">
@@ -506,6 +506,7 @@
   <script type="text/javascript">
     // get elements
     const cardButtons = document.querySelectorAll('.cardbutton');
+    const cardButtonsFAQ = document.querySelectorAll('.cardbuttonfaq');
     const modalInner = document.querySelector('.modal-inner');
     const modalOuter = document.querySelector('.modal-outer');
     function sortTable(table_name, index, skip) {
@@ -569,13 +570,15 @@
     	const button = event.currentTarget;
     	
     	modalInner.innerHTML = `
-   	      <form action="" class="card modal-form">
-   	        <h2>Answer question: </h2>
+   	      <form action="newFAQ.jsp" class="card modal-form">
+   	        <h2>Create New FAQ: </h2>
    	         <textarea name="question" id="question" placeholder="Question here..." cols="20" class="answer-area"></textarea>
    	         <textarea name="answer" id="answer" placeholder="Answer here..." cols="20" class="answer-area"></textarea>
    	        <input type="submit" value="Answer question" class='btn btn-sm btn-confirm'>
    	      </form>
    	      `;
+    	// show the modal
+        modalOuter.classList.add('open');
     }
     
     function handleQuestionAnswer(event) {
@@ -600,6 +603,10 @@
     cardButtons.forEach((button) => {
       button.addEventListener('click', handleQuestionAnswer);
     });
+    
+    cardButtonsFAQ.forEach((button) => {
+        button.addEventListener('click', addNewFAQ);
+      });
 
     function closeModal() {
       modalOuter.classList.remove('open');

@@ -53,7 +53,7 @@
 	}
 	
 	String hashedPw = BuyMe.Sessions.hashPassword(pwd);
-	User updated = new User(email, hashedPw, u.account_uuid, firstName, lastName, u.credits, u.lastIP, u.pwReset, u.isActive);
+	User updated = new User(email, hashedPw, u.account_uuid, firstName, lastName, u.credits, u.lastIP, u.isActive);
 	BuyMe.Users.update(updated);
 	if (fromAdmin != null) {
 		String isMod = request.getParameter("isMod");

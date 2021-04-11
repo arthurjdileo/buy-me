@@ -49,8 +49,7 @@ String accountUUID = BuyMe.genUUID();
 request.getHeader("X-Forwarded-For");
 String ipAddr = request.getRemoteAddr();
 String hashedPw = BuyMe.Sessions.hashPassword(pwd);
-User u = new User(email, hashedPw, accountUUID, fname, lname, 0, ipAddr, 0, 1);
-
+User u = new User(email, hashedPw, accountUUID, fname, lname, 50000, ipAddr, 1);
 BuyMe.Users.insert(u);
 
 if (fromAdmin == null) {

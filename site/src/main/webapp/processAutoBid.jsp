@@ -16,11 +16,13 @@
 	String listing_uuid = request.getParameter("listingUUID");
 	double upper_limit = Double.parseDouble(request.getParameter("max-number"));
 	double increment = Double.parseDouble(request.getParameter("bid-number"));
+	int edit = 0;
+	if (request.getParameter("edit") != null && request.getParameter("edit").equalsIgnoreCase("true")) {
+		edit = 1;
+	}
 	
-	if (BuyMe.AutomaticBids.exists(listing_uuid, u.account_uuid) != null) {
-		errors.add("You already have an automatic bid set.");
-		response.sendRedirect("listing-item.jsp?listingUUID=" + listing_uuid);
-		return;
+	if (BuyMe.AutomaticBids.exists(listing_uuid, u.account_uuid) != null && edit == 0) {
+		edit = 1;
 	}
 	
 	if (upper_limit > u.credits) {
@@ -28,12 +30,27 @@
 		response.sendRedirect("listing-item.jsp?listingUUID=" + listing_uuid);
 		return;
 	}
-
-	Bid newBid = new Bid(BuyMe.genUUID(), u.account_uuid, listing_uuid, BuyMe.Listings.getCurrentPrice(BuyMe.Listings.get(listing_uuid)) + increment);
-	BuyMe.Bids.insert(newBid);
+	
+	Bid topBid = BuyMe.Bids.topBid(BuyMe.Listings.get(listing_uuid));
+	boolean bidPlaced = false;
+	Bid newBid = null;
+	if (!topBid.buyer_uuid.equals(u.account_uuid)) {
+		newBid = new Bid(BuyMe.genUUID(), u.account_uuid, listing_uuid, BuyMe.Listings.getCurrentPrice(BuyMe.Listings.get(listing_uuid)) + increment);
+		BuyMe.Bids.insert(newBid);
+		bidPlaced = true;
+	}
+	
 	AutomaticBid b = new AutomaticBid(u.account_uuid, listing_uuid, upper_limit, increment);
-	BuyMe.AutomaticBids.insert(b);
-	BuyMe.SetAlerts.bidProcess(listing_uuid, newBid);
+	if (edit == 0) {
+		BuyMe.AutomaticBids.insert(b);
+	} else {
+		BuyMe.AutomaticBids.update(b);
+	}
+	
+	if (bidPlaced && newBid != null) {
+		BuyMe.SetAlerts.bidProcess(listing_uuid, newBid);
+	}
+	
 	BuyMe.AutomaticBids.process(listing_uuid);
 	SetAlert userAlert = BuyMe.SetAlerts.exists(u.account_uuid, "bid", listing_uuid);
 	if (userAlert == null) {

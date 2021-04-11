@@ -64,6 +64,8 @@
   <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+  <meta http-equiv="expires" content="0">
+
   <style media="screen">
     .listing-section {
       flex-direction: column;
@@ -181,6 +183,7 @@
             <div class="item-data-row">
               <ul class="product-details main-details">
                 <li class="product-price product-detail-box"><%= sold == 0 ? "Current Price" : "Sold Price" %> <span class="product-price-amount"><span class="currency-symbol">$</span><%= BuyMe.Listings.getCurrentPrice(l) %></span></li>
+                <li class="product-price product-detail-box">Item Condition<span class="product-price-amount"><%= l.item_condition %></span></li>
                 <li class="product-detail-box"><%= l.description %></li>
                 <% if (sold == 0 && !l.seller_uuid.equals(u.account_uuid)) { %>
                 <li class="bid-form-box">
@@ -420,6 +423,9 @@
 	      <input type="number" id="bid-number" name="bid-number" value="<%= autoBid != null ? autoBid.increment : l.bid_increment %>" min="<%= l.bid_increment %>" />
 	      </div>
 	      <input type="text" name="listingUUID" value="<%= l.listing_uuid %>" hidden/>
+	      <% if (autoBid != null) { %>
+	      <input type="text" name="edit" value="true" hidden/>
+	      <% } %>
 	      <input type="submit" value="<%= autoBid != null ? "update auto bid" : "create auto bid" %>" class='btn btn-sm btn-confirm'>
 	      </form>
       `;

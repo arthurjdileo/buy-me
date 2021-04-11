@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1" import="me.arthurdileo.*"%>
-<%@ page import="java.io.*,java.util.*,java.sql.*"%>
+<%@ page import="java.io.*,java.util.*,java.sql.*, java.net.*"%>
 <%@ page import="javax.servlet.http.*,javax.servlet.*" %>
 
 <%
@@ -188,6 +188,7 @@
     <% for (Listing l : listings) {%>
 	countDown(new Date ('<%= l.end_time %>-04:00').getTime(),"<%= l.listing_uuid %>");
 	<%}%>
+	
   </script>
 </body>
 
