@@ -95,10 +95,14 @@
                 <input type="password" class="input-field" name="password" id="password">
                 <input hidden name="from-admin" value="true"></input>
               </div>
+              <div class="input-group">
+              	<label for="confirm-password" class="input-label">confirm password </label>
+              	<input type="password" class="input-field" name="confirm-password" placeholder="Confirm Password" id="confirm-password" required>
+              </div>
+              
               <% if (BuyMe.Admins.isAdmin(u.account_uuid)) { %>
               <div class="input-group">
               	<label for="isMod" class="input-label">Moderator?</label>
-              	<input hidden name="isMod" value="false" id="isMod">
               	<input type="checkbox" value="true" class="input-field" name="isMod" id="isMod">
               </div>
               <% } %>

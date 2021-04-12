@@ -62,12 +62,19 @@ if (fromAdmin == null) {
 }
 
 if (fromAdmin != null) {
+	Cookie[] cookies = request.getCookies();
+	if (!BuyMe.Sessions.safetyCheck(cookies)) {
+		response.sendRedirect("login.jsp");
+		return;
+	}
+	User admin = BuyMe.Sessions.getBySession(BuyMe.Sessions.getCurrentSession(cookies));
 	String isMod = request.getParameter("isMod");
+	System.out.println(isMod);
 	if (isMod != null && isMod.equalsIgnoreCase("true")) {
 		BuyMe.Admins.setRole(accountUUID, "Moderator");
 	}
 	
-	Event e = new Event(u.account_uuid, "Created account: '" + email + "'");
+	Event e = new Event(admin.account_uuid, "Created account: '" + email + "'");
 	BuyMe.Events.insert(e);
 }
 

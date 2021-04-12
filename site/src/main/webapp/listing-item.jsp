@@ -39,7 +39,9 @@
 		boolean win = BuyMe.Listings.checkWin(l);
 		if (win) {
 			Transaction t = BuyMe.TransactionHistory.get(l.listing_uuid);
-			User winner = BuyMe.Users.get(t.buyer_uuid);
+			if (t != null) {
+				User winner = BuyMe.Users.get(t.buyer_uuid);
+			}
 			
 			response.sendRedirect("listing-item.jsp?sold=1&listingUUID=" + l.listing_uuid);
 			return;
@@ -348,7 +350,7 @@
 		    </div>
         </div>
       <% } %>
-      <% if (similarListings.size() > 0) { %>
+      <% if (similarListings.size() > 1) { %>
       <h2 class="listing-title">Similar Products</h2>
       <div id="otherSlider">
 	      <section class="MS-content">

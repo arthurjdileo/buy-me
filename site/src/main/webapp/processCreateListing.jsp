@@ -156,6 +156,10 @@
 		imgURL = BuyMe.Listings.get(listingUUIDPassed).image;
 	}
 	
+	if (listingUUIDPassed != null && numDays == BuyMe.Listings.get(listingUUIDPassed).listing_days) {
+		endDate = BuyMe.Listings.get(listingUUIDPassed).end_time;
+	}
+	
 	Listing l = new Listing(listingUUID, u.account_uuid, category,
 			subCategory, description, product, imgURL, numDays,
 			itemCondition, currency, startPrice, reservePrice,

@@ -215,6 +215,7 @@
               <ul class="alert-type-list">
               <% for (Alert a : userAlertsCategory) { %>
               <% Listing l = BuyMe.Listings.get(a.msg); %>
+              <% if (l != null) { %>
                 <li>
                   <article class="product-container alert-listing-item">
                     <img src="<%= l.image %>" width="100" height="100" alt="" class="product-img">
@@ -235,6 +236,7 @@
                     </div>
                   </article>
                 </li>
+                <% } %>
                 <% } %>
               </ul>
             </div>
@@ -288,9 +290,10 @@
   
   <script>
     <% for (Alert a : userAlertsCategory) { %>
-    <% System.out.println(a.msg); %> 
     <% Listing l = BuyMe.Listings.get(a.msg); %>
+    <% if (l != null) { %>
 	countDown(new Date ('<%= l.end_time %>-04:00').getTime(),"<%= l.listing_uuid %>");
+	<%}%>
 	<%}%>
   </script>
 

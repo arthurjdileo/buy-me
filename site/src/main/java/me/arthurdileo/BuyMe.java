@@ -1415,6 +1415,7 @@ public class BuyMe {
 		
 		public static void insert(Alert a) throws SQLException {
 			loadDatabase();
+			if (existsCategory(a)) return;
 			String query = "INSERT INTO Alerts(set_alert_uuid, alert_uuid, msg) VALUES (?, ?, ?);";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, a.set_alert_uuid);
@@ -1431,6 +1432,17 @@ public class BuyMe {
 			ps.setString(1, alert_uuid);
 			ps.executeUpdate();
 			AlertsTable = null;
+		}
+		
+		public static boolean existsCategory(Alert a) throws SQLException {
+			ArrayList<Alert> alerts = get();
+			
+			for (Alert al : alerts) {
+				if (al.set_alert_uuid.equals(a.set_alert_uuid) && al.msg.equals(a.msg) && a.msg.length() == 36) {
+					return true;
+				}
+			}
+			return false;
 		}
 		
 		public static ArrayList<Alert> getByUserBid(String acc_uuid) throws SQLException {
